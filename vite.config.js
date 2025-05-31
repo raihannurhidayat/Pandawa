@@ -3,7 +3,6 @@ import laravel from 'laravel-vite-plugin';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-    base: 'https://pandawa-production.up.railway.app/',
     plugins: [
         laravel({
             input: 'resources/js/app.tsx',
