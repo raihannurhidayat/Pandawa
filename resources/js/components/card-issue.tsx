@@ -8,8 +8,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { PageProps } from "@/types";
-import { Link, usePage } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
 import { Label } from "@/components/ui/label";
 import { Clock } from "lucide-react";
 
@@ -30,10 +29,6 @@ function CardIssue({
         updated_at_relative: string;
     };
 }) {
-    const { auth } = usePage<PageProps>().props;
-
-    console.log(issue);
-
     return (
         <Link href={route("pengaduan.show", issue.id)}>
             <Card key={issue.id} className="bg-neutral-800">

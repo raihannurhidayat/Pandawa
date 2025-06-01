@@ -22,9 +22,59 @@ function Issue({
     status: [];
     issues: any[];
 }) {
-    const [searchTitle, setSearchTitle] = useState<string>("");
-    const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
-    const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
+    const params = new URLSearchParams(window.location.search);
+
+    const titleParams = params.get("title");
+    const catParams = params.get("category")
+        ? params
+              .get("category")
+              ?.split(",")
+              .map((slug) => {
+                  const category = categories.find((cat) => cat.slug === slug);
+                  return category ? category.slug : null;
+              })
+              .filter((category) => category !== null)
+        : [];
+    const statusParams = params.get("status")
+        ? params
+              .get("status")
+              ?.split(",")
+              .filter((name: string) => status.includes(name))
+        : [];
+
+    const [searchTitle, setSearchTitle] = useState<string>(titleParams ?? "");
+    const [selectedCategory, setSelectedCategory] = useState<string[]>(
+        catParams ?? []
+    );
+    const [selectedStatus, setSelectedStatus] = useState<string[]>(
+        statusParams ?? []
+    );
+
+    const handleSubmit = (e: any) => {
+        e.preventDefault();
+
+        const url = new URL(location.href);
+
+        if (searchTitle) {
+            url.searchParams.set("title", searchTitle);
+        } else {
+            url.searchParams.delete("title");
+        }
+
+        if (selectedCategory.length > 0) {
+            url.searchParams.set("category", selectedCategory.join(","));
+        } else {
+            url.searchParams.delete("category");
+        }
+
+        if (selectedStatus.length > 0) {
+            url.searchParams.set("status", selectedStatus.join(","));
+        } else {
+            url.searchParams.delete("status");
+        }
+
+        location.href = url.toString();
+    };
 
     return (
         <AuthenticatedLayout header="Pengaduan">
@@ -35,15 +85,7 @@ function Issue({
                     <h1 className="text-2xl font-semibold">Pengaduan</h1>
                 </div>
                 <div className="flex gap-4">
-                    <form
-                        action={route("pengaduan.index", {
-                            title: searchTitle,
-                            category: selectedCategory,
-                            status: selectedStatus,
-                        })}
-                        method="get"
-                        className="flex gap-2"
-                    >
+                    <form onSubmit={handleSubmit} className="flex gap-2">
                         <Input
                             type="text"
                             placeholder="Cari pengaduan"
@@ -72,7 +114,7 @@ function Issue({
                                     <MultichoiceDropdown
                                         items={categories.map(
                                             (category: any) => ({
-                                                id: category.id,
+                                                id: category.slug,
                                                 name: category.name,
                                             })
                                         )}
@@ -93,6 +135,27 @@ function Issue({
                                         label="Status"
                                         placeholder="Pilih Status"
                                     />
+                                    <div className="flex justify-end gap-2">
+                                        <Button
+                                            type="reset"
+                                            variant="outline"
+                                            className="w-full"
+                                            onClick={() => {
+                                                setSelectedCategory([]);
+                                                setSelectedStatus([]);
+                                            }}
+                                        >
+                                            Reset
+                                        </Button>
+                                        <Button
+                                            type="submit"
+                                            variant="default"
+                                            className="w-full"
+                                            onClick={handleSubmit}
+                                        >
+                                            Apply
+                                        </Button>
+                                    </div>
                                 </PopoverContent>
                             </Popover>
                         </div>

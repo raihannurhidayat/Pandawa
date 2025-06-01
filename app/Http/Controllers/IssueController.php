@@ -18,13 +18,14 @@ class IssueController extends Controller
         if ($request->has('title')) {
             $query->where('title', 'like', '%' . $request->title . '%');
         }
-
         if ($request->has('category')) {
-            $query->whereIn('issue_category_id', explode(',', $request->category));
+            $query->whereHas('issueCategory', function ($query) use ($request) {
+                $query->whereIn('slug', explode(',', $request->category));
+            });
         }
 
         if ($request->has('status')) {
-            $query->status($request->status);
+            $query->whereIn('status', explode(',', $request->status));
         }
 
         $categories = IssueCategory::all();
@@ -34,7 +35,7 @@ class IssueController extends Controller
         return Inertia::render('issue/index', [
             'categories' => $categories,
             'status' => $status,
-            'issues' => $issues
+            'issues' => $issues,
         ]);
     }
 

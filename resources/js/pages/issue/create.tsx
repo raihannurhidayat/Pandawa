@@ -39,8 +39,6 @@ function CreateIssue({ categories }: { categories: any[] }) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        console.log(data);
-
         post(route("pengaduan.store"));
     };
 
