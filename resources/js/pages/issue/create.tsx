@@ -4,6 +4,7 @@ import {
     Card,
     CardContent,
     CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -18,6 +19,7 @@ import {
     SelectValue,
     SelectGroup,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 function CreateIssue({ categories }: { categories: any[] }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -25,7 +27,32 @@ function CreateIssue({ categories }: { categories: any[] }) {
         body: "",
         issue_category_id: "",
         location: "",
+        attachment: "",
     });
+
+    const handleIssueCategoryChange = (e: any) => {
+        setData("issue_category_id", e?.target?.value);
+    };
+
+    useEffect(() => {
+        async function getLocation() {
+            const response = await fetch(
+                "https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json"
+            );
+
+            const data = await response.json();
+
+            console.log("location");
+        }
+
+        // getLocation();
+    }, []);
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+
+        post(route("pengaduan/create"));
+    };
 
     const provinsi = [
         {
@@ -500,30 +527,6 @@ function CreateIssue({ categories }: { categories: any[] }) {
         },
     ];
 
-    const handleIssueCategoryChange = (e: any) => {
-        setData("issue_category_id", e.target.value);
-    };
-
-    useEffect(() => {
-        async function getLocation() {
-            const response = await fetch(
-                "https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json"
-            );
-
-            const data = await response.json();
-
-            console.log("location");
-        }
-
-        // getLocation();
-    }, []);
-
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        post(route("pengaduan/create"));
-    };
-
     return (
         <div className="flex items-center justify-center w-screen h-screen">
             <Head title="Pengaduan" />
@@ -551,9 +554,9 @@ function CreateIssue({ categories }: { categories: any[] }) {
                                         {categories?.map((category) => (
                                             <SelectItem
                                                 key={category.id}
-                                                value={category.id}
+                                                value={category?.id}
                                             >
-                                                {category.name}
+                                                {category?.name}
                                             </SelectItem>
                                         ))}
                                     </SelectGroup>
@@ -667,7 +670,14 @@ function CreateIssue({ categories }: { categories: any[] }) {
                                 </SelectContent>
                             </Select>
                         </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="attachment">Attachment</Label>
+                            <Input id="attachment" type="file" required />
+                        </div>
                     </CardContent>
+                    <CardFooter>
+                        <Button type="submit">Ajukan</Button>
+                    </CardFooter>
                 </Card>
             </form>
         </div>
