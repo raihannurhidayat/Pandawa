@@ -26,7 +26,7 @@ const LocationFilter = ({ onChange }: any) => {
     });
 
     function getUrl(endpoint: string) {
-        return "https://corsproxy.io/?url=" + `${apiUrl}/${endpoint}`;
+        return `${apiUrl}/${endpoint}`;
     }
 
     // Fetch Provinsi

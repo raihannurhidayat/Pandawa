@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Models\Issue;
 use Illuminate\Http\Request;
 use App\Models\IssueCategory;
+use Illuminate\Support\Facades\Auth;
 
 class IssueController extends Controller
 {
@@ -45,16 +46,35 @@ class IssueController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
 
-        // $validated = $request->validate([
-        //     'title' => 'required',
-        //     'body' => 'string|nullable',
-        //     'issue_category_id' => 'required',
-        //     'location' => 'required',
-        // ]);
+        $validated = $request->validate([
+            'title' => 'required',
+            'body' => 'string|nullable',
+            'issue_category_id' => 'required',
+            'location' => 'string|nullable',
+            'attachments' => 'array|nullable',
+        ]);
 
-        // Issue::create($validated);
+        $validated['user_id'] = Auth::user()->id;
+        $validated['location'] = json_encode([
+            'province' => 12,
+            'city' => 1202,
+            "district" => 120202,
+            "village" => 1202021
+        ]);
+
+        // dd($validated);
+
+        $issue = Issue::create($validated);
+
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $issue->addAttachment($file);
+            }
+        }
+
+        return redirect()->route('pengaduan.index');
     }
 
     public function show(Issue $issue)

@@ -1,4 +1,4 @@
-import { FormEventHandler } from "react";
+import { FormEventHandler, useState } from "react";
 import { Head, useForm } from "@inertiajs/react";
 import {
     Card,
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import LocationFilter from "@/components/location-filter";
+import { AttachmentInput } from "@/components/attachments-input";
 
 function CreateIssue({ categories }: { categories: any[] }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -28,7 +29,7 @@ function CreateIssue({ categories }: { categories: any[] }) {
         body: "",
         issue_category_id: "",
         location: "",
-        attachment: null,
+        attachments: [] as File[],
     });
 
     const handleIssueCategoryChange = (e: any) => {
@@ -40,7 +41,7 @@ function CreateIssue({ categories }: { categories: any[] }) {
 
         console.log(data);
 
-        // post(route("pengaduan.store"));
+        post(route("pengaduan.store"));
     };
 
     return (
@@ -113,13 +114,19 @@ function CreateIssue({ categories }: { categories: any[] }) {
                         />
 
                         <div className="grid gap-2">
-                            <Label htmlFor="attachment">Attachment</Label>
-                            <Input
-                                id="attachment"
+                            <Label htmlFor="attachments">Attachments</Label>
+                            {/* <Input
+                                id="attachments"
                                 type="file"
                                 required
                                 onChange={(e: any) =>
-                                    setData("attachment", e?.target?.files[0])
+                                    setData("attachments", e?.target?.files[0])
+                                }
+                            /> */}
+                            <AttachmentInput
+                                attachments={data.attachments}
+                                setAttachments={(files) =>
+                                    setData("attachments", files)
                                 }
                             />
                         </div>

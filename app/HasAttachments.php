@@ -6,7 +6,7 @@ use App\Models\Attachment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
 
-trait HasAttachment
+trait HasAttachments
 {
     public function attachments(): MorphMany
     {

@@ -12,7 +12,7 @@ class Attachment extends Model
     public $incrementing = false;
 
     public $fillable = [
-        'name',
+        'filename',
         'path',
     ];
 
