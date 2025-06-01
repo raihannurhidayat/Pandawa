@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\IssueStatus;
 use Inertia\Inertia;
 use App\Models\Issue;
 use Illuminate\Http\Request;
@@ -19,16 +20,21 @@ class IssueController extends Controller
         }
 
         if ($request->has('category')) {
-            $query->where('category', $request->category);
+            $query->whereIn('issue_category_id', explode(',', $request->category));
         }
 
         if ($request->has('status')) {
             $query->status($request->status);
         }
 
+        $categories = IssueCategory::all();
+        $status = IssueStatus::cases();
         $issues = $query->get();
 
+
         return Inertia::render('issue/index', [
+            'categories' => $categories,
+            'status' => $status,
             'issues' => $issues
         ]);
     }
