@@ -57,6 +57,8 @@ class IssueController extends Controller
 
     public function show(Issue $issue)
     {
+        $issue->load('user', 'issueCategory', 'attachments');
+
         return Inertia::render('issue/show', [
             'issue' => $issue
         ]);
