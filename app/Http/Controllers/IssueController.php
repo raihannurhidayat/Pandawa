@@ -45,14 +45,16 @@ class IssueController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required',
-            'body' => 'string|nullable',
-            'issue_category_id' => 'required',
-            'location' => 'required',
-        ]);
+        dd($request->all());
 
-        Issue::create($validated);
+        // $validated = $request->validate([
+        //     'title' => 'required',
+        //     'body' => 'string|nullable',
+        //     'issue_category_id' => 'required',
+        //     'location' => 'required',
+        // ]);
+
+        // Issue::create($validated);
     }
 
     public function show(Issue $issue)
