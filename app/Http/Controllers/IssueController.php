@@ -12,7 +12,7 @@ class IssueController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Issue::query()->with('user', 'issueCategory');
+        $query = Issue::query()->with(['user', 'issueCategory', 'attachments']);
 
         if ($request->has('title')) {
             $query->where('title', 'like', '%' . $request->title . '%');
