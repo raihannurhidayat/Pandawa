@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
     Popover,
@@ -9,6 +9,8 @@ import { X, ChevronDown } from "lucide-react";
 
 interface MultichoiceDropdownProps {
     items: { id: string; name: string }[];
+    selectedItems: string[];
+    onChange: (items: string[]) => void;
     label?: string;
     placeholder?: string;
     icon?: React.ReactNode;
@@ -16,16 +18,22 @@ interface MultichoiceDropdownProps {
 
 const MultichoiceDropdown: React.FC<MultichoiceDropdownProps> = ({
     items,
+    selectedItems,
+    onChange,
     label = "Select Items",
     placeholder = "Choose Items",
     icon = <ChevronDown className="w-4 h-4 ml-2" />,
 }) => {
-    const [open, setOpen] = useState(false);
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
+    const [open, setOpen] = React.useState(false);
 
-    const handleClear = () => setSelectedItems([]);
+    const handleClear = () => onChange([]);
     const handleRemove = (item: string) =>
-        setSelectedItems(selectedItems.filter((i) => i !== item));
+        onChange(selectedItems.filter((i) => i !== item));
+    const handleSelect = (item: string) => {
+        if (!selectedItems.includes(item)) {
+            onChange([...selectedItems, item]);
+        }
+    };
 
     return (
         <div className="w-full max-w-sm p-1 rounded-2xl">
@@ -58,14 +66,7 @@ const MultichoiceDropdown: React.FC<MultichoiceDropdownProps> = ({
                                     key={id}
                                     variant="ghost"
                                     className="justify-start"
-                                    onClick={() => {
-                                        if (!selectedItems.includes(id)) {
-                                            setSelectedItems([
-                                                ...selectedItems,
-                                                id,
-                                            ]);
-                                        }
-                                    }}
+                                    onClick={() => handleSelect(id)}
                                 >
                                     {name}
                                 </Button>

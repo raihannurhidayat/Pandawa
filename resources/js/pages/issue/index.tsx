@@ -30,7 +30,8 @@ function Issue({
     status: [];
     issues: any[];
 }) {
-    const [selected, setSelected] = useState<string[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+    const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
 
     return (
         <AuthenticatedLayout header="Pengaduan">
@@ -45,7 +46,7 @@ function Issue({
                     type="text"
                     placeholder="Cari pengaduan"
                     iconRight={<Search />}
-                    className="flex flex-1"
+                    className="flex flex-1 w-full"
                 />
                 <div className="flex gap-2">
                     <Popover>
@@ -71,8 +72,22 @@ function Issue({
                                         name: category.name,
                                     };
                                 })}
+                                selectedItems={selectedCategory}
+                                onChange={setSelectedCategory}
                                 label="Kategori"
                                 placeholder="Pilih Kategori"
+                            />
+                            <MultichoiceDropdown
+                                items={status.map((statusName: string) => {
+                                    return {
+                                        id: statusName,
+                                        name: statusName,
+                                    };
+                                })}
+                                selectedItems={selectedStatus}
+                                onChange={setSelectedStatus}
+                                label="Status"
+                                placeholder="Pilih Status"
                             />
                         </PopoverContent>
                     </Popover>
