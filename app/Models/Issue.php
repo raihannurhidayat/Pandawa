@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\IssueStatus;
 use App\HasAttachments;
+use App\HasRelativeTime;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Issue extends Model
 {
     /** @use HasFactory<\Database\Factories\IssueFactory> */
-    use HasFactory, HasAttachments;
+    use HasFactory, HasAttachments, HasRelativeTime;
 
     protected $keyType = 'string';
     public $incrementing = false;

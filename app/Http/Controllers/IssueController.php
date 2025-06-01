@@ -31,7 +31,6 @@ class IssueController extends Controller
         $status = IssueStatus::cases();
         $issues = $query->get();
 
-
         return Inertia::render('issue/index', [
             'categories' => $categories,
             'status' => $status,

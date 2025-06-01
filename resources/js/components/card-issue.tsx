@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
     Card,
@@ -11,6 +10,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { PageProps } from "@/types";
 import { Link, usePage } from "@inertiajs/react";
+import { Label } from "@/components/ui/label";
+import { Clock } from "lucide-react";
 
 function CardIssue({
     issue,
@@ -23,10 +24,15 @@ function CardIssue({
         attachments: [];
         issue_category: { name: string };
         status: string;
-        updated_at: string;
+        created_at_formatted: string;
+        updated_at_formatted: string;
+        created_at_relative: string;
+        updated_at_relative: string;
     };
 }) {
     const { auth } = usePage<PageProps>().props;
+
+    console.log(issue);
 
     return (
         <Link href={route("pengaduan.show", issue.id)}>
@@ -61,30 +67,21 @@ function CardIssue({
                 </CardContent>
                 <Separator className="bg-neutral-600" />
                 <CardFooter className="flex gap-2 py-2">
-                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                        <Avatar className="w-8 h-8 rounded-lg">
-                            {/*<AvatarImage src={user.avatar} alt={user.name} />*/}
-                            <AvatarFallback className="rounded-lg">
-                                AC
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="grid flex-1 text-sm leading-tight text-left">
-                            <span className="font-semibold truncate">
-                                {auth.user.name}
-                            </span>
-                            <span className="text-xs truncate">
+                    <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm py-2 items-center">
+                        <div className="flex items-center">
+                            <Clock className="w-4 h-4 mr-2" />
+                            <Label>Terakhir diubah</Label>
+                        </div>
+                        <span>{issue.updated_at_relative}</span>
+                        {/* <Label>Dibuat</Label> */}
+                        {/* <span>
+                            {issue.created_at_formatted} (
+                            {issue.created_at_relative}) oleh{" "}
+                            <span className="font-bold text-blue-500 hover:underline hover:text-blue-600">
                                 {auth.user.email}
                             </span>
-                        </div>
+                        </span> */}
                     </div>
-                    <span>
-                        {new Intl.DateTimeFormat("id-ID", {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                        }).format(new Date(issue.updated_at))}
-                    </span>
                 </CardFooter>
             </Card>
         </Link>
