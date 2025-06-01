@@ -25,9 +25,13 @@ const LocationFilter = ({ onChange }: any) => {
         village: "",
     });
 
+    function getUrl(endpoint: string) {
+        return "https://corsproxy.io/?url=" + `${apiUrl}/${endpoint}`;
+    }
+
     // Fetch Provinsi
     useEffect(() => {
-        axios.get(apiUrl + "/provinces").then((res) => {
+        axios.get(getUrl("provinces.json")).then((res) => {
             setProvinces(res.data);
         });
     }, []);
@@ -48,9 +52,7 @@ const LocationFilter = ({ onChange }: any) => {
             setCities([]);
             setDistricts([]);
             setVillages([]);
-            const res = await axios.get(
-                apiUrl + `/regencies?parent_id=${value}`
-            );
+            const res = await axios.get(getUrl(`/regencies/${value}.json`));
             setCities(res.data);
         }
 
@@ -59,18 +61,14 @@ const LocationFilter = ({ onChange }: any) => {
             updated.village = "";
             setDistricts([]);
             setVillages([]);
-            const res = await axios.get(
-                apiUrl + `/districts?parent_id=${value}`
-            );
+            const res = await axios.get(getUrl(`/districts/${value}.json`));
             setDistricts(res.data);
         }
 
         if (level === "district") {
             updated.village = "";
             setVillages([]);
-            const res = await axios.get(
-                apiUrl + `/villages?parent_id=${value}`
-            );
+            const res = await axios.get(getUrl(`/villages/${value}.json`));
             setVillages(res.data);
         }
 
