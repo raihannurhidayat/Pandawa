@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Issue;
 use Illuminate\Http\Request;
+use App\Models\IssueCategory;
 
 class IssueController extends Controller
 {
@@ -33,14 +34,19 @@ class IssueController extends Controller
 
     public function create()
     {
-        return Inertia::render('issue/create');
+        $categories = IssueCategory::all();
+
+        // dd($categories);
+
+        return Inertia::render('issue/create', [
+            'categories' => $categories,
+        ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required',
-            'category' => 'required',
             'body' => 'string|nullable',
             'issue_category_id' => 'required',
             'location' => 'required',
