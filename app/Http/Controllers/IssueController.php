@@ -49,9 +49,11 @@ class IssueController extends Controller
         Issue::create($validated);
     }
 
-    public function show()
+    public function show(Issue $issue)
     {
-        //
+        return Inertia::render('issue/show', [
+            'issue' => $issue
+        ]);
     }
 
     public function edit()
