@@ -121,7 +121,7 @@ export default function Register() {
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="password_confirmation">
-                                            Retype Password
+                                            Confirm Password
                                         </Label>
                                         <Input
                                             id="password_confirmation"
