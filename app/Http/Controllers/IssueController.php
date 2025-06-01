@@ -2,14 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Issue;
+use Illuminate\Http\Request;
 
 class IssueController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('issue/index');
+        $query = Issue::query();
+
+        if ($request->has('title')) {
+            $query->where('title', 'like', '%' . $request->title . '%');
+        }
+
+        if ($request->has('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->has('status')) {
+            $query->status($request->status);
+        }
+
+        $issues = $query->get();
+
+        return Inertia::render('issue/index', [
+            'issues' => $issues
+        ]);
     }
 
     public function create()
@@ -17,9 +36,17 @@ class IssueController extends Controller
         return Inertia::render('issue/create');
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required',
+            'category' => 'required',
+            'body' => 'string|nullable',
+            'issue_category_id' => 'required',
+            'location' => 'required',
+        ]);
+
+        Issue::create($validated);
     }
 
     public function show()
