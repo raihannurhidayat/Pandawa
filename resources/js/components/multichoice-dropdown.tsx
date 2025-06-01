@@ -28,12 +28,12 @@ const MultichoiceDropdown: React.FC<MultichoiceDropdownProps> = ({
         setSelectedItems(selectedItems.filter((i) => i !== item));
 
     return (
-        <div className="w-full max-w-sm p-4 border shadow-sm rounded-2xl">
+        <div className="w-full max-w-sm p-1 rounded-2xl">
             {/* Header */}
-            <div className="flex items-center justify-between mb-2">
-                <span className="text-base font-medium">{label}</span>
+            <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-neutral-400">{label}</span>
                 <button
-                    className="text-sm text-muted-foreground hover:underline"
+                    className="text-sm text-neutral-400 hover:underline"
                     onClick={handleClear}
                 >
                     Clear
@@ -83,15 +83,11 @@ const MultichoiceDropdown: React.FC<MultichoiceDropdownProps> = ({
                     return (
                         <div
                             key={item}
-                            className="flex items-center px-2 py-1 rounded-full bg-muted"
+                            className="flex items-center px-3 py-1 rounded select-none bg-muted hover:bg-muted/80"
+                            onClick={() => handleRemove(item)}
                         >
                             <span className="mr-1">{selected.name}</span>
-                            <button
-                                className="hover:text-destructive"
-                                onClick={() => handleRemove(item)}
-                            >
-                                <X className="w-3 h-3" />
-                            </button>
+                            <X className="w-3 h-3" />
                         </div>
                     );
                 })}
