@@ -19,7 +19,7 @@ function Issue({
     issues,
 }: {
     categories: any[];
-    status: [];
+    status: string[];
     issues: any[];
 }) {
     const params = new URLSearchParams(window.location.search);
