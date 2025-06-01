@@ -10,13 +10,13 @@ export interface InputProps
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ({ className, iconLeft, iconRight, type, ...props }, ref) => {
-        const paddingLeft = iconLeft ? "pl-10" : "pl-3";
-        const paddingRight = iconRight ? "pr-10" : "pr-3";
+        const paddingLeft = iconLeft ? "pl-8" : "pl-3";
+        const paddingRight = iconRight ? "pr-8" : "pr-3";
 
         return (
             <div className="relative flex items-center">
                 {iconLeft && (
-                    <div className="absolute flex items-center justify-center w-4 h-4 left-2">
+                    <div className="absolute flex items-center justify-center w-4 h-4 left-3">
                         {iconLeft}
                     </div>
                 )}
