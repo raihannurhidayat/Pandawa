@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class IssueCategory extends Model
 {
@@ -15,6 +16,11 @@ class IssueCategory extends Model
         'slug',
         'description'
     ];
+
+    public function issues(): HasMany
+    {
+        return $this->hasMany(Issue::class);
+    }
 
     public static function booted(): void
     {

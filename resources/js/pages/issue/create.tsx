@@ -1,6 +1,6 @@
 function Issue() {
     return ( <>
-    <h1>Pengaduan</h1>
+    <h1>Buat Pengaduan</h1>
     </> );
 }
 
