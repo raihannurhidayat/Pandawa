@@ -36,7 +36,7 @@ const MultichoiceDropdown: React.FC<MultichoiceDropdownProps> = ({
     };
 
     return (
-        <div className="w-full max-w-sm p-1 rounded-2xl">
+        <div className="w-full max-w-sm rounded-2xl">
             {/* Header */}
             <div className="flex items-center justify-between mb-3">
                 <span className="text-sm text-neutral-400">{label}</span>
