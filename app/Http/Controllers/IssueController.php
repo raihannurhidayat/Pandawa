@@ -10,7 +10,7 @@ class IssueController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Issue::query();
+        $query = Issue::query()->with('user', 'issueCategory');
 
         if ($request->has('title')) {
             $query->where('title', 'like', '%' . $request->title . '%');
@@ -64,8 +64,8 @@ class IssueController extends Controller
         //
     }
 
-    public function destroy()
+    public function destroy(Issue $issue)
     {
-        //
+        $issue->archive();
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\IssueStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->constrained('users');
             $table->foreignUuid('issue_category_id')->constrained('issue_categories');
             $table->json('location');
-            $table->enum('status', ['open', 'pending', 'resolved', 'closed'])->default('open');
+            $table->string('status')->default(IssueStatus::Open->value);
             $table->timestamps();
         });
     }

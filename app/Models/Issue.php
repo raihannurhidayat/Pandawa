@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
+use App\IssueStatus;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -24,6 +25,11 @@ class Issue extends Model
         'issue_category_id',
         'location',
         'status'
+    ];
+
+    public $casts = [
+        'location' => 'array',
+        'status' => IssueStatus::class
     ];
 
     public function user(): BelongsTo
@@ -47,6 +53,12 @@ class Issue extends Model
     public function scopeStatus(Builder $query, string $status): void
     {
         $query->where('status', $status);
+    }
+
+    public function archive(): void
+    {
+        $this->status = IssueStatus::Closed;
+        $this->save();
     }
 
 
