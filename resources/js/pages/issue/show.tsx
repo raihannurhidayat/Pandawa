@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import AuthenticatedLayout from "@/layouts/authenticated-layout";
+import { cn } from "@/lib/utils";
 import { Issue } from "@/types/issue";
 import { Head, Link } from "@inertiajs/react";
 import { useState } from "react";
@@ -28,6 +29,25 @@ function ShowIssue({ issue }: { issue: Issue }) {
         setGalleryIndex(0);
         setGalleryOpen(true);
     }
+
+    // console.log(issue);
+
+    const isActive = (index: number) => {
+        if (index === 0) {
+            return !issue.progress.some(
+                (prog, i) => i < index && prog.status === "resolved"
+            );
+        }
+        return issue.progress[index - 1].status === "resolved";
+    };
+
+    const getCardStyle = (index: number) =>
+        cn(
+            "flex flex-1 transition-colors ease-in-out",
+            isActive(index)
+                ? "bg-secondary hover:bg-secondary/80"
+                : "bg-transparent shadow-none border-transparent hover:border-inherit"
+        );
 
     return (
         <AuthenticatedLayout
@@ -57,74 +77,25 @@ function ShowIssue({ issue }: { issue: Issue }) {
 
             {/* Progress tracker */}
             <div className="flex items-center flex-1 gap-4 p-2 mt-1 mb-10 rounded-lg shadow-sm bg-muted outline outline-1 outline-secondary">
-                <Card className="flex flex-1 bg-accent">
-                    <CardHeader className="flex flex-row justify-between flex-1 w-full gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <CardTitle className="font-semibold">
-                                Pengaduan diterima
-                            </CardTitle>
-                            <CardDescription>
-                                Pengaduan diterima dan telah diverifikasi
-                            </CardDescription>
-                        </div>
-                        <div className="flex justify-end">
-                            <Badge className="text-sm uppercase select-none h-fit">
-                                {issue.status}
-                            </Badge>
-                        </div>
-                    </CardHeader>
-                </Card>
-                <Card className="flex flex-1 transition-colors ease-in-out bg-transparent border-none shadow-none outline-none hover:bg-accent">
-                    <CardHeader className="flex flex-row justify-between flex-1 w-full gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <CardTitle className="font-semibold">
-                                Pengaduan diterima
-                            </CardTitle>
-                            <CardDescription>
-                                Pengaduan diterima dan telah diverifikasi
-                            </CardDescription>
-                        </div>
-                        <div className="flex justify-end">
-                            <Badge className="text-sm uppercase select-none h-fit">
-                                {issue.status}
-                            </Badge>
-                        </div>
-                    </CardHeader>
-                </Card>
-                <Card className="flex flex-1 bg-transparent border-none shadow-none outline-none">
-                    <CardHeader className="flex flex-row justify-between flex-1 w-full gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <CardTitle className="font-semibold">
-                                Pengaduan diterima
-                            </CardTitle>
-                            <CardDescription>
-                                Pengaduan diterima dan telah diverifikasi
-                            </CardDescription>
-                        </div>
-                        <div className="flex justify-end">
-                            <Badge className="text-sm uppercase select-none h-fit">
-                                {issue.status}
-                            </Badge>
-                        </div>
-                    </CardHeader>
-                </Card>
-                <Card className="flex flex-1 bg-transparent border-none shadow-none outline-none">
-                    <CardHeader className="flex flex-row justify-between flex-1 w-full gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <CardTitle className="font-semibold">
-                                Pengaduan diterima
-                            </CardTitle>
-                            <CardDescription>
-                                Pengaduan diterima dan telah diverifikasi
-                            </CardDescription>
-                        </div>
-                        <div className="flex justify-end">
-                            <Badge className="text-sm uppercase select-none h-fit">
-                                {issue.status}
-                            </Badge>
-                        </div>
-                    </CardHeader>
-                </Card>
+                {issue.progress.map((progress, index) => (
+                    <Card id={progress.id} className={getCardStyle(index)}>
+                        <CardHeader className="flex flex-row justify-between flex-1 w-full gap-4">
+                            <div className="flex flex-col w-full gap-2">
+                                <CardTitle className="font-semibold">
+                                    {progress.title}
+                                </CardTitle>
+                                <CardDescription>
+                                    {progress.body}
+                                </CardDescription>
+                            </div>
+                            <div className="flex justify-end">
+                                <Badge className="text-sm uppercase select-none h-fit">
+                                    {progress.status}
+                                </Badge>
+                            </div>
+                        </CardHeader>
+                    </Card>
+                ))}
             </div>
             <Card className="gap-y-4">
                 <CardHeader className="flex flex-row items-center justify-between w-full gap-2">

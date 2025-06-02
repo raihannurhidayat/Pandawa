@@ -79,7 +79,7 @@ class IssueController extends Controller
 
     public function show($pengaduan)
     {
-        $issue = Issue::findOrFail($pengaduan)->load('user', 'issueCategory', 'attachments');
+        $issue = Issue::findOrFail($pengaduan)->load('user', 'issueCategory', 'progress', 'attachments');
 
         return Inertia::render('issue/show', [
             'issue' => $issue
