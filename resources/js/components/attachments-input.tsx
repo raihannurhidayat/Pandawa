@@ -37,10 +37,10 @@ export function AttachmentInput({
                     {attachments.map((file, index) => (
                         <Card
                             key={index}
-                            className="flex items-center justify-between p-2"
+                            className="flex items-center justify-between gap-1 p-2"
                         >
                             <CardContent className="p-0">
-                                {file.name}
+                                <span className="text-sm">{file.name}</span>
                             </CardContent>
                             <Button
                                 variant="ghost"

@@ -15,7 +15,7 @@ trait HasAttachments
 
     public function addAttachment($file): Attachment
     {
-        $path = $file->store('attachments');
+        $path = $file->store('public/attachments');
 
         return $this->attachments()->create([
             'filename' => $file->getClientOriginalName(),
