@@ -5,12 +5,14 @@ namespace App\Models;
 use App\IssueStatus;
 use App\HasAttachments;
 use App\HasRelativeTime;
+use App\IssueProgressTemplates;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Issue extends Model
 {
@@ -44,6 +46,11 @@ class Issue extends Model
         return $this->belongsTo(IssueCategory::class);
     }
 
+    public function progress(): HasMany
+    {
+        return $this->hasMany(IssueProgress::class);
+    }
+
     /**
      * Filter issues by status.
      *
@@ -63,11 +70,21 @@ class Issue extends Model
         $this->save();
     }
 
-
     public static function booted(): void
     {
-        static::creating(function ($model) {
+        static::creating(function (self $model) {
             $model->id = (string) Str::orderedUuid();
+        });
+
+        static::created(function (self $model) {
+            // create initial progresses
+            foreach (IssueProgressTemplates::ISSUE_PROGRESS_TEMPLATES as $step => $progress) {
+                $model->progress()->create([
+                    'title' => $progress[IssueStatus::Pending->value]['title'],
+                    'body' => $progress[IssueStatus::Pending->value]['body'],
+                    'status' => $progress[IssueStatus::Pending->value]['status'],
+                ]);
+            }
         });
     }
 }
