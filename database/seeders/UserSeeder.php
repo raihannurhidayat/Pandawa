@@ -16,11 +16,13 @@ class UserSeeder extends Seeder
         $users = [
             [
                 'name' => 'admin',
+                'role' => 'admin',
                 'email' => 'admin@example.com',
                 'password' => Hash::make('admin')
             ],
             [
                 'name' => 'user',
+                'role' => 'user',
                 'email' => 'user@example.com',
                 'password' => Hash::make('user')
             ]
@@ -29,6 +31,5 @@ class UserSeeder extends Seeder
         foreach ($users as $user) {
             \App\Models\User::create($user);
         }
-
     }
 }

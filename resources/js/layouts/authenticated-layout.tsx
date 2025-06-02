@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactNode } from "react";
+import { PropsWithChildren, ReactNode, useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
     SidebarInset,
@@ -30,8 +30,14 @@ export default function AuthenticatedLayout({
 }>) {
     const { auth } = usePage<PageProps<{ auth: Auth }>>().props;
 
+    useEffect(() => {
+        if (auth.user.role === "user") {
+            router.get("/onboarding");
+        }
+    }, [auth.user.role]);
+
     if (auth.user.role === "user") {
-        return router.get("/onboarding");
+        return null; // Prevent rendering during redirect
     }
 
     return (
@@ -39,12 +45,12 @@ export default function AuthenticatedLayout({
             <AppSidebar />
 
             <SidebarInset>
-                <header className="sticky top-0 bg-background flex h-16 shrink-0 items-center gap-2 justify-between p-4 border-b md:border-none md:rounded-xl">
+                <header className="sticky top-0 flex items-center justify-between h-16 gap-2 p-4 border-b bg-background shrink-0 md:border-none md:rounded-xl">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1" />
                         <Separator
                             orientation="vertical"
-                            className="mr-2 h-4"
+                            className="h-4 mr-2"
                         />
                         <Breadcrumb>
                             <BreadcrumbList>
@@ -59,7 +65,7 @@ export default function AuthenticatedLayout({
                     </div>
                 </header>
 
-                <main className="p-4 md:pt-0 h-full">{children}</main>
+                <main className="h-full p-4 md:pt-0">{children}</main>
             </SidebarInset>
         </SidebarProvider>
     );
