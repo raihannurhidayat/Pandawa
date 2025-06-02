@@ -152,15 +152,15 @@ const App = () => {
                 <div className="text-center mb-8 sm:mb-12">
                     <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-4 sm:mb-6 leading-tight px-2">
                         Laporkan Masalah Anda{' '}
-                        <span className="text-green-500">Dengan Mudah</span>,<br className="hidden sm:block" />
-                        <span className="text-green-500">Sampaikan</span> Dalam Hitungan Detik
+                        <span className="text-primary">Dengan Mudah</span>,<br className="hidden sm:block" />
+                        <span className="text-primary">Sampaikan</span> Dalam Hitungan Detik
                     </h1>
 
                     <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-12 px-4">
-                        Pantau Progres Laporan Anda <span className="text-green-500">Secara Real-time</span>
+                        Pantau Progres Laporan Anda <span className="text-primary">Secara Real-time</span>
                     </p>
 
-                    <button className="bg-green-500 text-white px-6 sm:px-8 lg:px-10 py-3 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-green-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                    <button className="bg-primary text-white px-6 sm:px-8 lg:px-10 py-3 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-green-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                         Buat Laporan Sekarang
                     </button>
                 </div>
@@ -288,8 +288,8 @@ const App = () => {
 
             <div className="fixed bottom-4 sm:bottom-6 lg:bottom-8 right-4 sm:right-6 lg:right-8 z-50">
                 <div className="relative group">
-                    <div className="absolute inset-0 bg-green-500 rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                    <button className="relative w-12 sm:w-14 lg:w-16 h-12 sm:h-14 lg:h-16 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 transition-all duration-300 cursor-pointer shadow-2xl hover:shadow-green-500/50 transform hover:scale-110">
+                    <div className="absolute inset-0 bg-primary rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
+                    <button className="relative w-12 sm:w-14 lg:w-16 h-12 sm:h-14 lg:h-16 bg-primary rounded-full flex items-center justify-center hover:bg-green-600 transition-all duration-300 cursor-pointer shadow-2xl hover:shadow-primary/50 transform hover:scale-110">
                         <Phone className="w-5 sm:w-6 lg:w-7 h-5 sm:h-6 lg:h-7 text-white" />
                     </button>
                 </div>

@@ -15,7 +15,7 @@ export default function Navbar() {
                     <div className="flex items-center">
                         <a
                             href="#"
-                            className="text-2xl font-black text-green-500 hover:text-green-700 transition-colors rounded-md"
+                            className="text-2xl font-black text-primary hover:text-primary-700 transition-colors rounded-md"
                         >
                             PANDAWA
                         </a>
@@ -55,7 +55,7 @@ export default function Navbar() {
                             Masuk
                         </button>
                         <button
-                            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-full transition-colors"
+                            className="bg-primary hover:bg-primary/80 text-white font-semibold px-6 py-2 rounded-full transition-colors"
                         >
                             Daftar
                         </button>
