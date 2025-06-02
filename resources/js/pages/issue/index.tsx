@@ -10,8 +10,17 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import MultichoiceDropdown from "@/components/multichoice-dropdown";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 function Issue({
     categories,
@@ -22,6 +31,19 @@ function Issue({
     status: string[];
     issues: any[];
 }) {
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
+    const sortedItems = useMemo(() => {
+        return [...issues].sort((a, b) => {
+            const aDate = new Date(a.updated_at as string);
+            const bDate = new Date(b.updated_at as string);
+
+            return sortOrder === "asc"
+                ? aDate.getTime() - bDate.getTime()
+                : bDate.getTime() - aDate.getTime();
+        });
+    }, [issues, sortOrder]);
+
     const params = new URLSearchParams(window.location.search);
 
     const titleParams = params.get("title");
@@ -85,6 +107,27 @@ function Issue({
                     <h1 className="text-2xl font-semibold">Pengaduan</h1>
                 </div>
                 <div className="flex gap-4">
+                    <Select
+                        onValueChange={(value) =>
+                            setSortOrder(value as "asc" | "desc")
+                        }
+                        value={sortOrder}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Sortir" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Pembuatan</SelectLabel>
+                                <SelectItem id="desc" value="desc">
+                                    Terbaru
+                                </SelectItem>
+                                <SelectItem id="asc" value="asc">
+                                    Terlama
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                     <form onSubmit={handleSubmit} className="flex gap-2">
                         <Input
                             type="text"
@@ -160,7 +203,7 @@ function Issue({
                             </Popover>
                         </div>
                     </form>
-                    <Button variant="outline" asChild>
+                    <Button variant="default" asChild>
                         <Link href={route("pengaduan.create")}>
                             <Plus />
                             Buat Pengaduan
@@ -171,7 +214,7 @@ function Issue({
 
             <ScrollArea>
                 <div className="flex flex-col gap-4">
-                    {issues.map((issue: any) => (
+                    {sortedItems.map((issue: any) => (
                         <CardIssue key={issue.id} issue={issue} />
                     ))}
                 </div>
