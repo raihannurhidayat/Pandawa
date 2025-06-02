@@ -24,6 +24,7 @@
         "vite": "^5.0"
     },
     "dependencies": {
+        "@heroicons/react": "^2.2.0",
         "@inertiajs/vue3": "^2.0.0",
         "@radix-ui/react-alert-dialog": "^1.0.5",
         "@radix-ui/react-avatar": "^1.1.1",
@@ -39,8 +40,10 @@
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
         "date-fns": "^3.6.0",
+        "heroicons-react": "^1.4.1",
         "lucide-react": "^0.378.0",
         "next-themes": "^0.3.0",
+        "react-icons": "^5.5.0",
         "react-resizable-panels": "^2.0.19",
         "tailwind-merge": "^2.3.0",
         "tailwindcss-animate": "^1.0.7",
