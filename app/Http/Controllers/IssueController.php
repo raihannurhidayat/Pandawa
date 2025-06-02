@@ -43,8 +43,6 @@ class IssueController extends Controller
     {
         $categories = IssueCategory::all();
 
-        // dd($categories);
-
         return Inertia::render('issue/create', [
             'categories' => $categories,
         ]);
@@ -52,8 +50,6 @@ class IssueController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
         $validated = $request->validate([
             'title' => 'required',
             'body' => 'string|nullable',
@@ -70,8 +66,6 @@ class IssueController extends Controller
             "village" => 1202021
         ]);
 
-        // dd($validated);
-
         $issue = Issue::create($validated);
 
         if ($request->hasFile('attachments')) {
@@ -83,9 +77,9 @@ class IssueController extends Controller
         return redirect()->route('pengaduan.index');
     }
 
-    public function show(Issue $issue)
+    public function show($pengaduan)
     {
-        $issue->load('user', 'issueCategory', 'attachments');
+        $issue = Issue::findOrFail($pengaduan)->load('user', 'issueCategory', 'attachments');
 
         return Inertia::render('issue/show', [
             'issue' => $issue

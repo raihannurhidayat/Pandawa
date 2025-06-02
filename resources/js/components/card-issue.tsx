@@ -11,24 +11,9 @@ import { Separator } from "@/components/ui/separator";
 import { Link } from "@inertiajs/react";
 import { Label } from "@/components/ui/label";
 import { Clock } from "lucide-react";
+import { Issue } from "@/types/issue";
 
-function CardIssue({
-    issue,
-}: {
-    issue: {
-        id: number;
-        title: string;
-        body: string;
-        location: string;
-        attachments: [];
-        issue_category: { name: string };
-        status: string;
-        created_at_formatted: string;
-        updated_at_formatted: string;
-        created_at_relative: string;
-        updated_at_relative: string;
-    };
-}) {
+function CardIssue({ issue }: { issue: Issue }) {
     return (
         <Link href={route("pengaduan.show", issue.id)}>
             <Card

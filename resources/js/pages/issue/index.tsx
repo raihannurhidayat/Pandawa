@@ -21,15 +21,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Issue } from "@/types/issue";
 
-function Issue({
+function IndexIssue({
     categories,
     status,
     issues,
 }: {
     categories: any[];
     status: string[];
-    issues: any[];
+    issues: Issue[];
 }) {
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -223,4 +224,4 @@ function Issue({
     );
 }
 
-export default Issue;
+export default IndexIssue;
