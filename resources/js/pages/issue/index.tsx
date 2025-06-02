@@ -136,7 +136,7 @@ function IndexIssue({
                             iconLeft={<Search />}
                             value={searchTitle}
                             onChange={(e) => setSearchTitle(e.target.value)}
-                            className="flex w-fit"
+                            className="w-fit"
                         />
                         <div className="flex gap-2">
                             <Popover>
@@ -213,13 +213,11 @@ function IndexIssue({
                 </div>
             </div>
 
-            <ScrollArea>
-                <div className="flex flex-col gap-4">
-                    {sortedItems.map((issue: any) => (
-                        <CardIssue key={issue.id} issue={issue} />
-                    ))}
-                </div>
-            </ScrollArea>
+            <div className="flex flex-col gap-4">
+                {sortedItems.map((issue: any) => (
+                    <CardIssue key={issue.id} issue={issue} />
+                ))}
+            </div>
         </AuthenticatedLayout>
     );
 }
