@@ -16,6 +16,7 @@ export default function Edit({
     status,
 }: { mustVerifyEmail: boolean; status?: string }) {
     return (
+        // @ts-ignore
         <AuthenticatedLayout
             header={'Edit Profile'}
         >

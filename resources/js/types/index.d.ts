@@ -1,11 +1,14 @@
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, ReactNode, RefAttributes } from "react";
 
+export type Role = "admin" | "user";
+
 export interface User {
     id: number;
     name: string;
     email: string;
     email_verified_at: string;
+    role: Role;
 }
 
 export type PageProps<
