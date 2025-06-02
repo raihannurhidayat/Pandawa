@@ -1,13 +1,7 @@
 import { ReactNode } from "react";
 import { router, usePage } from "@inertiajs/react";
 import { PageProps } from "@/types";
-
-type Auth = {
-    user: {
-        name: string;
-        email: string;
-    };
-};
+import { Auth } from "@/types/auth";
 
 export default function AuthenticatedUserLayout({
     children,

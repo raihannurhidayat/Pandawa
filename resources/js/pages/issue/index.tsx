@@ -29,9 +29,10 @@ import {
 } from "@/components/ui/pagination";
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthenticatedLayout from "@/layouts/authenticated-layout";
-import { Head, router } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { Issue } from "@/types/issue";
 import { Category } from "@/types/category";
+import { cn } from "@/lib/utils";
 
 enum ComplaintStatus {
     Open = "open",
@@ -118,10 +119,6 @@ export default function Component({
         }
     };
 
-    const handleRedirectToCreateIssue = () => {
-        router.get(route("pengaduan.create"));
-    };
-
     const applyFilters = () => {
         setIsFilterOpen(false);
     };
@@ -172,7 +169,7 @@ export default function Component({
                 <div className="">
                     {/* Header */}
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                        <h1 className="mb-2 text-3xl font-bold text-gray-900">
                             Pengaduan
                         </h1>
                         <p className="text-gray-600">
@@ -181,17 +178,17 @@ export default function Component({
                     </div>
 
                     {/* Search and Filter Bar */}
-                    <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-                        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-                            <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full lg:w-auto">
+                    <div className="p-6 mb-6 bg-white border rounded-lg shadow-sm">
+                        <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
+                            <div className="flex flex-col flex-1 w-full gap-3 sm:flex-row lg:w-auto">
                                 {/* Search Bar */}
-                                <div className="relative flex-1 min-w-0 max-w-full overflow-hidden">
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 z-10 pointer-events-none" />
+                                <div className="relative flex-1 max-w-full min-w-0 overflow-hidden">
+                                    <Search className="absolute z-10 w-4 h-4 text-gray-400 transform -translate-y-1/2 pointer-events-none left-3 top-1/2" />
                                     <Input
                                         placeholder="Cari pengaduan berdasarkan judul..."
                                         value={searchQuery}
                                         onChange={handleChangeSearch}
-                                        className="pl-10 w-full truncate"
+                                        className="w-full pl-10 truncate"
                                     />
                                 </div>
 
@@ -205,19 +202,22 @@ export default function Component({
                                             variant="outline"
                                             className="shrink-0"
                                         >
-                                            <Filter className="h-4 w-4 mr-2" />
+                                            <Filter className="w-4 h-4 mr-2" />
                                             Filter
-                                            {(selectedCategories.length > 0 ||
-                                                selectedStatuses.length >
-                                                    0) && (
-                                                <Badge
-                                                    variant="secondary"
-                                                    className="ml-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-                                                >
-                                                    {selectedCategories.length +
-                                                        selectedStatuses.length}
-                                                </Badge>
-                                            )}
+                                            <Badge
+                                                variant="secondary"
+                                                className={cn(
+                                                    "flex items-center justify-center w-5 h-5 p-0 ml-2 text-xs rounded-full",
+                                                    selectedCategories.length ===
+                                                        0 &&
+                                                        selectedStatuses.length ===
+                                                            0 &&
+                                                        "invisible"
+                                                )}
+                                            >
+                                                {selectedCategories.length +
+                                                    selectedStatuses.length}
+                                            </Badge>
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent
@@ -226,10 +226,10 @@ export default function Component({
                                     >
                                         <div className="space-y-4">
                                             <div>
-                                                <Label className="text-sm font-medium mb-3 block">
+                                                <Label className="block mb-3 text-sm font-medium">
                                                     Kategori
                                                 </Label>
-                                                <div className="space-y-2 max-h-32 overflow-y-auto">
+                                                <div className="space-y-2 overflow-y-auto max-h-32">
                                                     {categories.map(
                                                         (category, index) => (
                                                             <div
@@ -237,7 +237,7 @@ export default function Component({
                                                                 className="flex items-center space-x-2"
                                                             >
                                                                 <Checkbox
-                                                                    id={`category-${index}`}
+                                                                    id={`category-${category.name}`}
                                                                     checked={selectedCategories.includes(
                                                                         category.name
                                                                     )}
@@ -265,7 +265,7 @@ export default function Component({
                                             </div>
 
                                             <div>
-                                                <Label className="text-sm font-medium mb-3 block">
+                                                <Label className="block mb-3 text-sm font-medium">
                                                     Status
                                                 </Label>
                                                 <div className="space-y-2">
@@ -344,10 +344,12 @@ export default function Component({
                             {/* Create Complaint Button */}
                             <Button
                                 className="w-full sm:w-auto shrink-0"
-                                onClick={handleRedirectToCreateIssue}
+                                asChild
                             >
-                                <Plus className="h-4 w-4 mr-2" />
-                                Buat Pengaduan
+                                <Link href={route("pengaduan.create")}>
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    Buat Pengaduan
+                                </Link>
                             </Button>
                         </div>
                     </div>
@@ -361,86 +363,92 @@ export default function Component({
                     </div>
 
                     {/* Complaint Cards Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3">
                         {paginatedComplaints.map((complaint) => (
-                            <Card
-                                key={complaint.id}
-                                className="hover:shadow-lg transition-shadow duration-200 cursor-pointer group"
-                            >
-                                <CardHeader className="pb-3">
-                                    <div className="flex items-start justify-between gap-3">
-                                        <div className="flex-1 min-w-0">
-                                            <h3 className="font-semibold text-gray-900 group-hover:text-secondary-foreground transition-colors line-clamp-2">
-                                                {complaint.title}
-                                            </h3>
-                                        </div>
-                                        {/* {complaint.image && (
+                            <Link href={route("pengaduan.show", complaint.id)}>
+                                <Card
+                                    key={complaint.id}
+                                    className="transition-shadow duration-200 cursor-pointer hover:shadow-lg group"
+                                >
+                                    <CardHeader className="pb-3">
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="font-semibold text-gray-900 transition-colors group-hover:text-secondary-foreground line-clamp-2">
+                                                    {complaint.title}
+                                                </h3>
+                                            </div>
+                                            {/* {complaint.image && (
                                             <img
                                                 src={
                                                     complaint.image ||
                                                     "/placeholder.svg"
                                                 }
                                                 alt="Complaint thumbnail"
-                                                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                                                className="flex-shrink-0 object-cover w-12 h-12 rounded-lg"
                                             />
                                         )} */}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Badge
-                                            variant="outline"
-                                            className={`w-fit ${getStatusColor(
-                                                complaint.status
-                                            )}`}
-                                        >
-                                            {complaint.status}
-                                        </Badge>
-                                        <Badge
-                                            variant="outline"
-                                            className={`w-fit ${getCategoryColor(
-                                                complaint.issue_category.name
-                                            )}`}
-                                        >
-                                            {complaint.issue_category.name}
-                                        </Badge>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="pt-0">
-                                    <p className="text-sm text-gray-600 mb-4 line-clamp-3">
-                                        {complaint.body}
-                                    </p>
-
-                                    <div className="space-y-2">
-                                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                                            <Tag className="h-3 w-3" />
-                                            <span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Badge
+                                                variant="outline"
+                                                className={`w-fit ${getStatusColor(
+                                                    complaint.status
+                                                )}`}
+                                            >
+                                                {complaint.status}
+                                            </Badge>
+                                            <Badge
+                                                variant="outline"
+                                                className={`w-fit ${getCategoryColor(
+                                                    complaint.issue_category
+                                                        .name
+                                                )}`}
+                                            >
                                                 {complaint.issue_category.name}
-                                            </span>
+                                            </Badge>
                                         </div>
-                                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                                            <Calendar className="h-3 w-3" />
-                                            <span>
-                                                Diperbarui{" "}
-                                                {formatDate(
-                                                    complaint.updated_at
-                                                )}
-                                            </span>
+                                    </CardHeader>
+                                    <CardContent className="pt-0">
+                                        <p className="mb-4 text-sm text-gray-600 line-clamp-3">
+                                            {complaint.body}
+                                        </p>
+
+                                        <div className="space-y-2">
+                                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                <Tag className="w-3 h-3" />
+                                                <span>
+                                                    {
+                                                        complaint.issue_category
+                                                            .name
+                                                    }
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                <Calendar className="w-3 h-3" />
+                                                <span>
+                                                    Diperbarui{" "}
+                                                    {formatDate(
+                                                        complaint.updated_at
+                                                    )}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                    </CardContent>
+                                </Card>
+                            </Link>
                         ))}
                     </div>
 
                     {/* Empty State */}
                     {filteredComplaints.length === 0 && (
-                        <div className="text-center py-12">
-                            <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                                <Search className="h-8 w-8 text-gray-400" />
+                        <div className="py-12 text-center">
+                            <div className="flex items-center justify-center w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full">
+                                <Search className="w-8 h-8 text-gray-400" />
                             </div>
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">
+                            <h3 className="mb-2 text-lg font-medium text-gray-900">
                                 Tidak ada pengaduan ditemukan
                             </h3>
-                            <p className="text-gray-600 mb-4">
+                            <p className="mb-4 text-gray-600">
                                 Coba ubah kata kunci pencarian atau filter yang
                                 digunakan
                             </p>
@@ -452,7 +460,7 @@ export default function Component({
 
                     {/* Pagination */}
                     {/* {totalPages > 1 && ( */}
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border mt-6">
+                    <div className="flex flex-col items-center justify-between gap-4 p-4 mt-6 bg-white border rounded-lg shadow-sm sm:flex-row">
                         <div className="text-sm text-gray-500">
                             Halaman {currentPage} dari {totalPages} (
                             {filteredComplaints.length} pengaduan)
