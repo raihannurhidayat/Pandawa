@@ -48,7 +48,7 @@ class Issue extends Model
 
     public function progress(): HasMany
     {
-        return $this->hasMany(IssueProgress::class);
+        return $this->hasMany(IssueProgress::class)->orderBy('id');
     }
 
     /**
