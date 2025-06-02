@@ -3,6 +3,7 @@ import { Head } from "@inertiajs/react";
 
 export default function Dashboard() {
     return (
+        // @ts-ignore
         <AuthenticatedLayout
             header="Dashboard"
         >
