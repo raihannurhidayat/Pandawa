@@ -135,7 +135,7 @@ function Issue({
                             iconLeft={<Search />}
                             value={searchTitle}
                             onChange={(e) => setSearchTitle(e.target.value)}
-                            className="flex flex-1 w-full"
+                            className="flex w-fit"
                         />
                         <div className="flex gap-2">
                             <Popover>
