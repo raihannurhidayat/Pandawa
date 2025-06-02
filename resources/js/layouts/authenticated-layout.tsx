@@ -45,7 +45,7 @@ export default function AuthenticatedLayout({
             <AppSidebar />
 
             <SidebarInset>
-                <header className="sticky top-0 flex items-center justify-between h-16 gap-2 p-4 border-b bg-background shrink-0 md:border-none md:rounded-xl">
+                <header className="sticky top-0 flex items-center justify-between h-16 gap-2 p-4 border-b bg-background shrink-0 md:border-none md:rounded-xl z-50">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1" />
                         <Separator
