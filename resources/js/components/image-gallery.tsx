@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Attachment } from "@/types/issue";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 function ImageGallery({
     images = [],
@@ -88,14 +89,15 @@ function ImageGallery({
                     </Button>
                 </CardHeader>
                 <CardContent className="relative flex items-center justify-between w-full max-h-full p-4 bg-gray-100">
-                    {images.length > 1 && (
-                        <Button
-                            onClick={goToPrevious}
-                            className="z-10 p-3 transition-all ease-in-out rounded-full bg-secondary hover:bg-secondary/90 hover:scale-105"
-                        >
-                            <ChevronLeft className="w-6 h-6 text-black" />
-                        </Button>
-                    )}
+                    <Button
+                        onClick={goToPrevious}
+                        className={cn(
+                            "z-10 p-3 transition-all ease-in-out rounded-full bg-secondary hover:bg-secondary/90 hover:scale-105",
+                            images.length === 1 && "invisible"
+                        )}
+                    >
+                        <ChevronLeft className="w-6 h-6 text-black" />
+                    </Button>
 
                     <div className="h-[505px]">
                         <img
@@ -105,14 +107,15 @@ function ImageGallery({
                         />
                     </div>
 
-                    {images.length > 1 && (
-                        <Button
-                            onClick={goToNext}
-                            className="z-10 p-3 transition-all ease-in-out rounded-full bg-secondary hover:bg-secondary/90 hover:scale-105"
-                        >
-                            <ChevronRight className="w-6 h-6 text-black" />
-                        </Button>
-                    )}
+                    <Button
+                        onClick={goToNext}
+                        className={cn(
+                            "z-10 p-3 transition-all ease-in-out rounded-full bg-secondary hover:bg-secondary/90 hover:scale-105",
+                            images.length === 1 && "invisible"
+                        )}
+                    >
+                        <ChevronRight className="w-6 h-6 text-black" />
+                    </Button>
 
                     {/* Image Counter */}
                     <Badge className="absolute px-3 py-1 text-sm select-none top-4 right-4">
