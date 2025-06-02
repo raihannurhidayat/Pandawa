@@ -39,9 +39,9 @@ const MultichoiceDropdown: React.FC<MultichoiceDropdownProps> = ({
         <div className="w-full max-w-sm rounded-2xl">
             {/* Header */}
             <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-neutral-400">{label}</span>
+                <span className="text-sm text-primary">{label}</span>
                 <button
-                    className="text-sm text-neutral-400 hover:underline"
+                    className="text-sm text-blue-500 hover:underline"
                     onClick={handleClear}
                 >
                     Clear

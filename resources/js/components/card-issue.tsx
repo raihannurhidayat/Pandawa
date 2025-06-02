@@ -18,7 +18,7 @@ function CardIssue({ issue }: { issue: Issue }) {
         <Link href={route("pengaduan.show", issue.id)}>
             <Card
                 key={issue.id}
-                className="transition-colors duration-300 ease-in-out bg-neutral-800 hover:bg-neutral-700"
+                className="transition-colors duration-300 ease-in-out bg-secondary hover:bg-secondary/80"
             >
                 <CardHeader className="flex justify-between w-full gap-2">
                     <div className="flex items-center gap-2">
@@ -46,9 +46,11 @@ function CardIssue({ issue }: { issue: Issue }) {
                             </Link>
                         )}
                     </div>
-                    <span>Terlampir {issue.attachments.length} file</span>
+                    <span className="text-sm underline">
+                        Terlampir {issue.attachments.length} file
+                    </span>
                 </CardContent>
-                <Separator className="bg-neutral-600" />
+                <Separator className="bg-accent" />
                 <CardFooter className="flex gap-2 py-2">
                     <div className="grid grid-cols-[auto_1fr] gap-x-1 gap-y-1 text-sm py-2 items-center text-neutral-400">
                         <div className="flex items-center">
