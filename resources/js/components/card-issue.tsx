@@ -18,7 +18,7 @@ function CardIssue({ issue }: { issue: Issue }) {
         <Link href={route("pengaduan.show", issue.id)}>
             <Card
                 key={issue.id}
-                className="transition-colors duration-300 ease-in-out bg-secondary hover:bg-secondary/80"
+                className="transition-colors duration-300 ease-in-out bg-accent hover:bg-accent/80"
             >
                 <CardHeader className="flex justify-between w-full gap-2">
                     <div className="flex items-center gap-2">
@@ -52,7 +52,7 @@ function CardIssue({ issue }: { issue: Issue }) {
                 </CardContent>
                 <Separator className="bg-accent" />
                 <CardFooter className="flex gap-2 py-2">
-                    <div className="grid grid-cols-[auto_1fr] gap-x-1 gap-y-1 text-sm py-2 items-center text-neutral-400">
+                    <div className="grid grid-cols-[auto_1fr] gap-x-1 gap-y-1 text-sm py-2 items-center text-muted-foreground">
                         <div className="flex items-center">
                             <Clock className="w-4 h-4 mr-2" />
                             <Label className="font-normal">Diubah</Label>
