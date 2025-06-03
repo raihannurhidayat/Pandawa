@@ -30,7 +30,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { Head, Link, router } from "@inertiajs/react";
-import { Issue, PhaseStatus } from "@/types/issue";
+import { Issue, PhaseStatus, PhaseStatusLabels } from "@/types/issue";
 import { Category } from "@/types/category";
 import { cn } from "@/lib/utils";
 
@@ -287,7 +287,11 @@ export default function Component({
                                                                     htmlFor={`status-${status}`}
                                                                     className="text-sm"
                                                                 >
-                                                                    {status}
+                                                                    {
+                                                                        PhaseStatusLabels[
+                                                                            status as PhaseStatus
+                                                                        ]
+                                                                    }
                                                                 </Label>
                                                             </div>
                                                         )
@@ -389,7 +393,11 @@ export default function Component({
                                                     complaint.status
                                                 )}`}
                                             >
-                                                {complaint.status}
+                                                {
+                                                    PhaseStatusLabels[
+                                                        complaint.status
+                                                    ]
+                                                }
                                             </Badge>
                                             <Badge
                                                 variant="outline"

@@ -31,7 +31,15 @@ export enum PhaseStatus {
   Closed = 'closed',
 }
 
-export type PhaseStatusType = `${PhaseStatus}`;
+type PhaseStatusType = `${PhaseStatus}`;
+
+export const PhaseStatusLabels: Record<PhaseStatus, string> = {
+  [PhaseStatus.Open]: 'Open',
+  [PhaseStatus.Pending]: 'Pending',
+  [PhaseStatus.InProgress]: 'In Progress',
+  [PhaseStatus.Resolved]: 'Resolved',
+  [PhaseStatus.Closed]: 'Closed',
+};
 
 type Phase = {
     id: string;
@@ -91,5 +99,6 @@ export type {
     User,
     IssueCategory,
     Phase,
+    PhaseStatusType,
     Attachment,
 };
