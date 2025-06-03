@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\PhaseStatus;
 use Inertia\Inertia;
-use App\Models\Issue;
 use Illuminate\Http\Request;
+use App\Enums\PhaseStatus;
+use App\Models\Issue;
 use App\Models\IssueCategory;
 use Illuminate\Support\Facades\Auth;
 
