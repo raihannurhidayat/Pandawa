@@ -1,3 +1,4 @@
+import CTAHeader from "@/components/cta-header";
 import ImageGallery from "@/components/image-gallery";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -19,6 +20,7 @@ import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { cn } from "@/lib/utils";
 import { Issue } from "@/types/issue";
 import { Head, Link } from "@inertiajs/react";
+import { CheckCircle, EditIcon } from "lucide-react";
 import { useState } from "react";
 
 function ShowIssue({ issue }: { issue: Issue }) {
@@ -79,6 +81,9 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 initialIndex={galleryIndex}
             />
 
+            {/* Header Section */}
+            <CTAHeader />
+
             {/* Progress tracker */}
             <div className="flex items-center flex-1 gap-4 p-2 mt-1 mb-10 rounded-lg shadow-sm bg-muted outline outline-1 outline-secondary">
                 {issue.progress.map((progress, index) => (
@@ -115,11 +120,17 @@ function ShowIssue({ issue }: { issue: Issue }) {
                         </Badge>
                     </div> */}
                     <div className="flex gap-2">
-                        <Button variant="secondary" asChild className="text-sm">
-                            <Link href={route("pengaduan.index")}>Kembali</Link>
+                        <Button variant="outline" asChild>
+                            <Link href={route("pengaduan.index")}>
+                                <EditIcon className="w-4 h-4 mr-2" />
+                                Edit
+                            </Link>
                         </Button>
-                        <Button variant="secondary" asChild className="text-sm">
-                            <Link href={route("pengaduan.index")}>Kembali</Link>
+                        <Button variant="default" asChild>
+                            <Link href={route("pengaduan.index")}>
+                                <CheckCircle className="w-4 h-4 mr-2" />
+                                Tandai Selesai
+                            </Link>
                         </Button>
                     </div>
                 </CardHeader>

@@ -36,6 +36,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
+import CTAHeader from "@/components/cta-header";
 
 const locationData = {
     provinces: [
@@ -221,18 +222,7 @@ export default function CreateIssue({
             <div className="min-h-screen">
                 <div className="">
                     {/* Header Section */}
-                    <div className="mb-8">
-                        <div className="flex items-center gap-4 mb-4">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => window.history.back()}
-                                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-                            >
-                                <ArrowLeft className="h-4 w-4" />
-                                Back
-                            </Button>
-                        </div>
+                    <CTAHeader>
                         <div className="space-y-2">
                             <h1 className="text-3xl font-bold text-gray-900">
                                 Pengaduan Baru
@@ -242,7 +232,7 @@ export default function CreateIssue({
                                 berikut.
                             </p>
                         </div>
-                    </div>
+                    </CTAHeader>
 
                     <Card>
                         <CardHeader>
@@ -406,7 +396,7 @@ export default function CreateIssue({
                                             Detail Lokasi
                                         </h3>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                             {/* Provinsi */}
                                             <FormField
                                                 name={"location.provinsi"}
@@ -741,11 +731,11 @@ export default function CreateIssue({
                                             onDragLeave={handleDragLeave}
                                             onDrop={handleDrop}
                                         >
-                                            <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                                            <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                                             <div className="space-y-2">
                                                 <p className="text-sm text-gray-600">
                                                     Drag and drop files here, or{" "}
-                                                    <label className="text-blue-600 hover:text-blue-500 cursor-pointer font-medium">
+                                                    <label className="font-medium text-blue-600 cursor-pointer hover:text-blue-500">
                                                         browse
                                                         <input
                                                             type="file"
@@ -776,15 +766,15 @@ export default function CreateIssue({
                                                         (file, index) => (
                                                             <div
                                                                 key={index}
-                                                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                                                                className="flex items-center justify-between p-3 rounded-lg bg-gray-50"
                                                             >
                                                                 <div className="flex items-center space-x-3">
                                                                     {file.type.startsWith(
                                                                         "image/"
                                                                     ) ? (
-                                                                        <ImageIcon className="h-5 w-5 text-blue-500" />
+                                                                        <ImageIcon className="w-5 h-5 text-blue-500" />
                                                                     ) : (
-                                                                        <FileText className="h-5 w-5 text-gray-500" />
+                                                                        <FileText className="w-5 h-5 text-gray-500" />
                                                                     )}
                                                                     <div>
                                                                         <p className="text-sm font-medium text-gray-900 truncate max-w-[200px]">
@@ -810,7 +800,7 @@ export default function CreateIssue({
                                                                     }
                                                                     className="text-red-500 hover:text-red-700"
                                                                 >
-                                                                    <X className="h-4 w-4" />
+                                                                    <X className="w-4 h-4" />
                                                                 </Button>
                                                             </div>
                                                         )
@@ -824,7 +814,7 @@ export default function CreateIssue({
                                     <div className="pt-6">
                                         <Button
                                             type="submit"
-                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                                            className="w-full text-white bg-blue-600 hover:bg-blue-700"
                                         >
                                             Kirim Pengaduan
                                         </Button>
