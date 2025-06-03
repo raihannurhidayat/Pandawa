@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\HasAttachments;
-use App\HasRelativeTime;
+use App\Traits\HasAttachments;
+use App\Traits\HasRelativeTime;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 

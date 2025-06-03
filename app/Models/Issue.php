@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use App\PhaseStatus;
-use App\HasAttachments;
-use App\HasComments;
-use App\HasPhases;
-use App\HasRelativeTime;
+use App\Enums\PhaseStatus;
+use App\Traits\HasAttachments;
+use App\Traits\HasComments;
+use App\Traits\HasPhases;
+use App\Traits\HasRelativeTime;
 use App\IssueProgressTemplates;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Issue extends Model
 {
