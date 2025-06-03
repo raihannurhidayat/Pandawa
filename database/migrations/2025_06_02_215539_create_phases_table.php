@@ -1,6 +1,6 @@
 <?php
 
-use App\IssueStatus;
+use App\PhaseStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,13 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('issue_progress', function (Blueprint $table) {
+        Schema::create('phases', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('issue_id')->constrained('issues')->cascadeOnDelete();
+            $table->uuidMorphs('phaseable');
             $table->string('title');
-            $table->text('body');
+            $table->text('body')->nullable();
             $table->text('reason')->nullable();
-            $table->string('status')->default(IssueStatus::Pending->value);
+            $table->string('status')->default(PhaseStatus::Pending->value);
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('issue_progress');
+        Schema::dropIfExists('phases');
     }
 };

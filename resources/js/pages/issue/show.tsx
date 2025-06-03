@@ -36,12 +36,12 @@ function ShowIssue({ issue }: { issue: Issue }) {
 
     const isActive = (index: number) => {
         return (
-            (issue.progress[index].status === "resolved" &&
-                !issue.progress
+            (issue.phases[index].status === "resolved" &&
+                !issue.phases
                     .slice(index + 1)
                     .some((prog) => prog.status === "resolved")) ||
             (index === 0 &&
-                !issue.progress
+                !issue.phases
                     .slice(1)
                     .some((prog) => prog.status === "resolved"))
         );
@@ -84,22 +84,20 @@ function ShowIssue({ issue }: { issue: Issue }) {
             {/* Header Section */}
             <CTAHeader />
 
-            {/* Progress tracker */}
+            {/* Phases tracker */}
             <div className="flex items-center flex-1 gap-4 p-2 mt-1 mb-10 rounded-lg shadow-sm bg-muted outline outline-1 outline-secondary">
-                {issue.progress.map((progress, index) => (
-                    <Card key={progress.id} className={getCardStyle(index)}>
+                {issue.phases.map((phase, index) => (
+                    <Card key={phase.id} className={getCardStyle(index)}>
                         <CardHeader className="flex flex-row justify-between flex-1 w-full gap-4">
                             <div className="flex flex-col w-full gap-2">
                                 <CardTitle className="font-semibold">
-                                    {progress.title}
+                                    {phase.title}
                                 </CardTitle>
-                                <CardDescription>
-                                    {progress.body}
-                                </CardDescription>
+                                <CardDescription>{phase.body}</CardDescription>
                             </div>
                             <div className="flex justify-end">
                                 <Badge className="text-sm uppercase select-none h-fit">
-                                    {progress.status}
+                                    {phase.status}
                                 </Badge>
                             </div>
                         </CardHeader>

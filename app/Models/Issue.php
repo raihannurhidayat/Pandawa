@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use App\IssueStatus;
+use App\PhaseStatus;
 use App\HasAttachments;
+use App\HasComments;
+use App\HasPhases;
 use App\HasRelativeTime;
 use App\IssueProgressTemplates;
 use Illuminate\Support\Str;
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Issue extends Model
 {
     /** @use HasFactory<\Database\Factories\IssueFactory> */
-    use HasFactory, HasAttachments, HasRelativeTime;
+    use HasFactory, HasAttachments, HasComments, HasPhases, HasRelativeTime;
 
     protected $keyType = 'string';
     public $incrementing = false;
@@ -33,7 +35,7 @@ class Issue extends Model
 
     public $casts = [
         'location' => 'array',
-        'status' => IssueStatus::class
+        'status' => PhaseStatus::class
     ];
 
     public function user(): BelongsTo
@@ -44,11 +46,6 @@ class Issue extends Model
     public function issueCategory(): BelongsTo
     {
         return $this->belongsTo(IssueCategory::class);
-    }
-
-    public function progress(): HasMany
-    {
-        return $this->hasMany(IssueProgress::class)->orderBy('id');
     }
 
     /**
@@ -66,7 +63,7 @@ class Issue extends Model
 
     public function archive(): void
     {
-        $this->status = IssueStatus::Closed;
+        $this->status = PhaseStatus::Closed;
         $this->save();
     }
 
@@ -78,11 +75,11 @@ class Issue extends Model
 
         static::created(function (self $model) {
             // create initial progresses
-            foreach (IssueProgressTemplates::ISSUE_PROGRESS_TEMPLATES as $step => $progress) {
-                $model->progress()->create([
-                    'title' => $progress[IssueStatus::Pending->value]['title'],
-                    'body' => $progress[IssueStatus::Pending->value]['body'],
-                    'status' => $progress[IssueStatus::Pending->value]['status'],
+            foreach (IssueProgressTemplates::ISSUE_PROGRESS_TEMPLATES as $step => $phase) {
+                $model->phases()->create([
+                    'title' => $phase[PhaseStatus::Pending->value]['title'],
+                    'body' => $phase[PhaseStatus::Pending->value]['body'],
+                    'status' => $phase[PhaseStatus::Pending->value]['status'],
                 ]);
             }
         });
