@@ -30,16 +30,9 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { Head, Link, router } from "@inertiajs/react";
-import { Issue } from "@/types/issue";
+import { Issue, PhaseStatus } from "@/types/issue";
 import { Category } from "@/types/category";
 import { cn } from "@/lib/utils";
-
-enum ComplaintStatus {
-    Open = "open",
-    Pending = "pending",
-    Resolved = "resolved",
-    Closed = "closed",
-}
 
 export default function Component({
     categories,
@@ -58,22 +51,23 @@ export default function Component({
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [itemsPerPage, setItemsPerPage] = useState(6);
 
-    const getStatusColor = (status: ComplaintStatus | string) => {
+    const getStatusColor = (status: PhaseStatus) => {
+        const baseClasses =
+            "backdrop-blur-sm border shadow-lg ring-1 ring-white/20";
+
         switch (status) {
-            case ComplaintStatus.Open:
-            case "open":
-                return "bg-blue-500/10 backdrop-blur-sm text-blue-800 border border-blue-200/50 shadow-lg ring-1 ring-white/20";
-            case ComplaintStatus.Pending:
-            case "pending":
-                return "bg-amber-500/10 backdrop-blur-sm text-amber-800 border border-amber-200/50 shadow-lg ring-1 ring-white/20";
-            case ComplaintStatus.Resolved:
-            case "resolved":
-                return "bg-green-500/10 backdrop-blur-sm text-green-800 border border-green-200/50 shadow-lg ring-1 ring-white/20";
-            case ComplaintStatus.Closed:
-            case "closed":
-                return "bg-slate-500/10 backdrop-blur-sm text-slate-800 border border-slate-200/50 shadow-lg ring-1 ring-white/20";
+            case PhaseStatus.Open:
+                return `${baseClasses} bg-blue-500/10 text-blue-800 border-blue-200/50`;
+            case PhaseStatus.Pending:
+                return `${baseClasses} bg-amber-500/10 text-amber-800 border-amber-200/50`;
+            case PhaseStatus.InProgress:
+                return `${baseClasses} bg-cyan-500/10 text-cyan-800 border-cyan-200/50`;
+            case PhaseStatus.Resolved:
+                return `${baseClasses} bg-green-500/10 text-green-800 border-green-200/50`;
+            case PhaseStatus.Closed:
+                return `${baseClasses} bg-slate-500/10 text-slate-800 border-slate-200/50`;
             default:
-                return "bg-gray-500/10 backdrop-blur-sm text-gray-800 border border-gray-200/50 shadow-lg ring-1 ring-white/20";
+                return `${baseClasses} bg-gray-500/10 text-gray-800 border-gray-200/50`;
         }
     };
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\IssueStatus;
+use App\PhaseStatus;
 use Inertia\Inertia;
 use App\Models\Issue;
 use Illuminate\Http\Request;
@@ -29,7 +29,7 @@ class IssueController extends Controller
         }
 
         $categories = IssueCategory::all();
-        $status = IssueStatus::cases();
+        $status = PhaseStatus::cases();
         $issues = $query->get();
 
         return Inertia::render('issue/index', [
@@ -79,7 +79,7 @@ class IssueController extends Controller
 
     public function show($pengaduan)
     {
-        $issue = Issue::findOrFail($pengaduan)->load('user', 'issueCategory', 'progress', 'attachments');
+        $issue = Issue::findOrFail($pengaduan)->load('user', 'issueCategory', 'phases', 'attachments');
 
         return Inertia::render('issue/show', [
             'issue' => $issue

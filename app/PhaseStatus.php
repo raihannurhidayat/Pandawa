@@ -2,7 +2,7 @@
 
 namespace App;
 
-enum IssueStatus: string
+enum PhaseStatus: string
 {
     case Open = 'open';
     case Pending = 'pending';

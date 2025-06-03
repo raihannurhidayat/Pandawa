@@ -6,9 +6,8 @@ use App\HasAttachments;
 use App\HasRelativeTime;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class IssueProgress extends Model
+class Phase extends Model
 {
     use HasRelativeTime, HasAttachments;
 
@@ -21,16 +20,6 @@ class IssueProgress extends Model
         'status',
         'reason',
     ];
-
-    public function issue(): BelongsTo
-    {
-        return $this->belongsTo(Issue::class);
-    }
-
-    private const templates = [[
-        'title' => 'Pengaduan Diterima',
-        'body' => 'Pengaduan ini telah diterima oleh admin dan sedang diproses',
-    ]];
 
     public static function booted(): void
     {
