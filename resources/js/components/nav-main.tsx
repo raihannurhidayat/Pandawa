@@ -18,7 +18,8 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
+import { cn } from "@/lib/utils";
 
 export function NavMain({
     items,
@@ -34,6 +35,12 @@ export function NavMain({
         }[];
     }[];
 }) {
+    const { url } = usePage();
+
+    function isActive(urlParams: string) {
+        return urlParams.includes(url);
+    }
+
     return (
         <SidebarGroup>
             <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -46,7 +53,14 @@ export function NavMain({
                     >
                         <SidebarMenuItem>
                             <SidebarMenuButton asChild tooltip={item.title}>
-                                <Link href={item.url}>
+                                <Link
+                                    href={item.url}
+                                    className={cn(
+                                        "hover:bg-primary/10",
+                                        isActive(item.url) &&
+                                            "bg-primary text-primary-foreground hover:bg-primary/80"
+                                    )}
+                                >
                                     <item.icon />
                                     <span>{item.title}</span>
                                 </Link>
@@ -74,7 +88,7 @@ export function NavMain({
                                                             href={subItem.url}
                                                         >
                                                             <span>
-                                                                {subItem.title}
+                                                                {subItem.title}p
                                                             </span>
                                                         </Link>
                                                     </SidebarMenuSubButton>
