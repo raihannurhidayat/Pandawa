@@ -34,27 +34,6 @@ function ShowIssue({ issue }: { issue: Issue }) {
 
     console.log(issue);
 
-    const isActive = (index: number) => {
-        return (
-            (issue.phases[index].status === "resolved" &&
-                !issue.phases
-                    .slice(index + 1)
-                    .some((prog) => prog.status === "resolved")) ||
-            (index === 0 &&
-                !issue.phases
-                    .slice(1)
-                    .some((prog) => prog.status === "resolved"))
-        );
-    };
-
-    const getCardStyle = (index: number) =>
-        cn(
-            "flex flex-1 transition-colors ease-in-out",
-            isActive(index)
-                ? "bg-secondary hover:bg-secondary/80"
-                : "bg-transparent shadow-none border-transparent hover:border-inherit"
-        );
-
     return (
         <AuthenticatedLayout
             header={
@@ -189,7 +168,15 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 {/* Phases tracker */}
                 <div className="flex items-center flex-1 gap-4 p-2 mt-1 rounded-lg shadow-sm bg-muted outline outline-1 outline-secondary">
                     {issue.phases.map((phase, index) => (
-                        <Card key={phase.id} className={getCardStyle(index)}>
+                        <Card
+                            key={phase.id}
+                            className={cn(
+                                "flex flex-1 transition-colors ease-in-out",
+                                phase.is_active
+                                    ? "bg-secondary hover:bg-secondary/80"
+                                    : "bg-transparent shadow-none border-transparent hover:border-inherit"
+                            )}
+                        >
                             <CardHeader className="flex flex-row justify-between flex-1 w-full gap-4">
                                 <div className="flex flex-col w-full gap-2">
                                     <CardTitle className="font-semibold">
@@ -208,6 +195,22 @@ function ShowIssue({ issue }: { issue: Issue }) {
                         </Card>
                     ))}
                 </div>
+
+                {/* Updates */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between w-full">
+                            <h1 className="text-2xl font-semibold leading-none tracking-tight">
+                                Updates
+                            </h1>
+                            <div>
+                                <Button variant="default"> test</Button>
+                            </div>
+                        </div>
+                    </CardHeader>
+                </Card>
+
+                {/* Comments */}
             </div>
         </AuthenticatedLayout>
     );

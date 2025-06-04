@@ -21,6 +21,9 @@ class Phase extends Model
         'body',
         'status',
         'reason',
+        'order',
+        'is_active',
+        'activated_at',
     ];
 
     protected $casts = [

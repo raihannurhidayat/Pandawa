@@ -73,11 +73,15 @@ class Issue extends Model
         });
 
         static::created(function (self $model) {
-            // create initial progresses
+            // create initial phases
             foreach (IssueProgressTemplates::ISSUE_PROGRESS_TEMPLATES as $step => $phase) {
                 $model->phases()->create([
                     'title' => $phase[PhaseStatus::Pending->value]['title'],
                     'body' => $phase[PhaseStatus::Pending->value]['body'],
+                    'reason' => $phase[PhaseStatus::Pending->value]['reason'] ?? null,
+                    'order' => $step,
+                    'is_active' => $step === 0,
+                    'activated_at' => $step === 0 ? now() : null,
                     'status' => $phase[PhaseStatus::Pending->value]['status'],
                 ]);
             }

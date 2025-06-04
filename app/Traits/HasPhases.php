@@ -12,7 +12,7 @@ trait HasPhases
      */
     public function phases(): MorphMany
     {
-        return $this->morphMany(Phase::class, 'phaseable');
+        return $this->morphMany(Phase::class, 'phaseable')->orderBy('order');
     }
 
     /**
