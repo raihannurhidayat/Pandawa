@@ -39,68 +39,6 @@ import { toast } from "sonner";
 import { API_WILAYAH } from "@/constant/api-wilayah";
 import { Provinsi } from "@/types/wilayah";
 
-const locationData = {
-    provinces: [
-        { id: "jawa-barat", name: "Jawa Barat" },
-        { id: "jawa-tengah", name: "Jawa Tengah" },
-        { id: "jawa-timur", name: "Jawa Timur" },
-        { id: "dki-jakarta", name: "DKI Jakarta" },
-    ],
-    cities: {
-        "jawa-barat": [
-            { id: "bandung", name: "Bandung" },
-            { id: "bekasi", name: "Bekasi" },
-            { id: "bogor", name: "Bogor" },
-        ],
-        "jawa-tengah": [
-            { id: "semarang", name: "Semarang" },
-            { id: "solo", name: "Solo" },
-            { id: "yogyakarta", name: "Yogyakarta" },
-        ],
-        "jawa-timur": [
-            { id: "surabaya", name: "Surabaya" },
-            { id: "malang", name: "Malang" },
-            { id: "kediri", name: "Kediri" },
-        ],
-        "dki-jakarta": [
-            { id: "jakarta-pusat", name: "Jakarta Pusat" },
-            { id: "jakarta-utara", name: "Jakarta Utara" },
-            { id: "jakarta-selatan", name: "Jakarta Selatan" },
-        ],
-    },
-    districts: {
-        bandung: [
-            { id: "coblong", name: "Coblong" },
-            { id: "cicendo", name: "Cicendo" },
-        ],
-        bekasi: [
-            { id: "bekasi-timur", name: "Bekasi Timur" },
-            { id: "bekasi-barat", name: "Bekasi Barat" },
-        ],
-        semarang: [
-            { id: "semarang-tengah", name: "Semarang Tengah" },
-            { id: "semarang-utara", name: "Semarang Utara" },
-        ],
-        surabaya: [
-            { id: "surabaya-pusat", name: "Surabaya Pusat" },
-            { id: "surabaya-timur", name: "Surabaya Timur" },
-        ],
-    },
-    subdistricts: {
-        coblong: [
-            { id: "dago", name: "Dago" },
-            { id: "lebak-siliwangi", name: "Lebak Siliwangi" },
-        ],
-        cicendo: [
-            { id: "arjuna", name: "Arjuna" },
-            { id: "husen-sastranegara", name: "Husen Sastranegara" },
-        ],
-        "semarang-tengah": [
-            { id: "kauman", name: "Kauman" },
-            { id: "sekayu", name: "Sekayu" },
-        ],
-    },
-};
 
 interface FileWithPreview extends File {
     preview?: string;
@@ -111,11 +49,6 @@ export default function CreateIssue({
 }: {
     categories: Category[];
 }) {
-    // const [selectedProvinsi, setSelectedProvinsi] = useState<string>("");
-    // const [selectedKota, setSelectedKota] = useState<string>("");
-    // const [selectedKelurahan, setSelectedKelurahan] = useState<string>("");
-    // const [selectedKecamatan, setSelectedKecamatan] = useState<string>("");
-
     const [provinsi, setProvinsi] = useState<Provinsi[] | []>([]);
     const [kota, setKota] = useState<any[]>([]);
     const [kelurahan, setKelurahan] = useState<any[]>([]);
@@ -305,17 +238,17 @@ export default function CreateIssue({
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => window.history.back()}
-                                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                                className="flex items-center gap-2  hover:text-gray-900"
                             >
                                 <ArrowLeft className="h-4 w-4" />
                                 Back
                             </Button>
                         </div>
                         <div className="space-y-2">
-                            <h1 className="text-3xl font-bold text-gray-900">
+                            <h1 className="text-3xl font-bold text-primary-foreground">
                                 Pengaduan Baru
                             </h1>
-                            <p className="text-gray-600">
+                            <p className="">
                                 Buat pengaduan baru dengan mengisi formulir
                                 berikut.
                             </p>
@@ -324,7 +257,7 @@ export default function CreateIssue({
 
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-2xl font-bold text-gray-900">
+                            <CardTitle className="text-2xl font-bold">
                                 Formulir Pengaduan
                             </CardTitle>
                             <CardDescription>
@@ -349,7 +282,7 @@ export default function CreateIssue({
                                                 <div className="space-y-2">
                                                     <FormLabel
                                                         htmlFor="category"
-                                                        className="text-sm font-medium text-gray-700"
+                                                        className="text-sm font-medium"
                                                     >
                                                         Kategori{" "}
                                                         <span className="text-red-500">
@@ -373,7 +306,7 @@ export default function CreateIssue({
                                                                         .formState
                                                                         .errors
                                                                         .issue_category_id
-                                                                        ? "border-red-500"
+                                                                        ? ""
                                                                         : ""
                                                                 }`}
                                                             >
@@ -416,7 +349,7 @@ export default function CreateIssue({
                                                 <div className="space-y-2">
                                                     <FormLabel
                                                         htmlFor="title"
-                                                        className="text-sm font-medium text-gray-700"
+                                                        className="text-sm font-medium"
                                                     >
                                                         Judul Pengaduan
                                                         <span className="text-red-500">
@@ -431,7 +364,7 @@ export default function CreateIssue({
                                                                 form.formState
                                                                     .errors
                                                                     .title
-                                                                    ? "border-red-500"
+                                                                    ? ""
                                                                     : ""
                                                             }`}
                                                             {...field}
@@ -452,7 +385,7 @@ export default function CreateIssue({
                                                 <div className="space-y-2">
                                                     <FormLabel
                                                         htmlFor="description"
-                                                        className="text-sm font-medium text-gray-700"
+                                                        className="text-sm font-medium"
                                                     >
                                                         Deskripsi Pengaduan
                                                         <span className="text-red-500">
@@ -467,7 +400,7 @@ export default function CreateIssue({
                                                             className={`w-full min-h-[120px] resize-none ${
                                                                 form.formState
                                                                     .errors.body
-                                                                    ? "border-red-500"
+                                                                    ? ""
                                                                     : ""
                                                             }`}
                                                         />
@@ -480,7 +413,7 @@ export default function CreateIssue({
 
                                     {/* Detail Lokasi */}
                                     <div className="space-y-4">
-                                        <h3 className="text-lg font-medium text-gray-900">
+                                        <h3 className="text-lg font-medium ">
                                             Detail Lokasi
                                         </h3>
 
@@ -494,7 +427,7 @@ export default function CreateIssue({
                                                         <div className="space-y-2">
                                                             <FormLabel
                                                                 htmlFor="province"
-                                                                className="text-sm font-medium text-gray-700"
+                                                                className="text-sm font-medium"
                                                             >
                                                                 Provinsi{" "}
                                                                 <span className="text-red-500">
@@ -525,7 +458,7 @@ export default function CreateIssue({
                                                                                 .errors
                                                                                 .location
                                                                                 ?.provinsi
-                                                                                ? "border-red-500"
+                                                                                ? ""
                                                                                 : ""
                                                                         }`}
                                                                     >
@@ -568,7 +501,7 @@ export default function CreateIssue({
                                                         <div className="space-y-2">
                                                             <FormLabel
                                                                 htmlFor="city"
-                                                                className="text-sm font-medium text-gray-700"
+                                                                className="text-sm font-medium"
                                                             >
                                                                 Kota{" "}
                                                                 <span className="text-red-500">
@@ -600,7 +533,7 @@ export default function CreateIssue({
                                                                                 .errors
                                                                                 .location
                                                                                 ?.kota
-                                                                                ? "border-red-500"
+                                                                                ? ""
                                                                                 : ""
                                                                         }`}
                                                                     >
@@ -646,7 +579,7 @@ export default function CreateIssue({
                                                         <div className="space-y-2">
                                                             <FormLabel
                                                                 htmlFor="district"
-                                                                className="text-sm font-medium text-gray-700"
+                                                                className="text-sm font-medium"
                                                             >
                                                                 Kecamatan{" "}
                                                                 <span className="text-red-500">
@@ -679,7 +612,7 @@ export default function CreateIssue({
                                                                                 .errors
                                                                                 .location
                                                                                 ?.kecamatan
-                                                                                ? "border-red-500"
+                                                                                ? ""
                                                                                 : ""
                                                                         }`}
                                                                     >
@@ -725,7 +658,7 @@ export default function CreateIssue({
                                                         <div className="space-y-2">
                                                             <FormLabel
                                                                 htmlFor="subdistrict"
-                                                                className="text-sm font-medium text-gray-700"
+                                                                className="text-sm font-medium"
                                                             >
                                                                 Kelurahan{" "}
                                                                 <span className="text-red-500">
@@ -757,7 +690,7 @@ export default function CreateIssue({
                                                                                 .errors
                                                                                 .location
                                                                                 ?.kelurahan
-                                                                                ? "border-red-500"
+                                                                                ? ""
                                                                                 : ""
                                                                         }`}
                                                                     >
@@ -798,7 +731,7 @@ export default function CreateIssue({
 
                                     {/* File Upload */}
                                     <div className="space-y-4">
-                                        <Label className="text-sm font-medium text-gray-700">
+                                        <Label className="text-sm font-medium">
                                             File Attachments
                                         </Label>
                                         <div
@@ -813,9 +746,9 @@ export default function CreateIssue({
                                         >
                                             <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                                             <div className="space-y-2">
-                                                <p className="text-sm text-gray-600">
+                                                <p className="text-sm ">
                                                     Drag and drop files here, or{" "}
-                                                    <label className="text-blue-600 hover:text-blue-500 cursor-pointer font-medium">
+                                                    <label className="text-primary hover:text-primary/80 cursor-pointer font-medium">
                                                         browse
                                                         <input
                                                             type="file"
@@ -838,7 +771,7 @@ export default function CreateIssue({
                                         {/* File List */}
                                         {files.length > 0 && (
                                             <div className="space-y-2">
-                                                <h4 className="text-sm font-medium text-gray-700">
+                                                <h4 className="text-sm font-medium">
                                                     Attached Files:
                                                 </h4>
                                                 <div className="space-y-2">
@@ -846,18 +779,18 @@ export default function CreateIssue({
                                                         (file, index) => (
                                                             <div
                                                                 key={index}
-                                                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                                                                className="flex items-center justify-between p-3 bg-accent rounded-lg"
                                                             >
                                                                 <div className="flex items-center space-x-3">
                                                                     {file.type.startsWith(
                                                                         "image/"
                                                                     ) ? (
-                                                                        <ImageIcon className="h-5 w-5 text-blue-500" />
+                                                                        <ImageIcon className="h-5 w-5 text-primary" />
                                                                     ) : (
                                                                         <FileText className="h-5 w-5 text-gray-500" />
                                                                     )}
                                                                     <div>
-                                                                        <p className="text-sm font-medium text-gray-900 truncate max-w-[200px]">
+                                                                        <p className="text-sm font-medium  truncate max-w-[200px]">
                                                                             {
                                                                                 file.name
                                                                             }
@@ -894,7 +827,7 @@ export default function CreateIssue({
                                     <div className="pt-6">
                                         <Button
                                             type="submit"
-                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                                            className="w-full"
                                             disabled={isLoadingHandleCreateIssue}
                                         >
                                             {isLoadingHandleCreateIssue ? (
