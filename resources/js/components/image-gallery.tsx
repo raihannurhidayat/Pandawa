@@ -84,16 +84,16 @@ function ImageGallery({
                         onClick={onClose}
                         className="p-3 transition-colors rounded-full bg-muted hover:bg-muted-foreground"
                     >
-                        <X className="w-5 h-5 text-black" />
+                        <X className="w-5 h-5 text-secondary-foreground" />
                     </Button>
                 </CardHeader>
-                <CardContent className="relative flex items-center justify-between w-full max-h-full p-4 bg-gray-100">
+                <CardContent className="relative flex items-center justify-between w-full max-h-full p-4 bg-muted">
                     {images.length > 1 && (
                         <Button
                             onClick={goToPrevious}
                             className="z-10 p-3 transition-all ease-in-out rounded-full bg-secondary hover:bg-secondary/90 hover:scale-105"
                         >
-                            <ChevronLeft className="w-6 h-6 text-black" />
+                            <ChevronLeft className="w-6 h-6 text-secondary-foreground" />
                         </Button>
                     )}
 
@@ -110,7 +110,7 @@ function ImageGallery({
                             onClick={goToNext}
                             className="z-10 p-3 transition-all ease-in-out rounded-full bg-secondary hover:bg-secondary/90 hover:scale-105"
                         >
-                            <ChevronRight className="w-6 h-6 text-black" />
+                            <ChevronRight className="w-6 h-6 text-secondary-foreground" />
                         </Button>
                     )}
 
