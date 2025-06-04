@@ -365,11 +365,11 @@ export default function Component({
                     {/* Complaint Cards Grid */}
                     <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3">
                         {paginatedComplaints.map((complaint) => (
-                            <Link href={route("pengaduan.show", complaint.id)}>
-                                <Card
-                                    key={complaint.id}
-                                    className="transition-shadow duration-200 cursor-pointer hover:shadow-lg group"
-                                >
+                            <Link
+                                key={complaint.id}
+                                href={route("pengaduan.show", complaint.id)}
+                            >
+                                <Card className="transition-shadow duration-200 cursor-pointer hover:shadow-lg group">
                                     <CardHeader className="pb-3">
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="flex-1 min-w-0">

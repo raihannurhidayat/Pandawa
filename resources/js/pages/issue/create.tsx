@@ -1,7 +1,7 @@
 import type React from "react";
 
-import { useState, useCallback } from "react";
-import { Upload, X, FileText, ImageIcon, ArrowLeft } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+import { Upload, X, FileText, ImageIcon, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +36,8 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
+import { API_WILAYAH } from "@/constant/api-wilayah";
+import { Provinsi } from "@/types/wilayah";
 
 const locationData = {
     provinces: [
@@ -109,6 +111,21 @@ export default function CreateIssue({
 }: {
     categories: Category[];
 }) {
+    // const [selectedProvinsi, setSelectedProvinsi] = useState<string>("");
+    // const [selectedKota, setSelectedKota] = useState<string>("");
+    // const [selectedKelurahan, setSelectedKelurahan] = useState<string>("");
+    // const [selectedKecamatan, setSelectedKecamatan] = useState<string>("");
+
+    const [provinsi, setProvinsi] = useState<Provinsi[] | []>([]);
+    const [kota, setKota] = useState<any[]>([]);
+    const [kelurahan, setKelurahan] = useState<any[]>([]);
+    const [kecamatan, setKecamatan] = useState<any[]>([]);
+
+    const [files, setFiles] = useState<FileWithPreview[]>([]);
+    const [isDragOver, setIsDragOver] = useState(false);
+
+    const [isLoadingHandleCreateIssue, setIsLoadingHandleCreateIssue] = useState(false);
+
     const form = useForm<CreateIssueFormSchema>({
         resolver: zodResolver(createIssueFormSchema),
         mode: "onChange",
@@ -125,11 +142,69 @@ export default function CreateIssue({
         },
     });
 
-    const [files, setFiles] = useState<FileWithPreview[]>([]);
-    const [isDragOver, setIsDragOver] = useState(false);
+    useEffect(() => {
+        console.log(import.meta.env.VITE_API_WILAYAH);
+
+        const fetchWilayah = async () => {
+            const response = await fetch(`${API_WILAYAH}/provinsi`, {
+                headers: {
+                    "X-API-KEY": import.meta.env.VITE_API_WILAYAH,
+                },
+            });
+            const data = await response.json();
+            setProvinsi(data.data);
+
+            if (form.watch("location.provinsi")) {
+                const response = await fetch(
+                    `${API_WILAYAH}/kota?provinsi_id=${form.watch(
+                        "location.provinsi"
+                    )}`,
+                    {
+                        headers: {
+                            "X-API-KEY": import.meta.env.VITE_API_WILAYAH,
+                        },
+                    }
+                );
+                const data = await response.json();
+                setKota(data.data);
+            }
+
+            if (form.watch("location.kota")) {
+                const response = await fetch(
+                    `${API_WILAYAH}/kecamatan?kota_id=${form.watch(
+                        "location.kota"
+                    )}`,
+                    {
+                        headers: {
+                            "X-API-KEY": import.meta.env.VITE_API_WILAYAH,
+                        },
+                    }
+                );
+                const data = await response.json();
+                setKecamatan(data.data);
+            }
+
+            if (form.watch("location.kecamatan")) {
+                const response = await fetch(
+                    `${API_WILAYAH}/kelurahan?kecamatan_id=${form.watch(
+                        "location.kecamatan"
+                    )}`,
+                    {
+                        headers: {
+                            "X-API-KEY": import.meta.env.VITE_API_WILAYAH,
+                        },
+                    }
+                );
+                const data = await response.json();
+                setKelurahan(data.data);
+            }
+        };
+
+        fetchWilayah();
+    }, [form.watch("location.provinsi"), form.watch("location.kota"), form.watch("location.kecamatan")]);
 
     const handleSubmitCreateIssue = (data: CreateIssueFormSchema) => {
-        console.log({ data, files });
+        setIsLoadingHandleCreateIssue(true);
         const newissueData = {
             ...data,
             location: JSON.stringify(data.location),
@@ -151,6 +226,9 @@ export default function CreateIssue({
                 toast.loading("Pengaduan sedang diproses", {
                     id: "create-issues",
                 });
+            },
+            onFinish: () => {
+                setIsLoadingHandleCreateIssue(false);
             },
         });
     };
@@ -429,6 +507,9 @@ export default function CreateIssue({
                                                                     value={
                                                                         field.value
                                                                     }
+                                                                    disabled={
+                                                                        !provinsi
+                                                                    }
                                                                     onValueChange={(
                                                                         value
                                                                     ) =>
@@ -451,7 +532,7 @@ export default function CreateIssue({
                                                                         <SelectValue placeholder="Pilih Provinsi" />
                                                                     </SelectTrigger>
                                                                     <SelectContent>
-                                                                        {locationData.provinces.map(
+                                                                        {provinsi.map(
                                                                             (
                                                                                 province
                                                                             ) => (
@@ -509,7 +590,7 @@ export default function CreateIssue({
                                                                     disabled={
                                                                         !form.getValues(
                                                                             "location.provinsi"
-                                                                        )
+                                                                        ) || !kota
                                                                     }
                                                                 >
                                                                     <SelectTrigger
@@ -529,11 +610,7 @@ export default function CreateIssue({
                                                                         {form.getValues(
                                                                             "location.provinsi"
                                                                         ) &&
-                                                                            locationData.cities[
-                                                                                form.getValues(
-                                                                                    "location.provinsi"
-                                                                                ) as keyof typeof locationData.cities
-                                                                            ]?.map(
+                                                                            kota?.map(
                                                                                 (
                                                                                     city
                                                                                 ) => (
@@ -591,7 +668,8 @@ export default function CreateIssue({
                                                                     disabled={
                                                                         !form.getValues(
                                                                             "location.kota"
-                                                                        )
+                                                                        ) ||
+                                                                        !kecamatan.length
                                                                     }
                                                                 >
                                                                     <SelectTrigger
@@ -611,11 +689,7 @@ export default function CreateIssue({
                                                                         {form.getValues(
                                                                             "location.kota"
                                                                         ) &&
-                                                                            locationData.districts[
-                                                                                form.getValues(
-                                                                                    "location.kota"
-                                                                                ) as keyof typeof locationData.districts
-                                                                            ]?.map(
+                                                                            kecamatan?.map(
                                                                                 (
                                                                                     district
                                                                                 ) => (
@@ -673,7 +747,7 @@ export default function CreateIssue({
                                                                     disabled={
                                                                         !form.getValues(
                                                                             "location.kecamatan"
-                                                                        )
+                                                                        ) || !kelurahan
                                                                     }
                                                                 >
                                                                     <SelectTrigger
@@ -693,11 +767,7 @@ export default function CreateIssue({
                                                                         {form.getValues(
                                                                             "location.kecamatan"
                                                                         ) &&
-                                                                            locationData.subdistricts[
-                                                                                form.getValues(
-                                                                                    "location.kecamatan"
-                                                                                ) as keyof typeof locationData.subdistricts
-                                                                            ]?.map(
+                                                                            kelurahan?.map(
                                                                                 (
                                                                                     subdistrict
                                                                                 ) => (
@@ -825,8 +895,13 @@ export default function CreateIssue({
                                         <Button
                                             type="submit"
                                             className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                                            disabled={isLoadingHandleCreateIssue}
                                         >
-                                            Kirim Pengaduan
+                                            {isLoadingHandleCreateIssue ? (
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                            ) : (
+                                                "Kirim Pengaduan"
+                                            )}
                                         </Button>
                                     </div>
                                 </form>

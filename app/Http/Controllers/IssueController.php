@@ -59,12 +59,12 @@ class IssueController extends Controller
         ]);
 
         $validated['user_id'] = Auth::user()->id;
-        $validated['location'] = json_encode([
-            'province' => 12,
-            'city' => 1202,
-            "district" => 120202,
-            "village" => 1202021
-        ]);
+        // $validated['location'] = json_encode([
+        //     'province' => 12,
+        //     'city' => 1202,
+        //     "district" => 120202,
+        //     "village" => 1202021
+        // ]);
 
         $issue = Issue::create($validated);
 
