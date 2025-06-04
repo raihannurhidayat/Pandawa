@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Enums\PhaseStatus;
+
 class IssueProgressTemplates
 {
 
