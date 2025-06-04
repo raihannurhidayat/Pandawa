@@ -220,7 +220,7 @@ export default function CreateIssue({
         <AuthenticatedLayout header="Pengaduan">
             <Head title="Pengaduan" />
             <div className="min-h-screen">
-                <div className="">
+                <div className="flex flex-col w-full gap-6">
                     {/* Header Section */}
                     <CTAHeader>
                         <div className="space-y-2">

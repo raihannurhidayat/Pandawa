@@ -7,13 +7,13 @@ function CTAHeader({
     return (
         <>
             {/* Header Section */}
-            <div className="mb-8">
-                <div className="flex items-center gap-4 mb-4">
+            <div className="flex flex-col w-full gap-4">
+                <div className="flex items-center gap-4">
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => window.history.back()}
-                        className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                        className="flex items-center gap-2"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Back
