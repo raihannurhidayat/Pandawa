@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\PhaseStatus;
 use App\Traits\HasAttachments;
 use App\Traits\HasRelativeTime;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Phase extends Model
 {
@@ -20,6 +22,20 @@ class Phase extends Model
         'status',
         'reason',
     ];
+
+    protected $casts = [
+        'status' => PhaseStatus::class,
+    ];
+
+    /**
+     * The phaseable entity that this phase belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function phaseable(): MorphTo
+    {
+        return $this->morphTo();
+    }
 
     public static function booted(): void
     {
