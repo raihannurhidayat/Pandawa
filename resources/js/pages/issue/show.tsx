@@ -1,5 +1,6 @@
 import CTAHeader from "@/components/cta-header";
 import ImageGallery from "@/components/image-gallery";
+import PhaseCreate from "@/components/phase-create";
 import { Badge } from "@/components/ui/badge";
 import {
     Breadcrumb,
@@ -16,16 +17,29 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { cn } from "@/lib/utils";
+import { PageProps } from "@/types";
+import { Auth } from "@/types/auth";
 import { Issue } from "@/types/issue";
-import { Head, Link } from "@inertiajs/react";
-import { CheckCircle, EditIcon } from "lucide-react";
+import { Head, Link, usePage } from "@inertiajs/react";
+import {
+    CheckCircle,
+    ChevronRight,
+    EditIcon,
+    EllipsisVertical,
+    PlusCircle,
+    Trash2,
+} from "lucide-react";
 import { useState } from "react";
 
 function ShowIssue({ issue }: { issue: Issue }) {
+    const { auth } = usePage<PageProps<{ auth: Auth }>>().props;
+
     const [galleryOpen, setGalleryOpen] = useState(false);
     const [galleryIndex, setGalleryIndex] = useState(0);
+    const [activePhase, setActivePhase] = useState(0);
 
     function toggleGallery(e: any) {
         setGalleryIndex(0);
@@ -67,27 +81,29 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 {/* Main Section */}
                 <Card className="gap-y-4">
                     <CardHeader className="flex flex-row items-center justify-between w-full gap-2">
-                        <CardTitle className="flex-1 h-full">
-                            {issue.title}
-                        </CardTitle>
-                        {/* <div className="flex flex-row gap-2">
-                        <Badge className="text-sm font-bold uppercase select-none">
-                            {issue.issue_category.name}
-                        </Badge>
-                        <Badge className="text-sm font-bold uppercase select-none">
-                            {issue.status}
-                        </Badge>
-                    </div> */}
+                        <div className="flex items-center w-full gap-4">
+                            <h1 className="text-2xl font-bold leading-none tracking-normal">
+                                {issue.title}
+                            </h1>
+                            <div className="flex gap-2">
+                                <Badge className="text-sm font-semibold capitalize select-none">
+                                    {issue.status}
+                                </Badge>
+                                <Badge className="text-sm font-semibold capitalize select-none">
+                                    {issue.issue_category.name}
+                                </Badge>
+                            </div>
+                        </div>
                         <div className="flex gap-2">
                             <Button variant="outline" asChild>
                                 <Link href={route("pengaduan.index")}>
-                                    <EditIcon className="w-4 h-4 mr-2" />
+                                    <EditIcon className="w-4 h-4" />
                                     Edit
                                 </Link>
                             </Button>
                             <Button variant="default" asChild>
                                 <Link href={route("pengaduan.index")}>
-                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                    <CheckCircle className="w-4 h-4" />
                                     Tandai Selesai
                                 </Link>
                             </Button>
@@ -169,27 +185,32 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 <div className="flex items-center flex-1 gap-4 p-2 mt-1 rounded-lg shadow-sm bg-muted outline outline-1 outline-secondary">
                     {issue.phases.map((phase, index) => (
                         <Card
-                            key={phase.id}
                             className={cn(
                                 "flex flex-1 transition-colors ease-in-out",
                                 phase.is_active
                                     ? "bg-secondary hover:bg-secondary/80"
                                     : "bg-transparent shadow-none border-transparent hover:border-inherit"
                             )}
+                            onClick={() => setActivePhase(index)}
                         >
-                            <CardHeader className="flex flex-row justify-between flex-1 w-full gap-4">
-                                <div className="flex flex-col w-full gap-2">
-                                    <CardTitle className="font-semibold">
-                                        {phase.title}
-                                    </CardTitle>
-                                    <CardDescription>
-                                        {phase.body}
-                                    </CardDescription>
-                                </div>
-                                <div className="flex justify-end">
-                                    <Badge className="text-sm uppercase select-none h-fit">
-                                        {phase.status}
-                                    </Badge>
+                            <CardHeader>
+                                <div className="flex flex-row justify-between flex-1 w-full gap-4">
+                                    <div className="flex flex-col w-full gap-2">
+                                        <CardTitle className="font-semibold">
+                                            {phase.title}
+                                        </CardTitle>
+                                        <CardDescription>
+                                            {phase.body}
+                                        </CardDescription>
+                                    </div>
+                                    <div className="flex flex-col items-end justify-between h-full">
+                                        <Badge className="text-sm uppercase select-none h-fit">
+                                            {phase.status}
+                                        </Badge>
+                                        <h3 className="text-sm text-muted-foreground">
+                                            {phase.order + 1}
+                                        </h3>
+                                    </div>
                                 </div>
                             </CardHeader>
                         </Card>
@@ -203,11 +224,48 @@ function ShowIssue({ issue }: { issue: Issue }) {
                             <h1 className="text-2xl font-semibold leading-none tracking-tight">
                                 Updates
                             </h1>
-                            <div>
-                                <Button variant="default"> test</Button>
+                            <div className="flex gap-4">
+                                <Button variant="outline" size="icon">
+                                    <Trash2 className="w-4 h-4" />
+                                </Button>
+                                <PhaseCreate>
+                                    <Button variant="secondary">
+                                        <PlusCircle className="w-4 h-4" />
+                                        Add Update
+                                    </Button>
+                                </PhaseCreate>
+                                <Button variant="default" disabled>
+                                    <CheckCircle className="w-4 h-4" />
+                                    Resolve Phase
+                                </Button>
                             </div>
                         </div>
                     </CardHeader>
+                    <Separator className="mb-4" />
+                    <CardContent>
+                        {issue.phases.map((phase) => (
+                            <div key={phase.id}>
+                                <div className="flex items-center justify-between w-full gap-4">
+                                    <div className="flex flex-col w-full gap-2">
+                                        <CardTitle className="font-semibold">
+                                            {phase.title}
+                                        </CardTitle>
+                                        <CardDescription>
+                                            {phase.body}
+                                        </CardDescription>
+                                    </div>
+                                    <div className="flex flex-col items-end justify-between h-full">
+                                        <Badge className="text-sm uppercase select-none h-fit">
+                                            {phase.status}
+                                        </Badge>
+                                        <h3 className="text-sm text-muted-foreground">
+                                            {phase.order + 1}
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </CardContent>
                 </Card>
 
                 {/* Comments */}
