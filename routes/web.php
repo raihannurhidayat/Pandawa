@@ -34,7 +34,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // User
-    Route::get('/user/home', [UserController::class, 'index']);
+    Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
+    Route::get('/user/pengaduan', [UserController::class, 'pengaduan'])->name('user.pengaduan');
+    Route::get('/user/pengaduan/create', [UserController::class, 'create'])->name('user.pengaduan.create');
+    Route::post('/user/pengaduan', [UserController::class, 'store'])->name('user.pengaduan.store');
 });
 
 require __DIR__ . '/auth.php';
