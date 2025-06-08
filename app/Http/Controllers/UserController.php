@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\IssueCategory;
 use App\Models\Issue;
-use App\IssueStatus;
+use App\Enums\PhaseStatus;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -37,7 +37,7 @@ class UserController extends Controller
         }
 
         $categories = IssueCategory::all();
-        $status = IssueStatus::cases();
+        $status = PhaseStatus::cases();
         $issues = $query->get();
 
         return Inertia::render('user/pengaduan/index', [
