@@ -25,193 +25,16 @@ import {
     Filter,
     SortAsc,
     Megaphone,
+    Trash2Icon,
+    Waypoints,
+    PencilIcon,
 } from "lucide-react";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
 import { Head } from "@inertiajs/react";
 import { IoMegaphone, IoMegaphoneOutline } from "react-icons/io5";
+import { Category } from "@/types/category";
+import { Issue } from "@/types/issue";
 
-// Mock data for complaints
-const mockComplaints = [
-    {
-        id: 1,
-        title: "Pothole on Main Street causing vehicle damage",
-        description:
-            "There's a large pothole on Main Street near the intersection with Oak Avenue that has been causing damage to vehicles. Multiple residents have reported tire damage and the hole continues to grow larger with each rainfall. This is becoming a serious safety hazard for drivers.",
-        category: "Infrastructure",
-        status: "Pending",
-        submitter: "John Smith",
-        date: "2024-01-15",
-        upvotes: 23,
-        isLiked: false,
-    },
-    {
-        id: 2,
-        title: "Pothole on Main Street causing vehicle damage",
-        description:
-            "There's a large pothole on Main Street near the intersection with Oak Avenue that has been causing damage to vehicles. Multiple residents have reported tire damage and the hole continues to grow larger with each rainfall. This is becoming a serious safety hazard for drivers.",
-        category: "Infrastructure",
-        status: "Pending",
-        submitter: "John Smith",
-        date: "2024-01-15",
-        upvotes: 23,
-        isLiked: false,
-    },
-    {
-        id: 3,
-        title: "Pothole on Main Street causing vehicle damage",
-        description:
-            "There's a large pothole on Main Street near the intersection with Oak Avenue that has been causing damage to vehicles. Multiple residents have reported tire damage and the hole continues to grow larger with each rainfall. This is becoming a serious safety hazard for drivers.",
-        category: "Infrastructure",
-        status: "Pending",
-        submitter: "John Smith",
-        date: "2024-01-15",
-        upvotes: 23,
-        isLiked: false,
-    },
-    {
-        id: 4,
-        title: "Pothole on Main Street causing vehicle damage",
-        description:
-            "There's a large pothole on Main Street near the intersection with Oak Avenue that has been causing damage to vehicles. Multiple residents have reported tire damage and the hole continues to grow larger with each rainfall. This is becoming a serious safety hazard for drivers.",
-        category: "Infrastructure",
-        status: "Pending",
-        submitter: "John Smith",
-        date: "2024-01-15",
-        upvotes: 23,
-        isLiked: false,
-    },
-    {
-        id: 5,
-        title: "Pothole on Main Street causing vehicle damage",
-        description:
-            "There's a large pothole on Main Street near the intersection with Oak Avenue that has been causing damage to vehicles. Multiple residents have reported tire damage and the hole continues to grow larger with each rainfall. This is becoming a serious safety hazard for drivers.",
-        category: "Infrastructure",
-        status: "Pending",
-        submitter: "John Smith",
-        date: "2024-01-15",
-        upvotes: 23,
-        isLiked: false,
-    },
-    {
-        id: 6,
-        title: "Pothole on Main Street causing vehicle damage",
-        description:
-            "There's a large pothole on Main Street near the intersection with Oak Avenue that has been causing damage to vehicles. Multiple residents have reported tire damage and the hole continues to grow larger with each rainfall. This is becoming a serious safety hazard for drivers.",
-        category: "Infrastructure",
-        status: "Pending",
-        submitter: "John Smith",
-        date: "2024-01-15",
-        upvotes: 23,
-        isLiked: false,
-    },
-    {
-        id: 7,
-        title: "Pothole on Main Street causing vehicle damage",
-        description:
-            "There's a large pothole on Main Street near the intersection with Oak Avenue that has been causing damage to vehicles. Multiple residents have reported tire damage and the hole continues to grow larger with each rainfall. This is becoming a serious safety hazard for drivers.",
-        category: "Infrastructure",
-        status: "Pending",
-        submitter: "John Smith",
-        date: "2024-01-15",
-        upvotes: 23,
-        isLiked: false,
-    },
-    {
-        id: 8,
-        title: "Pothole on Main Street causing vehicle damage",
-        description:
-            "There's a large pothole on Main Street near the intersection with Oak Avenue that has been causing damage to vehicles. Multiple residents have reported tire damage and the hole continues to grow larger with each rainfall. This is becoming a serious safety hazard for drivers.",
-        category: "Infrastructure",
-        status: "Pending",
-        submitter: "John Smith",
-        date: "2024-01-15",
-        upvotes: 23,
-        isLiked: false,
-    },
-    {
-        id: 9,
-        title: "Pothole on Main Street causing vehicle damage",
-        description:
-            "There's a large pothole on Main Street near the intersection with Oak Avenue that has been causing damage to vehicles. Multiple residents have reported tire damage and the hole continues to grow larger with each rainfall. This is becoming a serious safety hazard for drivers.",
-        category: "Infrastructure",
-        status: "Pending",
-        submitter: "John Smith",
-        date: "2024-01-15",
-        upvotes: 23,
-        isLiked: false,
-    },
-    {
-        id: 10,
-        title: "Illegal dumping in Central Park area",
-        description:
-            "Someone has been illegally dumping construction waste and household items in the wooded area behind Central Park. This is creating an environmental hazard and attracting pests. The area needs immediate cleanup and better monitoring.",
-        category: "Environment",
-        status: "In Progress",
-        submitter: "Sarah Johnson",
-        date: "2024-01-12",
-        upvotes: 45,
-        isLiked: true,
-    },
-    {
-        id: 11,
-        title: "Noise complaints from late-night construction",
-        description:
-            "Construction work is being conducted at unreasonable hours (past 10 PM) in the residential area on Elm Street. This is disturbing residents' sleep and violating city noise ordinances. Please enforce proper construction hours.",
-        category: "Social",
-        status: "Resolved",
-        submitter: "Mike Davis",
-        date: "2024-01-10",
-        upvotes: 12,
-        isLiked: false,
-    },
-    {
-        id: 12,
-        title: "Broken streetlight creating safety hazard",
-        description:
-            "The streetlight at the corner of Pine and 5th Street has been out for over two weeks. This area is poorly lit at night and creates a safety concern for pedestrians and drivers. Multiple residents have requested repair.",
-        category: "Infrastructure",
-        status: "In Progress",
-        submitter: "Lisa Chen",
-        date: "2024-01-08",
-        upvotes: 31,
-        isLiked: true,
-    },
-    {
-        id: 13,
-        title: "Speeding vehicles on residential street",
-        description:
-            "Cars are consistently speeding through Maple Avenue, which is a residential area with children playing. We need speed bumps or increased police patrol to ensure the safety of our neighborhood.",
-        category: "Traffic",
-        status: "Pending",
-        submitter: "Robert Wilson",
-        date: "2024-01-05",
-        upvotes: 67,
-        isLiked: false,
-    },
-    {
-        id: 14,
-        title: "Vandalism at community center",
-        description:
-            "The community center has been vandalized with graffiti on the exterior walls. This damages the appearance of our neighborhood and needs to be addressed promptly with proper cleanup and security measures.",
-        category: "Safety",
-        status: "Pending",
-        submitter: "Emma Thompson",
-        date: "2024-01-03",
-        upvotes: 19,
-        isLiked: false,
-    },
-];
-
-const categories = [
-    "All",
-    "Infrastructure",
-    "Environment",
-    "Social",
-    "Traffic",
-    "Safety",
-    "Other",
-];
-const statuses = ["All", "Pending", "In Progress", "Resolved"];
 const sortOptions = [
     { value: "terbaru", label: "Terbaru" },
     { value: "terlama", label: "Terlama" },
@@ -219,26 +42,26 @@ const sortOptions = [
 ];
 
 const categoryIcons = {
-    Infrastructure: Construction,
-    Environment: TreePine,
-    Social: Users,
-    Traffic: Car,
-    Safety: Shield,
-    Other: Lightbulb,
+    Sampah: Trash2Icon,
+    Lainnya: PencilIcon,
+    Jalan: Waypoints,
 };
 
 const statusColors = {
-    Pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
-    "In Progress": "bg-blue-100 text-blue-800 border-blue-200",
-    Resolved: "bg-green-100 text-green-800 border-green-200",
+    open: "bg-gray-100 text-gray-800 border-gray-200",
+    pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    in_progress: "bg-blue-100 text-blue-800 border-blue-200",
+    resolved: "bg-green-100 text-green-800 border-green-200",
+    closed: "bg-red-100 text-red-800 border-red-200",
 };
+
 
 function ComplaintCard({
     complaint,
     onUpvote,
     isLoading = false,
 }: {
-    complaint: any;
+    complaint: Issue | null;
     onUpvote: (id: number) => void;
     isLoading: boolean;
 }) {
@@ -272,7 +95,7 @@ function ComplaintCard({
     }
 
     const IconComponent =
-        categoryIcons[complaint.category as keyof typeof categoryIcons] ||
+        categoryIcons[complaint?.issue_category.name as keyof typeof categoryIcons] ||
         Lightbulb;
 
     return (
@@ -288,28 +111,28 @@ function ComplaintCard({
                     <Badge
                         className={`${
                             statusColors[
-                                complaint.status as keyof typeof statusColors
-                            ]
+                                complaint?.status as keyof typeof statusColors
+                            ] || ""
                         } text-xs font-medium`}
-                        aria-label={`Status: ${complaint.status}`}
+                        aria-label={`Status: ${complaint?.status}`}
                     >
-                        {complaint.status}
+                        {complaint?.status}
                     </Badge>
                 </div>
                 <h3 className="font-semibold text-lg leading-tight line-clamp-2 group-hover:text-primary/80 transition-colors">
-                    {complaint.title}
+                    {complaint?.title}
                 </h3>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between">
                 <p className="text-sm text-gray-600 line-clamp-3 mb-4">
-                    {complaint.description}
+                    {complaint?.body}
                 </p>
                 <div className="flex items-center justify-between">
                     <div className="text-xs text-gray-500 space-y-1">
                         <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" aria-hidden="true" />
                             <span>
-                                {new Date(complaint.date).toLocaleDateString(
+                                {new Date(complaint?.created_at!).toLocaleDateString(
                                     "id-ID",
                                     {
                                         day: "2-digit",
@@ -321,10 +144,10 @@ function ComplaintCard({
                         </div>
                         <div className="flex items-center gap-1">
                             <User className="w-3 h-3" aria-hidden="true" />
-                            <span>{complaint.submitter}</span>
+                            <span>{complaint?.user?.name!}</span>
                         </div>
                     </div>
-                    <Button
+                    {/* <Button
                         variant="ghost"
                         size="sm"
                         className={`flex items-center gap-1 transition-all duration-200 hover:scale-105 ${
@@ -346,7 +169,7 @@ function ComplaintCard({
                             }`}
                         />
                         <span className="font-medium">{complaint.upvotes}</span>
-                    </Button>
+                    </Button> */}
                 </div>
             </CardContent>
         </Card>
@@ -356,13 +179,11 @@ function ComplaintCard({
 function EmptyState() {
     return (
         <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                <Search className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                <Search className="w-8 h-8" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No complaints found
-            </h3>
-            <p className="text-gray-500 max-w-md">
+            <h3 className="text-lg font-semibold  mb-2">No complaints found</h3>
+            <p className=" max-w-md">
                 Try adjusting your search terms or filters to find what you're
                 looking for.
             </p>
@@ -370,8 +191,16 @@ function EmptyState() {
     );
 }
 
-export default function PengaduanWargaPage() {
-    const [complaints, setComplaints] = useState(mockComplaints);
+export default function PengaduanWargaPage({
+    categories: categoriesData,
+    status,
+    issues,
+}: {
+    categories: Category[];
+    status: string[];
+    issues: Issue[];
+}) {
+    const [complaints, setComplaints] = useState(issues);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedStatus, setSelectedStatus] = useState("All");
@@ -379,6 +208,14 @@ export default function PengaduanWargaPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(6);
+    const [categories, setCategories] = useState([
+        { name: "All" },
+        ...categoriesData,
+    ]);
+    // const statuses = ["All", "Pending", "In Progress", "Resolved"];
+    const [statuses] = useState(["All", ...status])
+
+    console.log({ categories, status, issues });
 
     const filteredComplaints = useMemo(() => {
         return complaints.filter((complaint) => {
@@ -386,12 +223,12 @@ export default function PengaduanWargaPage() {
                 complaint.title
                     .toLowerCase()
                     .includes(searchTerm.toLowerCase()) ||
-                complaint.description
+                complaint.body
                     .toLowerCase()
                     .includes(searchTerm.toLowerCase());
             const matchesCategory =
                 selectedCategory === "All" ||
-                complaint.category === selectedCategory;
+                complaint.issue_category.name === selectedCategory;
             const matchesStatus =
                 selectedStatus === "All" || complaint.status === selectedStatus;
 
@@ -408,14 +245,14 @@ export default function PengaduanWargaPage() {
             switch (sortBy) {
                 case "terlama":
                     return (
-                        new Date(a.date).getTime() - new Date(b.date).getTime()
+                        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
                     );
-                case "terfavorit":
-                    return b.upvotes - a.upvotes;
+                // case "terfavorit":
+                //     return b.upvotes - a.upvotes;
                 case "terbaru":
                 default:
                     return (
-                        new Date(b.date).getTime() - new Date(a.date).getTime()
+                        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
                     );
             }
         });
@@ -434,20 +271,20 @@ export default function PengaduanWargaPage() {
     );
 
     const handleUpvote = (complaintId: number) => {
-        setComplaints((prev) =>
-            prev.map((complaint) => {
-                if (complaint.id === complaintId) {
-                    return {
-                        ...complaint,
-                        isLiked: !complaint.isLiked,
-                        upvotes: complaint.isLiked
-                            ? complaint.upvotes - 1
-                            : complaint.upvotes + 1,
-                    };
-                }
-                return complaint;
-            })
-        );
+        // setComplaints((prev) =>
+        //     prev.map((complaint) => {
+        //         if (complaint.id === complaintId) {
+        //             return {
+        //                 ...complaint,
+        //                 isLiked: !complaint.isLiked,
+        //                 upvotes: complaint.isLiked
+        //                     ? complaint.upvotes - 1
+        //                     : complaint.upvotes + 1,
+        //             };
+        //         }
+        //         return complaint;
+        //     })
+        // );
     };
 
     const handlePageChange = (page: any) => {
@@ -513,12 +350,12 @@ export default function PengaduanWargaPage() {
                                     </div>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {categories.map((category) => (
+                                    {categories.map((category, index) => (
                                         <SelectItem
-                                            key={category}
-                                            value={category}
+                                            key={index}
+                                            value={category.name}
                                         >
-                                            {category}
+                                            {category.name}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

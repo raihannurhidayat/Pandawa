@@ -49,7 +49,31 @@ class UserController extends Controller
 
     public function pengaduanWarga(Request $request)
     {
-        return Inertia::render('user/pengaduan-warga');
+
+        $query = Issue::query()->with(['user','issueCategory', 'attachments'])->orderBy('updated_at', 'desc');
+
+        if ($request->has('title')) {
+            $query->where('title', 'like', '%' . $request->title . '%');
+        }
+        if ($request->has('category')) {
+            $query->whereHas('issueCategory', function ($query) use ($request) {
+                $query->whereIn('slug', explode(',', $request->category));
+            });
+        }
+
+        if ($request->has('status')) {
+            $query->whereIn('status', explode(',', $request->status));
+        }
+
+        $categories = IssueCategory::all();
+        $status = PhaseStatus::cases();
+        $issues = $query->get();
+
+        return Inertia::render('user/pengaduan-warga', [
+            'categories' => $categories,
+            'status' => $status,
+            'issues' => $issues,
+        ]);
     }
 
     /**
