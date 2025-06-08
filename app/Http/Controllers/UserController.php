@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use App\Models\IssueCategory;
-use App\Models\Issue;
 use App\Enums\PhaseStatus;
+use App\Models\Issue;
+use App\Models\IssueCategory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -37,20 +36,30 @@ class UserController extends Controller
         }
 
         $categories = IssueCategory::all();
-        $status = PhaseStatus::cases();
-        $issues = $query->get();
+        $status     = PhaseStatus::cases();
+        $issues     = $query->get();
 
         return Inertia::render('user/pengaduan/index', [
             'categories' => $categories,
-            'status' => $status,
-            'issues' => $issues,
+            'status'     => $status,
+            'issues'     => $issues,
         ]);
     }
 
     public function pengaduanWarga(Request $request)
     {
 
-        $query = Issue::query()->with(['user','issueCategory', 'attachments'])->orderBy('updated_at', 'desc');
+        $query = Issue::query()
+            ->withCount('likes')
+            ->with([
+                'likes' => function ($q) {
+                    $q->where('user_id', Auth::id());
+                },
+                'user',
+                'issueCategory',
+                'attachments',
+            ])
+            ->orderBy('updated_at', 'desc');
 
         if ($request->has('title')) {
             $query->where('title', 'like', '%' . $request->title . '%');
@@ -66,14 +75,27 @@ class UserController extends Controller
         }
 
         $categories = IssueCategory::all();
-        $status = PhaseStatus::cases();
-        $issues = $query->get();
+        $status     = PhaseStatus::cases();
+        $issues     = $query->get();
 
         return Inertia::render('user/pengaduan-warga', [
             'categories' => $categories,
-            'status' => $status,
-            'issues' => $issues,
+            'status'     => $status,
+            'issues'     => $issues,
         ]);
+    }
+
+    public function toggle(Request $request, Issue $issue)
+    {
+        $user = $request->user();
+
+        if ($issue->isLikedBy($user)) {
+            $issue->likes()->where('user_id', $user->id)->delete();
+        } else {
+            $issue->likes()->create(['user_id' => $user->id]);
+        }
+
+        return back();
     }
 
     /**
@@ -94,11 +116,11 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required',
-            'body' => 'string|nullable',
+            'title'             => 'required',
+            'body'              => 'string|nullable',
             'issue_category_id' => 'required',
-            'location' => 'string|nullable',
-            'attachments' => 'array|nullable',
+            'location'          => 'string|nullable',
+            'attachments'       => 'array|nullable',
         ]);
 
         $validated['user_id'] = Auth::user()->id;

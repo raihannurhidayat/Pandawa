@@ -1,3 +1,6 @@
+// TODO: Fix status isLiked for UI
+// TODO: Fix invalidate likes user
+
 import { useState, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,10 +33,12 @@ import {
     PencilIcon,
 } from "lucide-react";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
-import { Head } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import { IoMegaphone, IoMegaphoneOutline } from "react-icons/io5";
 import { Category } from "@/types/category";
 import { Issue } from "@/types/issue";
+import { PageProps } from "@/types";
+import { Auth } from "@/types/auth";
 
 const sortOptions = [
     { value: "terbaru", label: "Terbaru" },
@@ -55,15 +60,16 @@ const statusColors = {
     closed: "bg-red-100 text-red-800 border-red-200",
 };
 
-
 function ComplaintCard({
     complaint,
     onUpvote,
     isLoading = false,
+    currentUserId,
 }: {
     complaint: Issue | null;
-    onUpvote: (id: number) => void;
+    onUpvote: (id: string) => void;
     isLoading: boolean;
+    currentUserId: string;
 }) {
     if (isLoading) {
         return (
@@ -94,9 +100,14 @@ function ComplaintCard({
         );
     }
 
+    const isLiked = Array.isArray(complaint?.Likes)
+        ? complaint.Likes.some((liked) => liked.id === currentUserId)
+        : false;
+
     const IconComponent =
-        categoryIcons[complaint?.issue_category.name as keyof typeof categoryIcons] ||
-        Lightbulb;
+        categoryIcons[
+            complaint?.issue_category.name as keyof typeof categoryIcons
+        ] || Lightbulb;
 
     return (
         <Card className="h-80 flex flex-col transition-all duration-200 hover:shadow-lg hover:-translate-y-1 cursor-pointer group">
@@ -132,14 +143,13 @@ function ComplaintCard({
                         <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" aria-hidden="true" />
                             <span>
-                                {new Date(complaint?.created_at!).toLocaleDateString(
-                                    "id-ID",
-                                    {
-                                        day: "2-digit",
-                                        month: "long",
-                                        year: "numeric",
-                                    }
-                                )}
+                                {new Date(
+                                    complaint?.created_at!
+                                ).toLocaleDateString("id-ID", {
+                                    day: "2-digit",
+                                    month: "long",
+                                    year: "numeric",
+                                })}
                             </span>
                         </div>
                         <div className="flex items-center gap-1">
@@ -147,29 +157,31 @@ function ComplaintCard({
                             <span>{complaint?.user?.name!}</span>
                         </div>
                     </div>
-                    {/* <Button
+                    <Button
                         variant="ghost"
                         size="sm"
                         className={`flex items-center gap-1 transition-all duration-200 hover:scale-105 ${
-                            complaint.isLiked
+                            isLiked
                                 ? "text-red-500 hover:text-red-600"
                                 : "text-gray-500 hover:text-red-500"
                         }`}
                         onClick={(e) => {
                             e.stopPropagation();
-                            onUpvote(complaint.id);
+                            onUpvote(complaint?.id!);
                         }}
                         aria-label={`${
-                            complaint.isLiked ? "Unlike" : "Like"
-                        } complaint. Current likes: ${complaint.upvotes}`}
+                            isLiked ? "Unlike" : "Like"
+                        } complaint. Current likes: ${complaint?.likes_count}`}
                     >
                         <IoMegaphoneOutline
                             className={`w-4 h-4 transition-all duration-200 ${
-                                complaint.isLiked ? "fill-current" : ""
+                                isLiked ? "fill-current" : ""
                             }`}
                         />
-                        <span className="font-medium">{complaint.upvotes}</span>
-                    </Button> */}
+                        <span className="font-medium">
+                            {complaint?.likes_count}
+                        </span>
+                    </Button>
                 </div>
             </CardContent>
         </Card>
@@ -212,10 +224,9 @@ export default function PengaduanWargaPage({
         { name: "All" },
         ...categoriesData,
     ]);
-    // const statuses = ["All", "Pending", "In Progress", "Resolved"];
-    const [statuses] = useState(["All", ...status])
+    const [statuses] = useState(["All", ...status]);
 
-    console.log({ categories, status, issues });
+    const { auth } = usePage<PageProps<{ auth: Auth }>>().props;
 
     const filteredComplaints = useMemo(() => {
         return complaints.filter((complaint) => {
@@ -223,9 +234,7 @@ export default function PengaduanWargaPage({
                 complaint.title
                     .toLowerCase()
                     .includes(searchTerm.toLowerCase()) ||
-                complaint.body
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase());
+                complaint.body.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesCategory =
                 selectedCategory === "All" ||
                 complaint.issue_category.name === selectedCategory;
@@ -245,14 +254,16 @@ export default function PengaduanWargaPage({
             switch (sortBy) {
                 case "terlama":
                     return (
-                        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+                        new Date(a.created_at).getTime() -
+                        new Date(b.created_at).getTime()
                     );
-                // case "terfavorit":
-                //     return b.upvotes - a.upvotes;
+                case "terfavorit":
+                    return b.likes_count - a.likes_count;
                 case "terbaru":
                 default:
                     return (
-                        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                        new Date(b.created_at).getTime() -
+                        new Date(a.created_at).getTime()
                     );
             }
         });
@@ -270,21 +281,14 @@ export default function PengaduanWargaPage({
         indexOfLastItem
     );
 
-    const handleUpvote = (complaintId: number) => {
-        // setComplaints((prev) =>
-        //     prev.map((complaint) => {
-        //         if (complaint.id === complaintId) {
-        //             return {
-        //                 ...complaint,
-        //                 isLiked: !complaint.isLiked,
-        //                 upvotes: complaint.isLiked
-        //                     ? complaint.upvotes - 1
-        //                     : complaint.upvotes + 1,
-        //             };
-        //         }
-        //         return complaint;
-        //     })
-        // );
+    const handleUpvote = (complaintId: string) => {
+        router.post(
+            `/user/${complaintId}/like`,
+            {},
+            {
+                preserveScroll: true,
+            }
+        );
     };
 
     const handlePageChange = (page: any) => {
@@ -491,6 +495,7 @@ export default function PengaduanWargaPage({
                                         complaint={null}
                                         onUpvote={() => {}}
                                         isLoading={true}
+                                        currentUserId={auth?.user?.id!}
                                     />
                                 )
                             )
@@ -501,6 +506,7 @@ export default function PengaduanWargaPage({
                                     complaint={complaint}
                                     onUpvote={handleUpvote}
                                     isLoading={isLoading}
+                                    currentUserId={auth?.user?.id!}
                                 />
                             ))
                         ) : (

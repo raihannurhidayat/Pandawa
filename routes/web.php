@@ -41,6 +41,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Global
     Route::get('/user/pengaduan-warga', [UserController::class, 'pengaduanWarga'])->name('user.pengaduan-warga');
+
+    // Utils
+    // routes/web.php
+    Route::post('/user/{issue}/like', [UserController::class, 'toggle'])->name("user.like");
+
 });
 
 require __DIR__ . '/auth.php';
