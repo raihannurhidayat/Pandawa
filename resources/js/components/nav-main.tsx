@@ -20,30 +20,33 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, usePage } from "@inertiajs/react";
 import { cn } from "@/lib/utils";
+import { IconType } from "react-icons/lib";
 
 export function NavMain({
     items,
+    title
 }: {
     items: {
         title: string;
         url: string;
-        icon: LucideIcon;
+        icon: LucideIcon | IconType;
         isActive?: boolean;
         items?: {
             title: string;
             url: string;
         }[];
     }[];
+    title?: string
 }) {
     const { url } = usePage();
 
     function isActive(urlParams: string) {
-        return urlParams.includes(url);
+        return urlParams === url;
     }
 
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+            <SidebarGroupLabel>{title}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => (
                     <Collapsible

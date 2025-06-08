@@ -47,6 +47,11 @@ class UserController extends Controller
         ]);
     }
 
+    public function pengaduanWarga(Request $request)
+    {
+        return Inertia::render('user/pengaduan-warga');
+    }
+
     /**
      * Show the form for creating a new resource.
      */

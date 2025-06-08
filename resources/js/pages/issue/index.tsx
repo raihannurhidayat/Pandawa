@@ -390,7 +390,7 @@ export default function Component({
                                             <Badge
                                                 variant="outline"
                                                 className={`w-fit ${getStatusColor(
-                                                    complaint.status
+                                                    complaint.status as any
                                                 )}`}
                                             >
                                                 {
