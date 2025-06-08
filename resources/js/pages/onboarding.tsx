@@ -10,7 +10,7 @@ export default function Onboarding({ auth }: PageProps) {
         if (auth.user.role === "user") {
             // alert("user");
             console.log(auth.user.role);
-            return router.get("/user/home");
+            return router.get("/user/dashboard");
         }
 
         if (auth.user.role === "admin") {

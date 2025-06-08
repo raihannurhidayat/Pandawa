@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\IssueCategory;
+use App\Models\Issue;
+use App\IssueStatus;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -12,7 +16,35 @@ class UserController extends Controller
      */
     public function index()
     {
-        return Inertia::render('user/home');
+        return Inertia::render('user/user-dashboard');
+    }
+
+    public function pengaduan(Request $request)
+    {
+        $query = Issue::query()->with(['user', 'issueCategory', 'attachments'])->orderBy('updated_at', 'desc');
+
+        if ($request->has('title')) {
+            $query->where('title', 'like', '%' . $request->title . '%');
+        }
+        if ($request->has('category')) {
+            $query->whereHas('issueCategory', function ($query) use ($request) {
+                $query->whereIn('slug', explode(',', $request->category));
+            });
+        }
+
+        if ($request->has('status')) {
+            $query->whereIn('status', explode(',', $request->status));
+        }
+
+        $categories = IssueCategory::all();
+        $status = IssueStatus::cases();
+        $issues = $query->get();
+
+        return Inertia::render('user/pengaduan/index', [
+            'categories' => $categories,
+            'status' => $status,
+            'issues' => $issues,
+        ]);
     }
 
     /**
@@ -20,7 +52,11 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $categories = IssueCategory::all();
+
+        return Inertia::render('user/pengaduan/create', [
+            'categories' => $categories,
+        ]);
     }
 
     /**
@@ -28,7 +64,31 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required',
+            'body' => 'string|nullable',
+            'issue_category_id' => 'required',
+            'location' => 'string|nullable',
+            'attachments' => 'array|nullable',
+        ]);
+
+        $validated['user_id'] = Auth::user()->id;
+        // $validated['location'] = json_encode([
+        //     'province' => 12,
+        //     'city' => 1202,
+        //     "district" => 120202,
+        //     "village" => 1202021
+        // ]);
+
+        $issue = Issue::create($validated);
+
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $issue->addAttachment($file);
+            }
+        }
+
+        return redirect()->route('user.pengaduan');
     }
 
     /**
