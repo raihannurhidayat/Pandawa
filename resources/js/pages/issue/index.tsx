@@ -30,16 +30,9 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { Head, Link, router } from "@inertiajs/react";
-import { Issue } from "@/types/issue";
+import { Issue, CaseStatus, CaseStatusLabels } from "@/types/issue";
 import { Category } from "@/types/category";
 import { cn } from "@/lib/utils";
-
-enum ComplaintStatus {
-    Open = "open",
-    Pending = "pending",
-    Resolved = "resolved",
-    Closed = "closed",
-}
 
 export default function Component({
     categories,
@@ -58,22 +51,23 @@ export default function Component({
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [itemsPerPage, setItemsPerPage] = useState(6);
 
-    const getStatusColor = (status: ComplaintStatus | string) => {
+    const getStatusColor = (status: CaseStatus) => {
+        const baseClasses =
+            "backdrop-blur-sm border shadow-lg ring-1 ring-white/20";
+
         switch (status) {
-            case ComplaintStatus.Open:
-            case "open":
-                return "bg-blue-500/10 dark:bg-blue-400/20 backdrop-blur-sm text-blue-800 dark:text-blue-200 border border-blue-200/50 dark:border-blue-400/30 shadow-lg ring-1 ring-white/20 dark:ring-white/10";
-            case ComplaintStatus.Pending:
-            case "pending":
-                return "bg-amber-500/10 dark:bg-amber-400/20 backdrop-blur-sm text-amber-800 dark:text-amber-200 border border-amber-200/50 dark:border-amber-400/30 shadow-lg ring-1 ring-white/20 dark:ring-white/10";
-            case ComplaintStatus.Resolved:
-            case "resolved":
-                return "bg-green-500/10 dark:bg-green-400/20 backdrop-blur-sm text-green-800 dark:text-green-200 border border-green-200/50 dark:border-green-400/30 shadow-lg ring-1 ring-white/20 dark:ring-white/10";
-            case ComplaintStatus.Closed:
-            case "closed":
-                return "bg-slate-500/10 dark:bg-slate-400/20 backdrop-blur-sm text-slate-800 dark:text-slate-200 border border-slate-200/50 dark:border-slate-400/30 shadow-lg ring-1 ring-white/20 dark:ring-white/10";
+            case CaseStatus.Open:
+                return `${baseClasses} bg-blue-500/10 text-blue-800 border-blue-200/50`;
+            case CaseStatus.Pending:
+                return `${baseClasses} bg-amber-500/10 text-amber-800 border-amber-200/50`;
+            case CaseStatus.InProgress:
+                return `${baseClasses} bg-cyan-500/10 text-cyan-800 border-cyan-200/50`;
+            case CaseStatus.Resolved:
+                return `${baseClasses} bg-green-500/10 text-green-800 border-green-200/50`;
+            case CaseStatus.Closed:
+                return `${baseClasses} bg-slate-500/10 text-slate-800 border-slate-200/50`;
             default:
-                return "bg-gray-500/10 dark:bg-gray-400/20 backdrop-blur-sm text-gray-800 dark:text-gray-200 border border-gray-200/50 dark:border-gray-400/30 shadow-lg ring-1 ring-white/20 dark:ring-white/10";
+                return `${baseClasses} bg-gray-500/10 text-gray-800 border-gray-200/50`;
         }
     };
 
@@ -169,7 +163,7 @@ export default function Component({
                 <div className="">
                     {/* Header */}
                     <div className="mb-8">
-                        <h1 className="mb-2 text-3xl text-secondary-foreground font-bold">
+                        <h1 className="mb-2 text-3xl font-bold text-secondary-foreground">
                             Pengaduan
                         </h1>
                         <p className="">
@@ -293,7 +287,11 @@ export default function Component({
                                                                     htmlFor={`status-${status}`}
                                                                     className="text-sm"
                                                                 >
-                                                                    {status}
+                                                                    {
+                                                                        CaseStatusLabels[
+                                                                            status as CaseStatus
+                                                                        ]
+                                                                    }
                                                                 </Label>
                                                             </div>
                                                         )
@@ -395,7 +393,11 @@ export default function Component({
                                                     complaint.status
                                                 )}`}
                                             >
-                                                {complaint.status}
+                                                {
+                                                    CaseStatusLabels[
+                                                        complaint.status
+                                                    ]
+                                                }
                                             </Badge>
                                             <Badge
                                                 variant="outline"
@@ -442,7 +444,7 @@ export default function Component({
                     {/* Empty State */}
                     {filteredComplaints.length === 0 && (
                         <div className="py-12 text-center">
-                            <div className="flex items-center justify-center w-24 h-24 mx-auto mb-4  rounded-full">
+                            <div className="flex items-center justify-center w-24 h-24 mx-auto mb-4 rounded-full">
                                 <Search className="w-8 h-8 " />
                             </div>
                             <h3 className="mb-2 text-lg font-medium ">

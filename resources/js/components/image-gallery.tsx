@@ -85,7 +85,7 @@ function ImageGallery({
                         onClick={onClose}
                         className="p-3 transition-colors rounded-full bg-muted hover:bg-muted-foreground"
                     >
-                        <X className="w-5 h-5 text-black" />
+                        <X className="w-5 h-5 text-secondary-foreground" />
                     </Button>
                 </CardHeader>
                 <CardContent className="relative flex items-center justify-between w-full max-h-full p-4 bg-gray-100">
