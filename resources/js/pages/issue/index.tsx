@@ -74,13 +74,13 @@ export default function Component({
     const getCategoryColor = (category: string) => {
         switch (category) {
             case "Jalan":
-                return "bg-blue-600/20 backdrop-blur-md text-blue-900 border border-blue-300/60 shadow-xl ring-2 ring-blue-100/30";
+                return "bg-blue-600/20 dark:bg-blue-500/30 backdrop-blur-md text-blue-900 dark:text-blue-100 border border-blue-300/60 dark:border-blue-400/40 shadow-xl ring-2 ring-blue-100/30 dark:ring-blue-200/20";
             case "Sampah":
-                return "bg-red-600/20 backdrop-blur-md text-red-900 border border-red-300/60 shadow-xl ring-2 ring-red-100/30";
+                return "bg-red-600/20 dark:bg-red-500/30 backdrop-blur-md text-red-900 dark:text-red-100 border border-red-300/60 dark:border-red-400/40 shadow-xl ring-2 ring-red-100/30 dark:ring-red-200/20";
             case "Lainnya":
-                return "bg-purple-600/20 backdrop-blur-md text-purple-900 border border-purple-300/60 shadow-xl ring-2 ring-purple-100/30";
+                return "bg-purple-600/20 dark:bg-purple-500/30 backdrop-blur-md text-purple-900 dark:text-purple-100 border border-purple-300/60 dark:border-purple-400/40 shadow-xl ring-2 ring-purple-100/30 dark:ring-purple-200/20";
             default:
-                return "bg-gray-600/20 backdrop-blur-md text-gray-900 border border-gray-300/60 shadow-xl ring-2 ring-gray-100/30";
+                return "bg-gray-600/20 dark:bg-gray-500/30 backdrop-blur-md text-gray-900 dark:text-gray-100 border border-gray-300/60 dark:border-gray-400/40 shadow-xl ring-2 ring-gray-100/30 dark:ring-gray-200/20";
         }
     };
 
@@ -163,21 +163,21 @@ export default function Component({
                 <div className="">
                     {/* Header */}
                     <div className="mb-8">
-                        <h1 className="mb-2 text-3xl font-bold text-gray-900">
+                        <h1 className="mb-2 text-3xl font-bold text-secondary-foreground">
                             Pengaduan
                         </h1>
-                        <p className="text-gray-600">
+                        <p className="">
                             Kelola dan pantau pengaduan masyarakat dengan mudah
                         </p>
                     </div>
 
                     {/* Search and Filter Bar */}
-                    <div className="p-6 mb-6 bg-white border rounded-lg shadow-sm">
+                    <div className="p-6 mb-6 border rounded-lg shadow-sm">
                         <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
                             <div className="flex flex-col flex-1 w-full gap-3 sm:flex-row lg:w-auto">
                                 {/* Search Bar */}
                                 <div className="relative flex-1 max-w-full min-w-0 overflow-hidden">
-                                    <Search className="absolute z-10 w-4 h-4 text-gray-400 transform -translate-y-1/2 pointer-events-none left-3 top-1/2" />
+                                    <Search className="absolute z-10 w-4 h-4 transform -translate-y-1/2 pointer-events-none left-3 top-1/2" />
                                     <Input
                                         placeholder="Cari pengaduan berdasarkan judul..."
                                         value={searchQuery}
@@ -354,7 +354,7 @@ export default function Component({
 
                     {/* Results Summary */}
                     <div className="mb-6">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm">
                             Menampilkan {paginatedComplaints.length} dari{" "}
                             {filteredComplaints.length} pengaduan
                         </p>
@@ -363,15 +363,15 @@ export default function Component({
                     {/* Complaint Cards Grid */}
                     <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3">
                         {paginatedComplaints.map((complaint) => (
-                            <Link href={route("pengaduan.show", complaint.id)}>
-                                <Card
-                                    key={complaint.id}
-                                    className="transition-shadow duration-200 cursor-pointer hover:shadow-lg group"
-                                >
+                            <Link
+                                key={complaint.id}
+                                href={route("pengaduan.show", complaint.id)}
+                            >
+                                <Card className="transition-shadow duration-200 cursor-pointer hover:shadow-lg group">
                                     <CardHeader className="pb-3">
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="font-semibold text-gray-900 transition-colors group-hover:text-secondary-foreground line-clamp-2">
+                                                <h3 className="font-semibold transition-colors group-hover:text-secondary-foreground line-clamp-2">
                                                     {complaint.title}
                                                 </h3>
                                             </div>
@@ -411,12 +411,12 @@ export default function Component({
                                         </div>
                                     </CardHeader>
                                     <CardContent className="pt-0">
-                                        <p className="mb-4 text-sm text-gray-600 line-clamp-3">
+                                        <p className="mb-4 text-sm line-clamp-3">
                                             {complaint.body}
                                         </p>
 
                                         <div className="space-y-2">
-                                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                            <div className="flex items-center gap-2 text-xs">
                                                 <Tag className="w-3 h-3" />
                                                 <span>
                                                     {
@@ -425,7 +425,7 @@ export default function Component({
                                                     }
                                                 </span>
                                             </div>
-                                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                            <div className="flex items-center gap-2 text-xs">
                                                 <Calendar className="w-3 h-3" />
                                                 <span>
                                                     Diperbarui{" "}
@@ -444,13 +444,13 @@ export default function Component({
                     {/* Empty State */}
                     {filteredComplaints.length === 0 && (
                         <div className="py-12 text-center">
-                            <div className="flex items-center justify-center w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full">
-                                <Search className="w-8 h-8 text-gray-400" />
+                            <div className="flex items-center justify-center w-24 h-24 mx-auto mb-4 rounded-full">
+                                <Search className="w-8 h-8 " />
                             </div>
-                            <h3 className="mb-2 text-lg font-medium text-gray-900">
+                            <h3 className="mb-2 text-lg font-medium ">
                                 Tidak ada pengaduan ditemukan
                             </h3>
-                            <p className="mb-4 text-gray-600">
+                            <p className="mb-4">
                                 Coba ubah kata kunci pencarian atau filter yang
                                 digunakan
                             </p>
@@ -462,8 +462,8 @@ export default function Component({
 
                     {/* Pagination */}
                     {/* {totalPages > 1 && ( */}
-                    <div className="flex flex-col items-center justify-between gap-4 p-4 mt-6 bg-white border rounded-lg shadow-sm sm:flex-row">
-                        <div className="text-sm text-gray-500">
+                    <div className="flex flex-col items-center justify-between gap-4 p-4 mt-6 border rounded-lg shadow-sm sm:flex-row">
+                        <div className="text-sm">
                             Halaman {currentPage} dari {totalPages} (
                             {filteredComplaints.length} pengaduan)
                         </div>

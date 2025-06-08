@@ -65,7 +65,7 @@ export default function AuthenticatedLayout({
                     </div>
                 </header>
 
-                <main className="h-full p-4 md:pt-0">{children}</main>
+                <main className="h-full p-4 md:pt-2">{children}</main>
             </SidebarInset>
         </SidebarProvider>
     );
