@@ -30,7 +30,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { Head, Link, router } from "@inertiajs/react";
-import { Issue, PhaseStatus, PhaseStatusLabels } from "@/types/issue";
+import { Issue, CaseStatus, CaseStatusLabels } from "@/types/issue";
 import { Category } from "@/types/category";
 import { cn } from "@/lib/utils";
 
@@ -51,20 +51,20 @@ export default function Component({
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [itemsPerPage, setItemsPerPage] = useState(6);
 
-    const getStatusColor = (status: PhaseStatus) => {
+    const getStatusColor = (status: CaseStatus) => {
         const baseClasses =
             "backdrop-blur-sm border shadow-lg ring-1 ring-white/20";
 
         switch (status) {
-            case PhaseStatus.Open:
+            case CaseStatus.Open:
                 return `${baseClasses} bg-blue-500/10 text-blue-800 border-blue-200/50`;
-            case PhaseStatus.Pending:
+            case CaseStatus.Pending:
                 return `${baseClasses} bg-amber-500/10 text-amber-800 border-amber-200/50`;
-            case PhaseStatus.InProgress:
+            case CaseStatus.InProgress:
                 return `${baseClasses} bg-cyan-500/10 text-cyan-800 border-cyan-200/50`;
-            case PhaseStatus.Resolved:
+            case CaseStatus.Resolved:
                 return `${baseClasses} bg-green-500/10 text-green-800 border-green-200/50`;
-            case PhaseStatus.Closed:
+            case CaseStatus.Closed:
                 return `${baseClasses} bg-slate-500/10 text-slate-800 border-slate-200/50`;
             default:
                 return `${baseClasses} bg-gray-500/10 text-gray-800 border-gray-200/50`;
@@ -288,8 +288,8 @@ export default function Component({
                                                                     className="text-sm"
                                                                 >
                                                                     {
-                                                                        PhaseStatusLabels[
-                                                                            status as PhaseStatus
+                                                                        CaseStatusLabels[
+                                                                            status as CaseStatus
                                                                         ]
                                                                     }
                                                                 </Label>
@@ -394,7 +394,7 @@ export default function Component({
                                                 )}`}
                                             >
                                                 {
-                                                    PhaseStatusLabels[
+                                                    CaseStatusLabels[
                                                         complaint.status
                                                     ]
                                                 }

@@ -9,14 +9,29 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AttachmentsInput } from "@/components/attachments-input";
 import { useState } from "react";
+import { Phase, PhaseStatusLabels, PhaseStatus } from "@/types/issue";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-function PhaseCreate({ children }: { children: React.ReactNode }) {
+function PhaseCreate({
+    children,
+    phase,
+}: {
+    children: React.ReactNode;
+    phase: Phase;
+}) {
     const [attachments, setAttachments] = useState<File[]>([]);
+
+    const [status, setStatus] = useState<PhaseStatus>(phase.status);
 
     return (
         <Dialog>
@@ -31,7 +46,42 @@ function PhaseCreate({ children }: { children: React.ReactNode }) {
                     </DialogHeader>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="reason">Set Reason</Label>
+                            <div className="flex items-center justify-between w-full mb-2">
+                                <Label htmlFor="reason">Set Reason</Label>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            size={"sm"}
+                                            className="px-3 py-1 rounded-full"
+                                        >
+                                            {PhaseStatusLabels[phase.status]}
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuRadioGroup
+                                            value={status}
+                                            onValueChange={(value) => {
+                                                setStatus(value as PhaseStatus);
+                                            }}
+                                        >
+                                            {Object.values(PhaseStatus).map(
+                                                (status) => (
+                                                    <DropdownMenuRadioItem
+                                                        value={status}
+                                                        key={status}
+                                                    >
+                                                        {
+                                                            PhaseStatusLabels[
+                                                                status
+                                                            ]
+                                                        }
+                                                    </DropdownMenuRadioItem>
+                                                )
+                                            )}
+                                        </DropdownMenuRadioGroup>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
                             <Textarea id="reason" className="resize-none" />
                         </div>
                         <AttachmentsInput

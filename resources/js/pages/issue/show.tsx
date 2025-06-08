@@ -39,7 +39,10 @@ function ShowIssue({ issue }: { issue: Issue }) {
 
     const [galleryOpen, setGalleryOpen] = useState(false);
     const [galleryIndex, setGalleryIndex] = useState(0);
-    const [activePhase, setActivePhase] = useState(0);
+    const [activePhase, setActivePhase] = useState(() => {
+        const index = issue.phases.findIndex((phase) => phase.is_active);
+        return index !== -1 ? index : 0; // Fallback to 0 if no active phase is found
+    });
 
     function toggleGallery(e: any) {
         setGalleryIndex(0);
@@ -186,8 +189,8 @@ function ShowIssue({ issue }: { issue: Issue }) {
                     {issue.phases.map((phase, index) => (
                         <Card
                             className={cn(
-                                "flex flex-1 transition-colors ease-in-out",
-                                phase.is_active
+                                "flex flex-1 transition-colors ease-in-out hover:cursor-pointer",
+                                index === activePhase
                                     ? "bg-secondary hover:bg-secondary/80"
                                     : "bg-transparent shadow-none border-transparent hover:border-inherit"
                             )}
@@ -228,7 +231,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                 <Button variant="outline" size="icon">
                                     <Trash2 className="w-4 h-4" />
                                 </Button>
-                                <PhaseCreate>
+                                <PhaseCreate phase={issue.phases[activePhase]}>
                                     <Button variant="secondary">
                                         <PlusCircle className="w-4 h-4" />
                                         Add Update

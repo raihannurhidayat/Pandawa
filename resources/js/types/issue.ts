@@ -23,8 +23,25 @@ interface IssueCategory {
     updated_at: string;
 }
 
-export enum PhaseStatus {
+export enum CaseStatus {
   Open = 'open',
+  Pending = 'pending',
+  InProgress = 'in_progress',
+  Resolved = 'resolved',
+  Closed = 'closed',
+}
+
+type CaseStatusType = `${CaseStatus}`;
+
+export const CaseStatusLabels: Record<CaseStatus, string> = {
+  [CaseStatus.Open]: 'Open',
+  [CaseStatus.Pending]: 'Pending',
+  [CaseStatus.InProgress]: 'In Progress',
+  [CaseStatus.Resolved]: 'Resolved',
+  [CaseStatus.Closed]: 'Closed',
+};
+
+export enum PhaseStatus {
   Pending = 'pending',
   InProgress = 'in_progress',
   Resolved = 'resolved',
@@ -34,7 +51,6 @@ export enum PhaseStatus {
 type PhaseStatusType = `${PhaseStatus}`;
 
 export const PhaseStatusLabels: Record<PhaseStatus, string> = {
-  [PhaseStatus.Open]: 'Open',
   [PhaseStatus.Pending]: 'Pending',
   [PhaseStatus.InProgress]: 'In Progress',
   [PhaseStatus.Resolved]: 'Resolved',
@@ -102,6 +118,7 @@ export type {
     User,
     IssueCategory,
     Phase,
+    CaseStatusType,
     PhaseStatusType,
     Attachment,
 };
