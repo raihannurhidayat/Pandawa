@@ -54,7 +54,7 @@ function PhaseCreate({
                                             size={"sm"}
                                             className="px-3 py-1 rounded-full"
                                         >
-                                            {PhaseStatusLabels[phase.status]}
+                                            {PhaseStatusLabels[status]}
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
