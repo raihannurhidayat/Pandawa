@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AttachmentsInput } from "@/components/attachments-input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Phase, PhaseStatusLabels, PhaseStatus } from "@/types/issue";
 import {
     DropdownMenu,
@@ -35,6 +35,13 @@ import { UpdatePhaseFormSchema, updatePhaseFromSchema } from "@/forms/phase";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "@inertiajs/react";
 import { toast } from "sonner";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 function PhaseCreate({
     children,
@@ -47,15 +54,21 @@ function PhaseCreate({
         resolver: zodResolver(updatePhaseFromSchema),
         mode: "onChange",
         defaultValues: {
-            reason: "",
+            reason: phase.reason ?? "",
             status: phase.status as PhaseStatus,
         },
     });
 
-    const [attachments, setAttachments] = useState<File[]>([]);
+    // Reset form whenever phase changes
+    useEffect(() => {
+        form.reset({
+            reason: phase.reason ?? "",
+            status: phase.status as PhaseStatus,
+        });
+    }, [phase, form]);
 
-    console.log(form.getValues("status"));
-    console.log(phase.status as PhaseStatus);
+    const [attachments, setAttachments] = useState<File[]>([]);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     function onSubmit(values: any) {
         const data = {
@@ -64,16 +77,15 @@ function PhaseCreate({
             _method: "put",
         };
 
-        console.log(values);
-
-        console.log(data);
-
         router.post(route("phase.update", phase.id), data, {
             onSuccess: () => {
                 toast.success("Update successful", {
                     id: "Update",
                     richColors: true,
                 });
+                form.reset();
+                setAttachments([]);
+                setIsDialogOpen(false);
             },
             onError: () => {
                 toast.error("Update failed", { id: "Update" });
@@ -85,15 +97,13 @@ function PhaseCreate({
     }
 
     return (
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <DialogTrigger asChild>{children}</DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>
-                                Create Phase {phase.status}
-                            </DialogTitle>
+                            <DialogTitle>Buat updates</DialogTitle>
                             <DialogDescription>{phase.title}</DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
@@ -108,54 +118,43 @@ function PhaseCreate({
                                                     <Label htmlFor="reason">
                                                         Set Reason
                                                     </Label>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger
-                                                            asChild
-                                                        >
-                                                            <Button
-                                                                size={"sm"}
-                                                                className="px-3 py-1 rounded-full"
-                                                            >
-                                                                {form.getValues(
-                                                                    "status"
-                                                                )}
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                            <DropdownMenuRadioGroup
-                                                                onValueChange={(
-                                                                    value
-                                                                ) => {
-                                                                    field.onChange(
-                                                                        value
-                                                                    );
-                                                                }}
-                                                            >
-                                                                {Object.values(
-                                                                    PhaseStatus
-                                                                ).map(
-                                                                    (
-                                                                        status
-                                                                    ) => (
-                                                                        <DropdownMenuRadioItem
-                                                                            value={
-                                                                                status
-                                                                            }
-                                                                            key={
-                                                                                status
-                                                                            }
-                                                                        >
-                                                                            {
-                                                                                PhaseStatusLabels[
-                                                                                    status
-                                                                                ]
-                                                                            }
-                                                                        </DropdownMenuRadioItem>
-                                                                    )
-                                                                )}
-                                                            </DropdownMenuRadioGroup>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
+                                                    <Select
+                                                        value={form.getValues(
+                                                            "status"
+                                                        )}
+                                                        onValueChange={(
+                                                            value
+                                                        ) => {
+                                                            field.onChange(
+                                                                value
+                                                            );
+                                                        }}
+                                                    >
+                                                        <SelectTrigger className="w-fit">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {Object.entries(
+                                                                PhaseStatusLabels
+                                                            ).map(
+                                                                ([
+                                                                    value,
+                                                                    label,
+                                                                ]) => (
+                                                                    <SelectItem
+                                                                        value={
+                                                                            value
+                                                                        }
+                                                                        key={
+                                                                            value
+                                                                        }
+                                                                    >
+                                                                        {label}
+                                                                    </SelectItem>
+                                                                )
+                                                            )}
+                                                        </SelectContent>
+                                                    </Select>
                                                 </div>
                                             </FormControl>
                                         </FormItem>
