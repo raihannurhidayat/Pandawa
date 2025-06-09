@@ -18,6 +18,7 @@ Route::get('/', function () {
 })->name('welcome');
 
 
+Route::put('/phase-update/{id}', [IssueController::class, 'updatePhase'])->name('phase.update');
 Route::resource('/pengaduan', IssueController::class)->middleware(['auth']);
 
 Route::get('/dashboard', function () {

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Enums\PhaseStatus;
 use App\Models\Issue;
 use App\Models\IssueCategory;
+use App\Models\Phase;
 use Illuminate\Support\Facades\Auth;
 
 class IssueController extends Controller
@@ -99,5 +100,14 @@ class IssueController extends Controller
     public function destroy(Issue $issue)
     {
         $issue->archive();
+    }
+
+    public function updatePhase(Request $request, string $id)
+    {
+        // dd($phase);
+
+        dd([$request, $id]);
+
+        // $phase->update($validated);
     }
 }
