@@ -188,6 +188,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 <div className="flex items-center flex-1 gap-4 p-2 mt-1 rounded-lg shadow-sm bg-muted outline outline-1 outline-secondary">
                     {issue.phases.map((phase, index) => (
                         <Card
+                            key={phase.id}
                             className={cn(
                                 "flex flex-1 transition-colors ease-in-out hover:cursor-pointer",
                                 index === activePhase
