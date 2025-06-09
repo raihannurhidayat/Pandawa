@@ -85,6 +85,11 @@ class UserController extends Controller
         ]);
     }
 
+    public function detailPengaduanWarga(Request $request, string $issueId)
+    {
+        return Inertia::render("user/detail-pengaduan-warga");
+    }
+
     public function toggle(Request $request, Issue $issue)
     {
         $user = $request->user();

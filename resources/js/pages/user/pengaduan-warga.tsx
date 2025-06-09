@@ -33,7 +33,7 @@ import {
     PencilIcon,
 } from "lucide-react";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
-import { Head, router, usePage } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { IoMegaphone, IoMegaphoneOutline } from "react-icons/io5";
 import { Category } from "@/types/category";
 import { Issue } from "@/types/issue";
@@ -110,81 +110,88 @@ function ComplaintCard({
         ] || Lightbulb;
 
     return (
-        <Card className="h-80 flex flex-col transition-all duration-200 hover:shadow-lg hover:-translate-y-1 cursor-pointer group">
-            <CardHeader className="pb-3">
-                <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 rounded-lg bg-primary group-hover:bg-primary/80 transition-colors">
-                        <IconComponent
-                            className="w-4 h-4 text-primary-foreground"
-                            aria-hidden="true"
-                        />
-                    </div>
-                    <Badge
-                        className={`${
-                            statusColors[
-                                complaint?.status as keyof typeof statusColors
-                            ] || ""
-                        } text-xs font-medium`}
-                        aria-label={`Status: ${complaint?.status}`}
-                    >
-                        {complaint?.status}
-                    </Badge>
-                </div>
-                <h3 className="font-semibold text-lg leading-tight line-clamp-2 group-hover:text-primary/80 transition-colors">
-                    {complaint?.title}
-                </h3>
-            </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-between">
-                <p className="text-sm text-gray-600 line-clamp-3 mb-4">
-                    {complaint?.body}
-                </p>
-                <div className="flex items-center justify-between">
-                    <div className="text-xs text-gray-500 space-y-1">
-                        <div className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" aria-hidden="true" />
-                            <span>
-                                {new Date(
-                                    complaint?.created_at!
-                                ).toLocaleDateString("id-ID", {
-                                    day: "2-digit",
-                                    month: "long",
-                                    year: "numeric",
-                                })}
-                            </span>
+        <Link href={route("user.detail.pengaduan-warga", complaint?.id)}>
+            <Card className="h-80 flex flex-col transition-all duration-200 hover:shadow-lg hover:-translate-y-1 cursor-pointer group">
+                <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 rounded-lg bg-primary group-hover:bg-primary/80 transition-colors">
+                            <IconComponent
+                                className="w-4 h-4 text-primary-foreground"
+                                aria-hidden="true"
+                            />
                         </div>
-                        <div className="flex items-center gap-1">
-                            <User className="w-3 h-3" aria-hidden="true" />
-                            <span>{complaint?.user?.name!}</span>
-                        </div>
+                        <Badge
+                            className={`${
+                                statusColors[
+                                    complaint?.status as keyof typeof statusColors
+                                ] || ""
+                            } text-xs font-medium`}
+                            aria-label={`Status: ${complaint?.status}`}
+                        >
+                            {complaint?.status}
+                        </Badge>
                     </div>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className={`flex items-center gap-1 transition-all duration-200 hover:scale-105 ${
-                            isLiked
-                                ? "text-red-500 hover:text-red-600"
-                                : "text-gray-500 hover:text-red-500"
-                        }`}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onUpvote(complaint?.id!);
-                        }}
-                        aria-label={`${
-                            isLiked ? "Unlike" : "Like"
-                        } complaint. Current likes: ${complaint?.likes_count}`}
-                    >
-                        <IoMegaphoneOutline
-                            className={`w-4 h-4 transition-all duration-200 ${
-                                isLiked ? "fill-current" : ""
+                    <h3 className="font-semibold text-lg leading-tight line-clamp-2 group-hover:text-primary/80 transition-colors">
+                        {complaint?.title}
+                    </h3>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col justify-between">
+                    <p className="text-sm text-gray-600 line-clamp-3 mb-4">
+                        {complaint?.body}
+                    </p>
+                    <div className="flex items-center justify-between">
+                        <div className="text-xs text-gray-500 space-y-1">
+                            <div className="flex items-center gap-1">
+                                <Calendar
+                                    className="w-3 h-3"
+                                    aria-hidden="true"
+                                />
+                                <span>
+                                    {new Date(
+                                        complaint?.created_at!
+                                    ).toLocaleDateString("id-ID", {
+                                        day: "2-digit",
+                                        month: "long",
+                                        year: "numeric",
+                                    })}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <User className="w-3 h-3" aria-hidden="true" />
+                                <span>{complaint?.user?.name!}</span>
+                            </div>
+                        </div>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className={`flex items-center gap-1 transition-all duration-200 hover:scale-105 ${
+                                isLiked
+                                    ? "text-red-500 hover:text-red-600"
+                                    : "text-gray-500 hover:text-red-500"
                             }`}
-                        />
-                        <span className="font-medium">
-                            {complaint?.likes_count}
-                        </span>
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onUpvote(complaint?.id!);
+                            }}
+                            aria-label={`${
+                                isLiked ? "Unlike" : "Like"
+                            } complaint. Current likes: ${
+                                complaint?.likes_count
+                            }`}
+                        >
+                            <IoMegaphoneOutline
+                                className={`w-4 h-4 transition-all duration-200 ${
+                                    isLiked ? "fill-current" : ""
+                                }`}
+                            />
+                            <span className="font-medium">
+                                {complaint?.likes_count}
+                            </span>
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+        </Link>
     );
 }
 
@@ -297,10 +304,14 @@ export default function PengaduanWargaPage({
                     if (typeof router.reload === "function") {
                         router.reload({ only: ["issues"] });
                     } else {
-                        router.get(window.location.pathname, {}, { only: ["issues"], preserveScroll: true });
+                        router.get(
+                            window.location.pathname,
+                            {},
+                            { only: ["issues"], preserveScroll: true }
+                        );
                     }
-                }
-            },
+                },
+            }
         );
     };
 

@@ -41,9 +41,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Global
     Route::get('/user/pengaduan-warga', [UserController::class, 'pengaduanWarga'])->name('user.pengaduan-warga');
+    Route::get('/user/pengaduan-warga/{issueId}', [UserController::class, 'detailPengaduanWarga'])->name('user.detail.pengaduan-warga');
 
     // Utils
-    // routes/web.php
     Route::post('/user/{issue}/like', [UserController::class, 'toggle'])->name("user.like");
 
 });
