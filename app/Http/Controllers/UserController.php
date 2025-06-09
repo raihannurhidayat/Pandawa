@@ -87,7 +87,11 @@ class UserController extends Controller
 
     public function detailPengaduanWarga(Request $request, string $issueId)
     {
-        return Inertia::render("user/detail-pengaduan-warga");
+        $issue = Issue::findOrFail($issueId)->load('user', 'issueCategory', 'phases', 'attachments');
+
+        return Inertia::render("user/detail-pengaduan-warga", [
+            "issue" => $issue,
+        ]);
     }
 
     public function toggle(Request $request, Issue $issue)

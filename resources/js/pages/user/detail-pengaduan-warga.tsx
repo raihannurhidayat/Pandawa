@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
 import { Head } from "@inertiajs/react";
+import { Issue } from "@/types/issue";
 
 // Mock data for the complaint
 const complaintData = {
@@ -113,7 +114,7 @@ const categoryIcons = {
     Safety: AlertCircle,
 };
 
-export default function DetailPengaduanWarga() {
+export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
     const [selectedImage, setSelectedImage] = useState<number | null>(null);
     const [newComment, setNewComment] = useState("");
     const [comments, setComments] = useState(complaintData.comments);
@@ -121,6 +122,8 @@ export default function DetailPengaduanWarga() {
     const currentStatus = complaintData.status as keyof typeof statusHistory;
     const CategoryIcon =
         categoryIcons[complaintData.category as keyof typeof categoryIcons];
+
+    console.log(issue);
 
     const handleSubmitComment = () => {
         if (newComment.trim()) {
@@ -143,11 +146,11 @@ export default function DetailPengaduanWarga() {
             setSelectedImage(
                 selectedImage > 0
                     ? selectedImage - 1
-                    : complaintData.attachments.length - 1
+                    : issue.attachments.length - 1
             );
         } else {
             setSelectedImage(
-                selectedImage < complaintData.attachments.length - 1
+                selectedImage < issue.attachments.length - 1
                     ? selectedImage + 1
                     : 0
             );
@@ -434,7 +437,7 @@ export default function DetailPengaduanWarga() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                        {complaintData.attachments.map(
+                                        {issue.attachments.map(
                                             (image, index) => (
                                                 <Dialog key={index}>
                                                     <DialogTrigger asChild>
@@ -447,10 +450,7 @@ export default function DetailPengaduanWarga() {
                                                             }
                                                         >
                                                             <img
-                                                                src={
-                                                                    image ||
-                                                                    "/placeholder.svg"
-                                                                }
+                                                                src={image.url}
                                                                 alt={`Evidence ${
                                                                     index + 1
                                                                 }`}
@@ -462,11 +462,11 @@ export default function DetailPengaduanWarga() {
                                                         <div className="relative">
                                                             <img
                                                                 src={
-                                                                    complaintData
+                                                                    issue
                                                                         .attachments[
                                                                         selectedImage ||
                                                                             0
-                                                                    ]
+                                                                    ].url
                                                                 }
                                                                 alt="Evidence"
                                                                 className="w-full h-auto max-h-[80vh] object-contain"
@@ -474,7 +474,7 @@ export default function DetailPengaduanWarga() {
                                                             <Button
                                                                 variant="outline"
                                                                 size="icon"
-                                                                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white"
+                                                                className="absolute left-4 top-1/2 transform -translate-y-1/2 "
                                                                 onClick={() =>
                                                                     navigateImage(
                                                                         "prev"
@@ -486,7 +486,7 @@ export default function DetailPengaduanWarga() {
                                                             <Button
                                                                 variant="outline"
                                                                 size="icon"
-                                                                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white"
+                                                                className="absolute right-4 top-1/2 transform -translate-y-1/2 "
                                                                 onClick={() =>
                                                                     navigateImage(
                                                                         "next"
@@ -500,7 +500,7 @@ export default function DetailPengaduanWarga() {
                                                                     0) + 1}{" "}
                                                                 of{" "}
                                                                 {
-                                                                    complaintData
+                                                                    issue
                                                                         .attachments
                                                                         .length
                                                                 }
@@ -550,7 +550,7 @@ export default function DetailPengaduanWarga() {
                                                         {comment.date}
                                                     </span>
                                                 </div>
-                                                <div className="rounded-lg p-3 text-sm">
+                                                <div className="rounded-lg bg-secondary p-3 text-sm">
                                                     {comment.message}
                                                 </div>
                                             </div>
