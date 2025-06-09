@@ -80,7 +80,7 @@ class IssueController extends Controller
 
     public function show($pengaduan)
     {
-        $issue = Issue::findOrFail($pengaduan)->load('user', 'issueCategory', 'phases', 'attachments');
+        $issue = Issue::findOrFail($pengaduan)->load('user', 'issueCategory', 'phases', 'phases.attachments', 'attachments');
 
         return Inertia::render('issue/show', [
             'issue' => $issue
@@ -104,10 +104,20 @@ class IssueController extends Controller
 
     public function updatePhase(Request $request, string $id)
     {
-        // dd($phase);
+        $validated = $request->validate([
+            'status' => 'required',
+            'reason' => 'string',
+            'attachments' => 'array|nullable',
+        ]);
 
-        dd([$request, $id]);
+        $phase = Phase::findOrFail($id);
 
-        // $phase->update($validated);
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $phase->addAttachment($file);
+            }
+        }
+
+        $phase->update($validated);
     }
 }

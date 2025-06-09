@@ -61,13 +61,14 @@ function PhaseCreate({
         const data = {
             ...values,
             attachments,
+            _method: "put",
         };
 
         console.log(values);
 
         console.log(data);
 
-        router.put(route("phase.update", phase.id), data, {
+        router.post(route("phase.update", phase.id), data, {
             onSuccess: () => {
                 toast.success("Update successful", {
                     id: "Update",

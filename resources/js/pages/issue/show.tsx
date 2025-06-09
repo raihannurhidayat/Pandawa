@@ -25,6 +25,7 @@ import { Auth } from "@/types/auth";
 import { Issue } from "@/types/issue";
 import { Head, Link, usePage } from "@inertiajs/react";
 import {
+    AlertTriangle,
     CheckCircle,
     ChevronRight,
     EditIcon,
@@ -39,6 +40,8 @@ function ShowIssue({ issue }: { issue: Issue }) {
 
     const [galleryOpen, setGalleryOpen] = useState(false);
     const [galleryIndex, setGalleryIndex] = useState(0);
+    const [phaseGalleryOpen, setPhaseGalleryOpen] = useState(false);
+    const [phaseGalleryIndex, setPhaseGalleryIndex] = useState(0);
     const [activePhase, setActivePhase] = useState(() => {
         const index = issue.phases.findIndex((phase) => phase.is_active);
         return index !== -1 ? index : 0; // Fallback to 0 if no active phase is found
@@ -47,6 +50,11 @@ function ShowIssue({ issue }: { issue: Issue }) {
     function toggleGallery(e: any) {
         setGalleryIndex(0);
         setGalleryOpen(true);
+    }
+
+    function togglePhaseGallery(e: any) {
+        setPhaseGalleryIndex(0);
+        setPhaseGalleryOpen(true);
     }
 
     console.log(issue);
@@ -75,6 +83,14 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 isOpen={galleryOpen}
                 onClose={() => setGalleryOpen(false)}
                 initialIndex={galleryIndex}
+            />
+
+            {/* Image gallery */}
+            <ImageGallery
+                images={issue.phases[activePhase].attachments}
+                isOpen={phaseGalleryOpen}
+                onClose={() => setPhaseGalleryOpen(false)}
+                initialIndex={phaseGalleryIndex}
             />
 
             <div className="flex flex-col w-full gap-6">
@@ -247,7 +263,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                     </CardHeader>
                     <Separator className="mb-4" />
                     <CardContent>
-                        {issue.phases.map((phase) => (
+                        {/* {issue.phases.map((phase) => (
                             <div key={phase.id}>
                                 <div className="flex items-center justify-between w-full gap-4">
                                     <div className="flex flex-col w-full gap-2">
@@ -268,7 +284,57 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                     </div>
                                 </div>
                             </div>
-                        ))}
+                        ))} */}
+                        {issue.phases[activePhase].reason ? (
+                            <div className="flex flex-col gap-4">
+                                <p className="whitespace-pre-wrap">
+                                    {issue.phases[activePhase].reason}
+                                </p>
+                                {issue.phases[activePhase].attachments.length >
+                                0 ? (
+                                    <div className="flex flex-col gap-4">
+                                        <Label className="font-semibold leading-tight text-md">
+                                            Lampiran
+                                        </Label>
+                                        <div className="flex flex-row flex-wrap gap-4">
+                                            {issue.phases[
+                                                activePhase
+                                            ].attachments.map((attachment) => (
+                                                <Button
+                                                    key={attachment.id}
+                                                    className="p-0 transition-opacity hover:bg-black/10"
+                                                    onClick={togglePhaseGallery}
+                                                    asChild
+                                                >
+                                                    <div className="w-32 h-24 overflow-hidden rounded-md outline outline-1 outline-neutral-400">
+                                                        <img
+                                                            src={attachment.url}
+                                                            alt={
+                                                                attachment.filename
+                                                            }
+                                                            className="object-cover w-full h-full transition-transform hover:scale-105"
+                                                        />
+                                                    </div>
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col gap-4">
+                                        <Label className="font-semibold leading-tight text-md">
+                                            Tidak ada file terlampir
+                                        </Label>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center w-full gap-4 text-secondary-foreground">
+                                <div className="flex items-center justify-center rounded-full bg-muted">
+                                    <AlertTriangle className="w-6 h-6 m-4 text-muted-foreground" />
+                                </div>
+                                Oops! Fase ini belum diupdate
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 

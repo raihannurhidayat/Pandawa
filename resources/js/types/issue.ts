@@ -73,6 +73,7 @@ type Phase = {
     updated_at_relative: string;
     created_at_formatted: string;
     updated_at_formatted: string;
+    attachments: Attachment[];
 };
 
 interface Attachment {
