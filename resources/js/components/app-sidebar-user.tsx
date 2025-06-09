@@ -9,6 +9,7 @@ import {
     NotebookText,
     Send,
     SquareTerminal,
+    User,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -25,6 +26,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, usePage } from "@inertiajs/react";
 import { PageProps } from "@/types";
+import { IoPeople } from "react-icons/io5";
 
 const data = {
     user: {
@@ -34,12 +36,19 @@ const data = {
     },
     navMain: [
         {
+            title: "Pengaduan Warga",
+            url: "/user/pengaduan-warga",
+            icon: IoPeople,
+        },
+    ],
+    navMainPribadi: [
+        {
             title: "Dashboard",
             url: "/user/dashboard",
             icon: Home,
         },
         {
-            title: "Pengaduan",
+            title: "Pengaduan Saya",
             url: "/user/pengaduan",
             icon: NotebookText,
             isActive: true,
@@ -65,7 +74,9 @@ const data = {
     ],
 };
 
-export function AppSidebarUser({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebarUser({
+    ...props
+}: React.ComponentProps<typeof Sidebar>) {
     const { auth } = usePage<PageProps>().props;
 
     return (
@@ -92,8 +103,9 @@ export function AppSidebarUser({ ...props }: React.ComponentProps<typeof Sidebar
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={data.navMain} />
-                {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+                <NavMain items={data.navMain} title="Masyarakat" />
+                <NavMain items={data.navMainPribadi} title="Pribadi" />
+                <NavSecondary items={data.navSecondary} className="mt-auto" />
             </SidebarContent>
             <SidebarFooter>
                 <NavUser user={auth.user} />

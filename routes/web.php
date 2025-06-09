@@ -38,6 +38,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/pengaduan', [UserController::class, 'pengaduan'])->name('user.pengaduan');
     Route::get('/user/pengaduan/create', [UserController::class, 'create'])->name('user.pengaduan.create');
     Route::post('/user/pengaduan', [UserController::class, 'store'])->name('user.pengaduan.store');
+
+    // Global
+    Route::get('/user/pengaduan-warga', [UserController::class, 'pengaduanWarga'])->name('user.pengaduan-warga');
+
+    // Utils
+    // routes/web.php
+    Route::post('/user/{issue}/like', [UserController::class, 'toggle'])->name("user.like");
+
 });
 
 require __DIR__ . '/auth.php';

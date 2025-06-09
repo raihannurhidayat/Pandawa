@@ -103,6 +103,8 @@ interface Issue {
     user: User;
     issue_category: IssueCategory;
     phases: Phase[];
+    likes: any[],
+    likes_count: number
     attachments: Attachment[];
 }
 
