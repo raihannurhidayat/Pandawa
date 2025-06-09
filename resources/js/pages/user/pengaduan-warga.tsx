@@ -1,7 +1,7 @@
 // TODO: Fix status isLiked for UI
 // TODO: Fix invalidate likes user
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -100,9 +100,9 @@ function ComplaintCard({
         );
     }
 
-    const isLiked = Array.isArray(complaint?.Likes)
-        ? complaint.Likes.some((liked) => liked.id === currentUserId)
-        : false;
+    const isLiked = !!complaint?.likes?.some(
+        (liked) => liked.user_id === currentUserId
+    );
 
     const IconComponent =
         categoryIcons[
@@ -228,6 +228,10 @@ export default function PengaduanWargaPage({
 
     const { auth } = usePage<PageProps<{ auth: Auth }>>().props;
 
+    useEffect(() => {
+        setComplaints(issues);
+    }, [issues]);
+
     const filteredComplaints = useMemo(() => {
         return complaints.filter((complaint) => {
             const matchesSearch =
@@ -286,8 +290,17 @@ export default function PengaduanWargaPage({
             `/user/${complaintId}/like`,
             {},
             {
+                only: ["issues"],
                 preserveScroll: true,
-            }
+                onSuccess: () => {
+                    // Invalidate and refetch issues
+                    if (typeof router.reload === "function") {
+                        router.reload({ only: ["issues"] });
+                    } else {
+                        router.get(window.location.pathname, {}, { only: ["issues"], preserveScroll: true });
+                    }
+                }
+            },
         );
     };
 

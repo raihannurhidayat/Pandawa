@@ -95,7 +95,7 @@ class UserController extends Controller
             $issue->likes()->create(['user_id' => $user->id]);
         }
 
-        return back();
+        return redirect()->back();
     }
 
     /**
