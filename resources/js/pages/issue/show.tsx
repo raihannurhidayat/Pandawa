@@ -16,6 +16,12 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import AuthenticatedLayout from "@/layouts/authenticated-layout";
@@ -30,6 +36,7 @@ import {
     ChevronRight,
     EditIcon,
     EllipsisVertical,
+    MoreHorizontal,
     PlusCircle,
     Trash2,
 } from "lucide-react";
@@ -122,47 +129,78 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 initialIndex={phaseGalleryIndex}
             />
 
-            <div className="flex flex-col w-full gap-6">
+            <div className="flex flex-col w-full gap-2 lg:gap-6">
                 {/* Header Section */}
                 <CTAHeader />
 
                 {/* Main Section */}
-                <Card className="gap-y-4">
-                    <CardHeader className="flex flex-row items-center justify-between w-full gap-2">
-                        <div className="flex items-center w-full gap-4">
-                            <h1 className="text-2xl font-bold leading-none tracking-normal">
-                                {issue.title}
-                            </h1>
-                            <div className="flex gap-2">
-                                <Badge className="text-sm font-semibold capitalize select-none">
-                                    {issue.status}
-                                </Badge>
-                                <Badge className="text-sm font-semibold capitalize select-none">
-                                    {issue.issue_category.name}
-                                </Badge>
+                <Card className="max-md:bg-transparent max-md:border-transparent max-md:shadow-transparent">
+                    <CardHeader className="max-md:px-0">
+                        <div className="flex flex-row justify-between w-full gap-2 ">
+                            <div className="flex flex-col gap-4 lg:items-center w-fit lg:w-full lg:flex-row">
+                                <h1 className="max-w-full text-2xl font-bold leading-none tracking-normal truncate text-start">
+                                    {issue.title}
+                                </h1>
+                                <div className="flex gap-2">
+                                    <Badge className="text-sm font-semibold capitalize select-none">
+                                        {issue.status}
+                                    </Badge>
+                                    <Badge className="text-sm font-semibold capitalize select-none">
+                                        {issue.issue_category.name}
+                                    </Badge>
+                                </div>
+                            </div>
+                            <div className="flex md:hidden">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="bg-muted"
+                                        >
+                                            <MoreHorizontal className="w-5 h-5" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem asChild>
+                                            <Link
+                                                href={route("pengaduan.index")}
+                                            >
+                                                <EditIcon className="w-4 h-4 mr-2" />
+                                                <span>Edit</span>
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <Link
+                                                href={route("pengaduan.index")}
+                                            >
+                                                <CheckCircle className="w-4 h-4 mr-2" />
+                                                <span>Tandai Selesai</span>
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                            {/* Desktop: inline buttons */}
+                            <div className="hidden gap-2 md:flex">
+                                <Button variant="outline" asChild>
+                                    <Link href={route("pengaduan.index")}>
+                                        <EditIcon className="w-4 h-4" />
+                                        <span>Edit</span>
+                                    </Link>
+                                </Button>
+                                <Button variant="default" asChild>
+                                    <Link href={route("pengaduan.index")}>
+                                        <CheckCircle className="w-4 h-4" />
+                                        <span>Tandai Selesai</span>
+                                    </Link>
+                                </Button>
                             </div>
                         </div>
-                        <div className="flex gap-2">
-                            <Button variant="outline" asChild>
-                                <Link href={route("pengaduan.index")}>
-                                    <EditIcon className="w-4 h-4" />
-                                    Edit
-                                </Link>
-                            </Button>
-                            <Button variant="default" asChild>
-                                <Link href={route("pengaduan.index")}>
-                                    <CheckCircle className="w-4 h-4" />
-                                    Tandai Selesai
-                                </Link>
-                            </Button>
-                        </div>
                     </CardHeader>
-                    <CardContent className="flex w-full gap-4">
+                    <CardContent className="flex flex-col w-full gap-4 lg:flex-row max-md:px-0">
                         <Card className="flex-1">
                             <CardContent className="flex flex-col gap-4 p-4">
-                                <Label className="font-semibold leading-tight text-md">
-                                    Deskripsi
-                                </Label>
                                 <p className="">{issue.body}</p>
                                 <div className="flex flex-col gap-4">
                                     <Label className="font-semibold leading-tight text-md">
@@ -222,7 +260,8 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                     Lokasi
                                 </Label>
                                 <p className="break-words whitespace-pre-wrap">
-                                    {issue.location}
+                                    {/* {issue.location} */}
+                                    test
                                 </p>
                             </CardContent>
                         </Card>
@@ -230,7 +269,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 </Card>
 
                 {/* Phases tracker */}
-                <div className="grid items-center grid-cols-4 gap-4 p-2 mt-1 rounded-lg shadow-sm bg-muted outline outline-1 outline-secondary">
+                <div className="grid items-center grid-cols-1 gap-4 p-2 rounded-lg shadow-sm lg:mt-1 md:grid-cols-4 bg-muted outline outline-1 outline-secondary">
                     {issue.phases.map((phase, index) => (
                         <Card
                             key={phase.id}
@@ -267,13 +306,13 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 </div>
 
                 {/* Updates */}
-                <Card>
+                <Card className="mt-2">
                     <CardHeader className="p-4">
                         <div className="flex items-center justify-between w-full">
                             <h1 className="text-xl font-medium leading-none tracking-tight">
                                 {activePhase.title}
                             </h1>
-                            <div className="flex gap-4">
+                            {/* <div className="flex gap-4">
                                 <PhaseCreate phase={activePhase}>
                                     <Button
                                         variant="secondary"
@@ -305,6 +344,102 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                             : "Resolve Phase"}
                                     </Button>
                                 )}
+                            </div> */}
+                            <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
+                                {/* Mobile: dropdown menu */}
+                                <div className="flex md:hidden">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon">
+                                                <MoreHorizontal className="w-5 h-5" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem>
+                                                <PhaseCreate
+                                                    phase={activePhase}
+                                                >
+                                                    <Button
+                                                        variant="secondary"
+                                                        disabled={
+                                                            !activePhase.is_active
+                                                        }
+                                                    >
+                                                        <PlusCircle className="w-4 h-4 mr-2" />
+                                                        <span>Add Update</span>
+                                                    </Button>
+                                                </PhaseCreate>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                {activePhase.is_active ? (
+                                                    <Button
+                                                        variant="default"
+                                                        disabled={
+                                                            activePhase.status !==
+                                                            PhaseStatus.Resolved
+                                                        }
+                                                        onClick={resolvePhase}
+                                                    >
+                                                        <CheckCircle className="w-4 h-4 mr-2" />
+                                                        <span>
+                                                            Resolve Phase
+                                                        </span>
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        variant="secondary"
+                                                        disabled
+                                                    >
+                                                        <CheckCircle className="w-4 h-4 mr-2" />
+                                                        <span>
+                                                            {activePhase.status ===
+                                                            PhaseStatus.Resolved
+                                                                ? "Resolved"
+                                                                : "Resolve Phase"}
+                                                        </span>
+                                                    </Button>
+                                                )}
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+
+                                {/* Desktop: inline actions */}
+                                <div className="hidden gap-4 md:flex">
+                                    <PhaseCreate phase={activePhase}>
+                                        <Button
+                                            variant="secondary"
+                                            disabled={!activePhase.is_active}
+                                        >
+                                            <PlusCircle className="w-4 h-4" />
+                                            <span>Add Update</span>
+                                        </Button>
+                                    </PhaseCreate>
+
+                                    {activePhase.is_active ? (
+                                        <Button
+                                            variant="default"
+                                            disabled={
+                                                activePhase.status !==
+                                                PhaseStatus.Resolved
+                                            }
+                                            onClick={resolvePhase}
+                                        >
+                                            <CheckCircle className="w-4 h-4" />
+                                            <span>Resolve Phase</span>
+                                        </Button>
+                                    ) : (
+                                        <Button variant="secondary" disabled>
+                                            <CheckCircle className="w-4 h-4" />
+                                            <span>
+                                                {activePhase.status ===
+                                                PhaseStatus.Resolved
+                                                    ? "Resolved"
+                                                    : "Resolve Phase"}
+                                            </span>
+                                        </Button>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </CardHeader>
