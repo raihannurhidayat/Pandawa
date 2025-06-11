@@ -46,6 +46,10 @@ Route::middleware(['auth'])->group(function () {
     // routes/web.php
     Route::post('/user/{issue}/like', [UserController::class, 'toggle'])->name("user.like");
 
+
+    // Issue Phase control
+    Route::put('/phase-update/{id}', [IssueController::class, 'updatePhase'])->name('phase.update');
+    Route::put('/phase-resolve/{id}', [IssueController::class, 'resolvePhase'])->name('phase.resolve');
 });
 
 require __DIR__ . '/auth.php';

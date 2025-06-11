@@ -12,15 +12,29 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AttachmentsInput } from "@/components/attachments-input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Phase, PhaseStatusLabels, PhaseStatus } from "@/types/issue";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { UpdatePhaseFormSchema, updatePhaseFromSchema } from "@/forms/phase";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { router } from "@inertiajs/react";
+import { toast } from "sonner";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 function PhaseCreate({
     children,
@@ -29,74 +43,156 @@ function PhaseCreate({
     children: React.ReactNode;
     phase: Phase;
 }) {
-    const [attachments, setAttachments] = useState<File[]>([]);
+    const form = useForm<UpdatePhaseFormSchema>({
+        resolver: zodResolver(updatePhaseFromSchema),
+        mode: "onChange",
+        defaultValues: {
+            reason: phase.reason ?? "",
+            status: phase.status as PhaseStatus,
+        },
+    });
 
-    const [status, setStatus] = useState<PhaseStatus>(phase.status);
+    // Reset form whenever phase changes
+    useEffect(() => {
+        form.reset({
+            reason: phase.reason ?? "",
+            status: phase.status as PhaseStatus,
+        });
+    }, [phase, form]);
+
+    const [attachments, setAttachments] = useState<File[]>([]);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    function onSubmit(values: any) {
+        const data = {
+            ...values,
+            attachments,
+            _method: "put",
+        };
+
+        router.post(route("phase.update", phase.id), data, {
+            onSuccess: () => {
+                toast.success("Update successful", {
+                    id: "Update",
+                    richColors: true,
+                });
+                form.reset();
+                setAttachments([]);
+                setIsDialogOpen(false);
+                router.reload();
+            },
+            onError: () => {
+                toast.error("Update failed", { id: "Update" });
+            },
+            onStart: () => {
+                toast.loading("Updating in...", { id: "Update" });
+            },
+        });
+    }
 
     return (
-        <Dialog>
-            <form>
-                <DialogTrigger asChild>{children}</DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Create Phase</DialogTitle>
-                        <DialogDescription>
-                            Add updates to this phase
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between w-full mb-2">
-                                <Label htmlFor="reason">Set Reason</Label>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button
-                                            size={"sm"}
-                                            className="px-3 py-1 rounded-full"
-                                        >
-                                            {PhaseStatusLabels[status]}
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuRadioGroup
-                                            value={status}
-                                            onValueChange={(value) => {
-                                                setStatus(value as PhaseStatus);
-                                            }}
-                                        >
-                                            {Object.values(PhaseStatus).map(
-                                                (status) => (
-                                                    <DropdownMenuRadioItem
-                                                        value={status}
-                                                        key={status}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <DialogTrigger asChild>{children}</DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Buat updates</DialogTitle>
+                            <DialogDescription>{phase.title}</DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <FormField
+                                    control={form.control}
+                                    name="status"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <div className="flex items-center justify-between w-full mb-2">
+                                                    <Label htmlFor="reason">
+                                                        Set Reason
+                                                    </Label>
+                                                    <Select
+                                                        value={form.getValues(
+                                                            "status"
+                                                        )}
+                                                        onValueChange={(
+                                                            value
+                                                        ) => {
+                                                            field.onChange(
+                                                                value
+                                                            );
+                                                        }}
                                                     >
-                                                        {
-                                                            PhaseStatusLabels[
-                                                                status
-                                                            ]
-                                                        }
-                                                    </DropdownMenuRadioItem>
-                                                )
-                                            )}
-                                        </DropdownMenuRadioGroup>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                                        <SelectTrigger className="w-fit">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {Object.entries(
+                                                                PhaseStatusLabels
+                                                            ).map(
+                                                                ([
+                                                                    value,
+                                                                    label,
+                                                                ]) => (
+                                                                    <SelectItem
+                                                                        value={
+                                                                            value
+                                                                        }
+                                                                        key={
+                                                                            value
+                                                                        }
+                                                                    >
+                                                                        {label}
+                                                                    </SelectItem>
+                                                                )
+                                                            )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="reason"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel />
+                                            <FormControl>
+                                                <Textarea
+                                                    className="resize-none"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormDescription></FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             </div>
-                            <Textarea id="reason" className="resize-none" />
+                            <AttachmentsInput
+                                attachments={attachments}
+                                setAttachments={setAttachments}
+                            />
                         </div>
-                        <AttachmentsInput
-                            attachments={attachments}
-                            setAttachments={setAttachments}
-                        />
-                    </div>
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button variant={"outline"}>Cancel</Button>
-                        </DialogClose>
-                        <Button variant={"default"}>Save Update</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </form>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button variant={"outline"}>Cancel</Button>
+                            </DialogClose>
+                            <Button
+                                variant={"default"}
+                                type="submit"
+                                onClick={form.handleSubmit(onSubmit)}
+                            >
+                                Save Update
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </form>
+            </Form>
         </Dialog>
     );
 }

@@ -22,9 +22,10 @@ import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { cn } from "@/lib/utils";
 import { PageProps } from "@/types";
 import { Auth } from "@/types/auth";
-import { Issue } from "@/types/issue";
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Issue, Phase, PhaseStatus } from "@/types/issue";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
+    AlertTriangle,
     CheckCircle,
     ChevronRight,
     EditIcon,
@@ -32,21 +33,57 @@ import {
     PlusCircle,
     Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 function ShowIssue({ issue }: { issue: Issue }) {
     const { auth } = usePage<PageProps<{ auth: Auth }>>().props;
 
     const [galleryOpen, setGalleryOpen] = useState(false);
     const [galleryIndex, setGalleryIndex] = useState(0);
-    const [activePhase, setActivePhase] = useState(() => {
+    const [phaseGalleryOpen, setPhaseGalleryOpen] = useState(false);
+    const [phaseGalleryIndex, setPhaseGalleryIndex] = useState(0);
+    const [activePhase, setActivePhase] = useState<Phase>(() => {
         const index = issue.phases.findIndex((phase) => phase.is_active);
-        return index !== -1 ? index : 0; // Fallback to 0 if no active phase is found
+        return issue.phases[index !== -1 ? index : 0]; // Fallback to 0 if no active phase is found
     });
+
+    // whenever issue.phases changes, pick up the new “active” one
+    useEffect(() => {
+        const idx = issue.phases.findIndex((p) => p.is_active);
+        setActivePhase(issue.phases[idx !== -1 ? idx : 0]);
+    }, [issue.phases]);
 
     function toggleGallery(e: any) {
         setGalleryIndex(0);
         setGalleryOpen(true);
+    }
+
+    function togglePhaseGallery(e: any) {
+        setPhaseGalleryIndex(0);
+        setPhaseGalleryOpen(true);
+    }
+
+    function resolvePhase() {
+        router.post(
+            route("phase.resolve", activePhase.id),
+            { _method: "put" },
+            {
+                onSuccess: () => {
+                    toast.success("Update successful", {
+                        id: "Update",
+                        richColors: true,
+                    });
+                    router.reload();
+                },
+                onError: () => {
+                    toast.error("Update failed", { id: "Update" });
+                },
+                onStart: () => {
+                    toast.loading("Updating in...", { id: "Update" });
+                },
+            }
+        );
     }
 
     console.log(issue);
@@ -75,6 +112,14 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 isOpen={galleryOpen}
                 onClose={() => setGalleryOpen(false)}
                 initialIndex={galleryIndex}
+            />
+
+            {/* Image gallery */}
+            <ImageGallery
+                images={activePhase.attachments}
+                isOpen={phaseGalleryOpen}
+                onClose={() => setPhaseGalleryOpen(false)}
+                initialIndex={phaseGalleryIndex}
             />
 
             <div className="flex flex-col w-full gap-6">
@@ -185,16 +230,17 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 </Card>
 
                 {/* Phases tracker */}
-                <div className="flex items-center flex-1 gap-4 p-2 mt-1 rounded-lg shadow-sm bg-muted outline outline-1 outline-secondary">
+                <div className="grid items-center grid-cols-4 gap-4 p-2 mt-1 rounded-lg shadow-sm bg-muted outline outline-1 outline-secondary">
                     {issue.phases.map((phase, index) => (
                         <Card
+                            key={phase.id}
                             className={cn(
                                 "flex flex-1 transition-colors ease-in-out hover:cursor-pointer",
-                                index === activePhase
+                                phase === activePhase
                                     ? "bg-secondary hover:bg-secondary/80"
                                     : "bg-transparent shadow-none border-transparent hover:border-inherit"
                             )}
-                            onClick={() => setActivePhase(index)}
+                            onClick={() => setActivePhase(phase)}
                         >
                             <CardHeader>
                                 <div className="flex flex-row justify-between flex-1 w-full gap-4">
@@ -222,52 +268,101 @@ function ShowIssue({ issue }: { issue: Issue }) {
 
                 {/* Updates */}
                 <Card>
-                    <CardHeader>
+                    <CardHeader className="p-4">
                         <div className="flex items-center justify-between w-full">
-                            <h1 className="text-2xl font-semibold leading-none tracking-tight">
-                                Updates
+                            <h1 className="text-xl font-medium leading-none tracking-tight">
+                                {activePhase.title}
                             </h1>
                             <div className="flex gap-4">
-                                <Button variant="outline" size="icon">
-                                    <Trash2 className="w-4 h-4" />
-                                </Button>
-                                <PhaseCreate phase={issue.phases[activePhase]}>
-                                    <Button variant="secondary">
+                                <PhaseCreate phase={activePhase}>
+                                    <Button
+                                        variant="secondary"
+                                        disabled={!activePhase.is_active}
+                                    >
                                         <PlusCircle className="w-4 h-4" />
                                         Add Update
                                     </Button>
                                 </PhaseCreate>
-                                <Button variant="default" disabled>
-                                    <CheckCircle className="w-4 h-4" />
-                                    Resolve Phase
-                                </Button>
+
+                                {activePhase.is_active ? (
+                                    <Button
+                                        variant="default"
+                                        disabled={
+                                            activePhase.status !==
+                                            PhaseStatus.Resolved
+                                        }
+                                        onClick={resolvePhase}
+                                    >
+                                        <CheckCircle className="w-4 h-4" />
+                                        Resolve Phase
+                                    </Button>
+                                ) : (
+                                    <Button variant="secondary" disabled>
+                                        <CheckCircle className="w-4 h-4" />
+                                        {activePhase.status ===
+                                        PhaseStatus.Resolved
+                                            ? "Resolved"
+                                            : "Resolve Phase"}
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </CardHeader>
                     <Separator className="mb-4" />
                     <CardContent>
-                        {issue.phases.map((phase) => (
-                            <div key={phase.id}>
-                                <div className="flex items-center justify-between w-full gap-4">
-                                    <div className="flex flex-col w-full gap-2">
-                                        <CardTitle className="font-semibold">
-                                            {phase.title}
-                                        </CardTitle>
-                                        <CardDescription>
-                                            {phase.body}
-                                        </CardDescription>
+                        {activePhase.reason ? (
+                            <div className="flex flex-col gap-4">
+                                <p className="text-base whitespace-pre-wrap">
+                                    {activePhase.reason}
+                                </p>
+                                {activePhase.attachments.length > 0 ? (
+                                    <div className="flex flex-col gap-4">
+                                        <Label className="text-lg leading-tight">
+                                            Lampiran
+                                        </Label>
+                                        <div className="flex flex-row flex-wrap gap-4">
+                                            {activePhase.attachments.map(
+                                                (attachment) => (
+                                                    <Button
+                                                        key={attachment.id}
+                                                        className="p-0 transition-opacity hover:bg-black/10"
+                                                        onClick={
+                                                            togglePhaseGallery
+                                                        }
+                                                        asChild
+                                                    >
+                                                        <div className="w-32 h-24 overflow-hidden rounded-md outline outline-1 outline-neutral-400">
+                                                            <img
+                                                                src={
+                                                                    attachment.url
+                                                                }
+                                                                alt={
+                                                                    attachment.filename
+                                                                }
+                                                                className="object-cover w-full h-full transition-transform hover:scale-105"
+                                                            />
+                                                        </div>
+                                                    </Button>
+                                                )
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="flex flex-col items-end justify-between h-full">
-                                        <Badge className="text-sm uppercase select-none h-fit">
-                                            {phase.status}
-                                        </Badge>
-                                        <h3 className="text-sm text-muted-foreground">
-                                            {phase.order + 1}
-                                        </h3>
+                                ) : (
+                                    <div className="flex flex-col gap-4">
+                                        <Label className="font-semibold leading-tight text-md">
+                                            Tidak ada file terlampir
+                                        </Label>
                                     </div>
-                                </div>
+                                )}
                             </div>
-                        ))}
+                        ) : (
+                            <div className="flex flex-col items-center w-full gap-4 text-secondary-foreground">
+                                <div className="flex items-center justify-center rounded-full bg-muted">
+                                    <AlertTriangle className="w-6 h-6 m-4 text-muted-foreground" />
+                                </div>
+                                Oops! Fase ini belum diupdate
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 
