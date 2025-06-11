@@ -33,7 +33,7 @@ import {
     PlusCircle,
     Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 function ShowIssue({ issue }: { issue: Issue }) {
@@ -47,6 +47,12 @@ function ShowIssue({ issue }: { issue: Issue }) {
         const index = issue.phases.findIndex((phase) => phase.is_active);
         return issue.phases[index !== -1 ? index : 0]; // Fallback to 0 if no active phase is found
     });
+
+    // whenever issue.phases changes, pick up the new “active” one
+    useEffect(() => {
+        const idx = issue.phases.findIndex((p) => p.is_active);
+        setActivePhase(issue.phases[idx !== -1 ? idx : 0]);
+    }, [issue.phases]);
 
     function toggleGallery(e: any) {
         setGalleryIndex(0);
@@ -68,6 +74,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                         id: "Update",
                         richColors: true,
                     });
+                    router.reload();
                 },
                 onError: () => {
                     toast.error("Update failed", { id: "Update" });

@@ -37,7 +37,16 @@ trait HasPhases
     public function activatePhase(Phase $phase, bool $next = false): void
     {
         if ($next) {
-            $phase = $this->phases()->where('order', '>', $phase->order)->orderBy('order')->first();
+            $nextPhase = $this->phases()->where('order', '>', $phase->order)->orderBy('order')->first();
+
+            if ($nextPhase) {
+                $phase = $nextPhase;
+            } else {
+                // No next phase in order, just deactivate all phases
+                $this->phases()->update(['is_active' => false]);
+
+                return;
+            }
         }
 
         $this->phases()->update(['is_active' => false]);

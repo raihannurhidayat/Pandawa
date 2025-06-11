@@ -15,13 +15,6 @@ import { AttachmentsInput } from "@/components/attachments-input";
 import { useEffect, useState } from "react";
 import { Phase, PhaseStatusLabels, PhaseStatus } from "@/types/issue";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
     Form,
     FormControl,
     FormDescription,
@@ -86,6 +79,7 @@ function PhaseCreate({
                 form.reset();
                 setAttachments([]);
                 setIsDialogOpen(false);
+                router.reload();
             },
             onError: () => {
                 toast.error("Update failed", { id: "Update" });
