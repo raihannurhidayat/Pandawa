@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 import { PageProps } from "@/types";
 import { Auth } from "@/types/auth";
 import { Issue, Phase, PhaseStatus } from "@/types/issue";
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
     AlertTriangle,
     CheckCircle,
@@ -34,6 +34,7 @@ import {
     Trash2,
 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 function ShowIssue({ issue }: { issue: Issue }) {
     const { auth } = usePage<PageProps<{ auth: Auth }>>().props;
@@ -55,6 +56,27 @@ function ShowIssue({ issue }: { issue: Issue }) {
     function togglePhaseGallery(e: any) {
         setPhaseGalleryIndex(0);
         setPhaseGalleryOpen(true);
+    }
+
+    function resolvePhase() {
+        router.post(
+            route("phase.resolve", activePhase.id),
+            { _method: "put" },
+            {
+                onSuccess: () => {
+                    toast.success("Update successful", {
+                        id: "Update",
+                        richColors: true,
+                    });
+                },
+                onError: () => {
+                    toast.error("Update failed", { id: "Update" });
+                },
+                onStart: () => {
+                    toast.loading("Updating in...", { id: "Update" });
+                },
+            }
+        );
     }
 
     console.log(issue);
@@ -262,6 +284,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                             activePhase.status !==
                                             PhaseStatus.Resolved
                                         }
+                                        onClick={resolvePhase}
                                     >
                                         <CheckCircle className="w-4 h-4" />
                                         Resolve Phase

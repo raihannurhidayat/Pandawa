@@ -18,7 +18,6 @@ Route::get('/', function () {
 })->name('welcome');
 
 
-Route::put('/phase-update/{id}', [IssueController::class, 'updatePhase'])->name('phase.update');
 Route::resource('/pengaduan', IssueController::class)->middleware(['auth']);
 
 Route::get('/dashboard', function () {
@@ -36,6 +35,10 @@ Route::middleware(['auth'])->group(function () {
 
     // User
     Route::get('/user/home', [UserController::class, 'index']);
+
+    // Issue Phase control
+    Route::put('/phase-update/{id}', [IssueController::class, 'updatePhase'])->name('phase.update');
+    Route::put('/phase-resolve/{id}', [IssueController::class, 'resolvePhase'])->name('phase.resolve');
 });
 
 require __DIR__ . '/auth.php';

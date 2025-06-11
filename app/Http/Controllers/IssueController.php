@@ -133,4 +133,11 @@ class IssueController extends Controller
             'reason' => $validated['reason'] ?? null,
         ]);
     }
+
+    public function resolvePhase(Request $request, string $id)
+    {
+        $phase = Phase::findOrFail($id);
+
+        $phase->phaseable->activatePhase($phase, true);
+    }
 }

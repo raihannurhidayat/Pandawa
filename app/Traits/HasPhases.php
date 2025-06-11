@@ -25,10 +25,23 @@ trait HasPhases
         return $this->phases()->where('is_active', true)->first();
     }
 
-    public function activatePhase(Phase $phase): void
+    /**
+     * Activate a specified phase, optionally activating the next phase in order.
+     *
+     * @param \App\Models\Phase $phase The phase to activate.
+     * @param bool $next If true, activate the next phase in order instead.
+     *
+     * This method first deactivates all phases, then activates the specified phase or the next phase
+     * in order, depending on the value of $next. It also updates the activation timestamp.
+     */
+    public function activatePhase(Phase $phase, bool $next = false): void
     {
+        if ($next) {
+            $phase = $this->phases()->where('order', '>', $phase->order)->orderBy('order')->first();
+        }
+
         $this->phases()->update(['is_active' => false]);
-        $this->phases()->updateExistingPivot($phase, ['is_active' => true]);
-        $this->phases()->updateExistingPivot($phase, ['activated_at' => now()]);
+
+        $phase->update(['is_active' => true, 'activated_at' => now()]);
     }
 }
