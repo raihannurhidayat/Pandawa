@@ -1,6 +1,7 @@
 import CTAHeader from "@/components/cta-header";
+import UpdatePhase from "@/components/forms/issues/update-phase";
 import ImageGallery from "@/components/image-gallery";
-import PhaseCreate from "@/components/phase-create";
+import { ResponsiveDialog } from "@/components/responsive-dialog";
 import { Badge } from "@/components/ui/badge";
 import {
     Breadcrumb,
@@ -50,6 +51,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
     const [galleryIndex, setGalleryIndex] = useState(0);
     const [phaseGalleryOpen, setPhaseGalleryOpen] = useState(false);
     const [phaseGalleryIndex, setPhaseGalleryIndex] = useState(0);
+    const [isEditOpen, setIsEditOpen] = useState(false);
     const [activePhase, setActivePhase] = useState<Phase>(() => {
         const index = issue.phases.findIndex((phase) => phase.is_active);
         return issue.phases[index !== -1 ? index : 0]; // Fallback to 0 if no active phase is found
@@ -128,6 +130,15 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 onClose={() => setPhaseGalleryOpen(false)}
                 initialIndex={phaseGalleryIndex}
             />
+
+            {/* Edit phase dialog */}
+            <ResponsiveDialog
+                isOpen={isEditOpen}
+                setIsOpen={setIsEditOpen}
+                title="Update Issue"
+            >
+                <UpdatePhase setIsOpen={setIsEditOpen} phase={activePhase} />
+            </ResponsiveDialog>
 
             <div className="flex flex-col w-full gap-2 lg:gap-6">
                 {/* Header Section */}
@@ -312,93 +323,43 @@ function ShowIssue({ issue }: { issue: Issue }) {
                             <h1 className="text-xl font-medium leading-none tracking-tight">
                                 {activePhase.title}
                             </h1>
-                            {/* <div className="flex gap-4">
-                                <PhaseCreate phase={activePhase}>
-                                    <Button
-                                        variant="secondary"
-                                        disabled={!activePhase.is_active}
-                                    >
-                                        <PlusCircle className="w-4 h-4" />
-                                        Add Update
-                                    </Button>
-                                </PhaseCreate>
-
-                                {activePhase.is_active ? (
-                                    <Button
-                                        variant="default"
-                                        disabled={
-                                            activePhase.status !==
-                                            PhaseStatus.Resolved
-                                        }
-                                        onClick={resolvePhase}
-                                    >
-                                        <CheckCircle className="w-4 h-4" />
-                                        Resolve Phase
-                                    </Button>
-                                ) : (
-                                    <Button variant="secondary" disabled>
-                                        <CheckCircle className="w-4 h-4" />
-                                        {activePhase.status ===
-                                        PhaseStatus.Resolved
-                                            ? "Resolved"
-                                            : "Resolve Phase"}
-                                    </Button>
-                                )}
-                            </div> */}
                             <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
                                 {/* Mobile: dropdown menu */}
                                 <div className="flex md:hidden">
-                                    <DropdownMenu>
+                                    <DropdownMenu modal={false}>
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="ghost" size="icon">
                                                 <MoreHorizontal className="w-5 h-5" />
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuItem>
-                                                <PhaseCreate
-                                                    phase={activePhase}
+                                            <DropdownMenuItem
+                                                disabled={
+                                                    !activePhase.is_active
+                                                }
+                                            >
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        setIsEditOpen(true)
+                                                    }
                                                 >
-                                                    <Button
-                                                        variant="secondary"
-                                                        disabled={
-                                                            !activePhase.is_active
-                                                        }
-                                                    >
-                                                        <PlusCircle className="w-4 h-4 mr-2" />
-                                                        <span>Add Update</span>
-                                                    </Button>
-                                                </PhaseCreate>
+                                                    <EditIcon className="w-4 h-4 mr-2" />
+                                                    Add Update
+                                                </Button>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                {activePhase.is_active ? (
-                                                    <Button
-                                                        variant="default"
-                                                        disabled={
-                                                            activePhase.status !==
-                                                            PhaseStatus.Resolved
-                                                        }
-                                                        onClick={resolvePhase}
-                                                    >
-                                                        <CheckCircle className="w-4 h-4 mr-2" />
-                                                        <span>
-                                                            Resolve Phase
-                                                        </span>
-                                                    </Button>
-                                                ) : (
-                                                    <Button
-                                                        variant="secondary"
-                                                        disabled
-                                                    >
-                                                        <CheckCircle className="w-4 h-4 mr-2" />
-                                                        <span>
-                                                            {activePhase.status ===
-                                                            PhaseStatus.Resolved
-                                                                ? "Resolved"
-                                                                : "Resolve Phase"}
-                                                        </span>
-                                                    </Button>
-                                                )}
+                                            <DropdownMenuItem
+                                                disabled={
+                                                    !activePhase.is_active &&
+                                                    activePhase.status !==
+                                                        PhaseStatus.Resolved
+                                                }
+                                            >
+                                                {activePhase.status ===
+                                                PhaseStatus.Resolved
+                                                    ? "Resolved"
+                                                    : "Resolve Phase"}
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -406,15 +367,14 @@ function ShowIssue({ issue }: { issue: Issue }) {
 
                                 {/* Desktop: inline actions */}
                                 <div className="hidden gap-4 md:flex">
-                                    <PhaseCreate phase={activePhase}>
-                                        <Button
-                                            variant="secondary"
-                                            disabled={!activePhase.is_active}
-                                        >
-                                            <PlusCircle className="w-4 h-4" />
-                                            <span>Add Update</span>
-                                        </Button>
-                                    </PhaseCreate>
+                                    <Button
+                                        variant="secondary"
+                                        disabled={!activePhase.is_active}
+                                        onClick={() => setIsEditOpen(true)}
+                                    >
+                                        <PlusCircle className="w-4 h-4" />
+                                        <span>Add Update</span>
+                                    </Button>
 
                                     {activePhase.is_active ? (
                                         <Button
