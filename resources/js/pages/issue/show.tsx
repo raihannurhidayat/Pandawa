@@ -34,12 +34,9 @@ import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
     AlertTriangle,
     CheckCircle,
-    ChevronRight,
     EditIcon,
-    EllipsisVertical,
     MoreHorizontal,
     PlusCircle,
-    Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -95,7 +92,55 @@ function ShowIssue({ issue }: { issue: Issue }) {
         );
     }
 
+    // to be deleted in prod
     console.log(issue);
+    console.log(activePhase.status === PhaseStatus.Resolved);
+
+    function PhaseCard({
+        phase,
+        isActive = false,
+        onClick,
+        className,
+    }: {
+        phase: Phase;
+        isActive?: boolean;
+        onClick?: () => void;
+        className?: string;
+    }) {
+        return (
+            <Card
+                className={cn(
+                    "flex flex-1 transition-colors ease-in-out cursor-pointer h-full",
+                    isActive
+                        ? "bg-secondary hover:bg-secondary/80"
+                        : "bg-transparent shadow-none border-transparent hover:border-inherit",
+                    className
+                )}
+                onClick={onClick}
+            >
+                <CardHeader className="w-full">
+                    <div className="flex flex-row justify-between flex-1 w-full gap-4 p-1 md:p-2">
+                        <div className="flex flex-col justify-between w-full gap-2">
+                            <CardTitle className="font-semibold text-start">
+                                {phase.title}
+                            </CardTitle>
+                            <CardDescription className="text-start">
+                                {phase.body}
+                            </CardDescription>
+                        </div>
+                        <div className="flex flex-col items-end justify-between h-full">
+                            <Badge className="text-sm uppercase select-none h-fit">
+                                {phase.status}
+                            </Badge>
+                            <h3 className="text-sm text-muted-foreground">
+                                {phase.order + 1}
+                            </h3>
+                        </div>
+                    </div>
+                </CardHeader>
+            </Card>
+        );
+    }
 
     return (
         <AuthenticatedLayout
@@ -137,7 +182,12 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 setIsOpen={setIsEditOpen}
                 title="Update Issue"
             >
-                <UpdatePhase setIsOpen={setIsEditOpen} phase={activePhase} />
+                <div className="px-4">
+                    <UpdatePhase
+                        setIsOpen={setIsEditOpen}
+                        phase={activePhase}
+                    />
+                </div>
             </ResponsiveDialog>
 
             <div className="flex flex-col w-full gap-2 lg:gap-6">
@@ -279,40 +329,45 @@ function ShowIssue({ issue }: { issue: Issue }) {
                     </CardContent>
                 </Card>
 
-                {/* Phases tracker */}
-                <div className="grid items-center grid-cols-1 gap-4 p-2 rounded-lg shadow-sm lg:mt-1 md:grid-cols-4 bg-muted outline outline-1 outline-secondary">
-                    {issue.phases.map((phase, index) => (
-                        <Card
+                {/* Mobile */}
+                <div className="block md:hidden">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className="flex items-center justify-between w-full p-0 h-fit"
+                            >
+                                <PhaseCard phase={activePhase} className="" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="p-0 mx-4 w-[calc(100vw-3rem)]">
+                            {issue.phases.map((phase) => (
+                                <DropdownMenuItem
+                                    key={phase.id}
+                                    onSelect={() => setActivePhase(phase)}
+                                    className="w-full p-0"
+                                >
+                                    <PhaseCard
+                                        phase={phase}
+                                        isActive={phase === activePhase}
+                                        onClick={() => setActivePhase(phase)}
+                                        className="w-full"
+                                    />
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+
+                {/* Desktop */}
+                <div className="items-center hidden grid-cols-1 gap-4 p-2 rounded-lg shadow-sm md:grid md:grid-cols-4 md:mt-1 bg-muted outline outline-1 outline-secondary">
+                    {issue.phases.map((phase) => (
+                        <PhaseCard
                             key={phase.id}
-                            className={cn(
-                                "flex flex-1 transition-colors ease-in-out hover:cursor-pointer",
-                                phase === activePhase
-                                    ? "bg-secondary hover:bg-secondary/80"
-                                    : "bg-transparent shadow-none border-transparent hover:border-inherit"
-                            )}
+                            phase={phase}
+                            isActive={phase === activePhase}
                             onClick={() => setActivePhase(phase)}
-                        >
-                            <CardHeader>
-                                <div className="flex flex-row justify-between flex-1 w-full gap-4">
-                                    <div className="flex flex-col w-full gap-2">
-                                        <CardTitle className="font-semibold">
-                                            {phase.title}
-                                        </CardTitle>
-                                        <CardDescription>
-                                            {phase.body}
-                                        </CardDescription>
-                                    </div>
-                                    <div className="flex flex-col items-end justify-between h-full">
-                                        <Badge className="text-sm uppercase select-none h-fit">
-                                            {phase.status}
-                                        </Badge>
-                                        <h3 className="text-sm text-muted-foreground">
-                                            {phase.order + 1}
-                                        </h3>
-                                    </div>
-                                </div>
-                            </CardHeader>
-                        </Card>
+                        />
                     ))}
                 </div>
 
@@ -351,15 +406,24 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 disabled={
-                                                    !activePhase.is_active &&
-                                                    activePhase.status !==
-                                                        PhaseStatus.Resolved
+                                                    !activePhase.is_active
                                                 }
                                             >
-                                                {activePhase.status ===
-                                                PhaseStatus.Resolved
-                                                    ? "Resolved"
-                                                    : "Resolve Phase"}
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={resolvePhase}
+                                                    disabled={
+                                                        activePhase.status !==
+                                                        PhaseStatus.Resolved
+                                                    }
+                                                >
+                                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                                    {activePhase.status ===
+                                                    PhaseStatus.Resolved
+                                                        ? "Resolved"
+                                                        : "Resolve Phase"}
+                                                </Button>
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
