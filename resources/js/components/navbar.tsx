@@ -20,8 +20,8 @@ export default function Navbar() {
                 <div className="flex items-center justify-between py-4">
                     <div className="flex items-center">
                         <a
-                            href="#"
-                            className="text-2xl font-black transition-colors rounded-md text-primary hover:text-primary-700"
+                            href="/#Beranda"
+                            className="text-2xl font-black transition-colors rounded-md text-green-500 hover:text-green-500"
                         >
                             PANDAWA
                         </a>
@@ -29,35 +29,41 @@ export default function Navbar() {
 
                     <div className="items-center hidden space-x-8 md:flex">
                         <a
-                            href="#"
-                            className="px-3 py-2 font-medium text-gray-700 transition-colors rounded-md hover:text-green-600"
+                            href="/#Beranda"
+                            className="px-3 py-2 font-medium text-gray-700 transition-colors rounded-md hover:text-green-500"
                         >
                             Beranda
                         </a>
-                        <a
-                            href="#"
-                            className="px-3 py-2 font-medium text-gray-700 transition-colors rounded-md hover:text-green-600"
+                        <Link
+                            href="/issues"
+                            className="px-3 py-2 font-medium text-gray-700 transition-colors rounded-md hover:text-green-500"
                         >
                             Laporan
+                        </Link>
+                        <a
+                            href="/#Statistik"
+                            className="px-3 py-2 font-medium text-gray-700 transition-colors rounded-md hover:text-green-500"
+                        >
+                            Statistik
                         </a>
                         <a
-                            href="#"
-                            className="px-3 py-2 font-medium text-gray-700 transition-colors rounded-md hover:text-green-600"
+                            href="/#Tentang"
+                            className="px-3 py-2 font-medium text-gray-700 transition-colors rounded-md hover:text-green-500"
                         >
                             Tentang
                         </a>
                         <a
-                            href="#"
-                            className="px-3 py-2 font-medium text-gray-700 transition-colors rounded-md hover:text-green-600"
+                            href="/#Tujuan"
+                            className="px-3 py-2 font-medium text-gray-700 transition-colors rounded-md hover:text-green-500"
                         >
-                            Kontak
+                            Tujuan
                         </a>
                     </div>
 
                     <div className="items-center hidden space-x-4 md:flex">
                         {auth.user ? (
                             <Button
-                                className="font-semibold text-gray-700 transition-colors bg-transparent rounded-full hover:text-green-600"
+                                className="font-semibold text-white transition-colors bg-transparent rounded-full bg-green-500 hover:bg-green-600"
                                 asChild
                             >
                                 <Link href="/dashboard">Dashboard</Link>
@@ -65,13 +71,13 @@ export default function Navbar() {
                         ) : (
                             <>
                                 <Button
-                                    className="font-semibold text-gray-700 transition-colors bg-transparent rounded-full hover:text-green-600"
+                                    className="font-semibold text-gray-700 transition-colors bg-transparent rounded-full hover:text-white hover:bg-green-500"
                                     asChild
                                 >
                                     <Link href="/login">Masuk</Link>
                                 </Button>
                                 <Button
-                                    className="font-semibold text-white transition-colors rounded-full bg-primary hover:bg-primary/80"
+                                    className="font-semibold text-white transition-colors rounded-full bg-green-500 hover:bg-green-600"
                                     asChild
                                 >
                                     <Link href="/register">Daftar</Link>
@@ -83,7 +89,7 @@ export default function Navbar() {
                     <div className="flex items-center md:hidden">
                         <button
                             onClick={toggleMobileMenu}
-                            className="p-2 text-gray-600 rounded-md hover:text-green-600"
+                            className="p-2 text-gray-600 rounded-md hover:text-green-500"
                             aria-label="Toggle menu"
                         >
                             {isMobileMenuOpen ? (
@@ -98,7 +104,7 @@ export default function Navbar() {
                 {isMobileMenuOpen && (
                     <div className="pb-4 space-y-2 md:hidden">
                         <a
-                            href="#"
+                            href="/#Beranda"
                             className="block px-4 py-3 font-medium text-gray-700 transition-colors rounded-md hover:bg-gray-50"
                         >
                             Beranda
@@ -110,24 +116,38 @@ export default function Navbar() {
                             Laporan
                         </a>
                         <a
-                            href="#"
+                            href="/#Statistik"
+                            className="block px-4 py-3 font-medium text-gray-700 transition-colors rounded-md hover:bg-gray-50"
+                        >
+                            Statistik
+                        </a>
+                        <a
+                            href="/#Tentang"
                             className="block px-4 py-3 font-medium text-gray-700 transition-colors rounded-md hover:bg-gray-50"
                         >
                             Tentang
                         </a>
                         <a
-                            href="#"
+                            href="/#Tujuan"
                             className="block px-4 py-3 font-medium text-gray-700 transition-colors rounded-md hover:bg-gray-50"
                         >
-                            Kontak
+                            Tujuan
                         </a>
                         <div className="pt-2 space-y-2">
-                            <button className="w-full py-3 font-semibold text-gray-700 transition-colors bg-transparent rounded-full hover:text-green-600">
-                                Masuk
-                            </button>
-                            <button className="w-full py-3 font-semibold text-white transition-colors bg-green-600 rounded-full hover:bg-green-700">
-                                Daftar
-                            </button>
+                            {auth.user ? (
+                                <Button className="w-full py-3 font-semibold text-white transition-colors bg-green-500 rounded-full hover:bg-green-700">
+                                    <Link href="/dashboard">Dashboard</Link>
+                                </Button>
+                            ) : (
+                                <>
+                                    <Button className="w-full py-3 font-semibold text-gray-700 transition-colors bg-transparent rounded-full hover:bg-green-500 hover:text-white">
+                                        <Link href="/login">Masuk</Link>
+                                    </Button>
+                                    <Button className="w-full py-3 font-semibold text-white transition-colors bg-green-500 rounded-full hover:bg-green-700">
+                                        <Link href="/register">Daftar</Link>
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     </div>
                 )}
