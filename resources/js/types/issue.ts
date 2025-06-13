@@ -94,7 +94,7 @@ interface Issue {
     user_id: string;
     issue_category_id: string;
     location: string;
-    status: PhaseStatus;
+    status: CaseStatus;
     created_at: string;
     updated_at: string;
     created_at_relative: string;
