@@ -1,7 +1,10 @@
+// TODO: fix location parsing
+
 import CTAHeader from "@/components/cta-header";
 import UpdatePhase from "@/components/forms/issues/update-phase";
 import ImageGallery from "@/components/image-gallery";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
+import StatusBadge from "@/components/status-badge";
 import { Badge } from "@/components/ui/badge";
 import {
     Breadcrumb,
@@ -29,7 +32,7 @@ import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { cn } from "@/lib/utils";
 import { PageProps } from "@/types";
 import { Auth } from "@/types/auth";
-import { Issue, Phase, PhaseStatus } from "@/types/issue";
+import { CaseStatus, Issue, Phase, PhaseStatus } from "@/types/issue";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
     AlertTriangle,
@@ -37,6 +40,7 @@ import {
     EditIcon,
     MoreHorizontal,
     PlusCircle,
+    Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -129,9 +133,10 @@ function ShowIssue({ issue }: { issue: Issue }) {
                             </CardDescription>
                         </div>
                         <div className="flex flex-col items-end justify-between h-full">
-                            <Badge className="text-sm uppercase select-none h-fit">
-                                {phase.status}
-                            </Badge>
+                            <StatusBadge
+                                status={phase.status}
+                                className="uppercase"
+                            />
                             <h3 className="text-sm text-muted-foreground">
                                 {phase.order + 1}
                             </h3>
@@ -195,7 +200,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 <CTAHeader />
 
                 {/* Main Section */}
-                <Card className="max-md:bg-transparent max-md:border-transparent max-md:shadow-transparent">
+                <Card className="max-md:bg-transparent max-md:border-none max-md:shadow-none">
                     <CardHeader className="max-md:px-0">
                         <div className="flex flex-row justify-between w-full gap-2 ">
                             <div className="flex flex-col gap-4 lg:items-center w-fit lg:w-full lg:flex-row">
@@ -203,59 +208,91 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                     {issue.title}
                                 </h1>
                                 <div className="flex gap-2">
-                                    <Badge className="text-sm font-semibold capitalize select-none">
-                                        {issue.status}
-                                    </Badge>
-                                    <Badge className="text-sm font-semibold capitalize select-none">
+                                    <StatusBadge
+                                        status={issue.status}
+                                        size={"sm"}
+                                    />
+
+                                    <Badge className="font-semibold select-none">
                                         {issue.issue_category.name}
                                     </Badge>
                                 </div>
                             </div>
                             <div className="flex md:hidden">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="bg-muted"
-                                        >
-                                            <MoreHorizontal className="w-5 h-5" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuItem asChild>
-                                            <Link
-                                                href={route("pengaduan.index")}
+                                {auth.user?.id === issue.user_id && (
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="bg-muted"
                                             >
-                                                <EditIcon className="w-4 h-4 mr-2" />
-                                                <span>Edit</span>
-                                            </Link>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem asChild>
-                                            <Link
-                                                href={route("pengaduan.index")}
-                                            >
-                                                <CheckCircle className="w-4 h-4 mr-2" />
-                                                <span>Tandai Selesai</span>
-                                            </Link>
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                                <MoreHorizontal className="w-5 h-5" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem>
+                                                <Button
+                                                    variant={"ghost"}
+                                                    size={"sm"}
+                                                    asChild
+                                                >
+                                                    <Link
+                                                        href={route(
+                                                            "pengaduan.edit",
+                                                            issue.id
+                                                        )}
+                                                    >
+                                                        <EditIcon className="w-4 h-4 mr-2" />
+                                                        <span>Edit</span>
+                                                    </Link>
+                                                </Button>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                <Button
+                                                    variant={"ghost"}
+                                                    size={"sm"}
+                                                    asChild
+                                                >
+                                                    <Link
+                                                        href={route(
+                                                            "pengaduan.index"
+                                                        )}
+                                                    >
+                                                        <Trash2 className="w-4 h-4 mr-2" />
+                                                        <span>Hapus</span>
+                                                    </Link>
+                                                </Button>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                )}
                             </div>
                             {/* Desktop: inline buttons */}
                             <div className="hidden gap-2 md:flex">
-                                <Button variant="outline" asChild>
-                                    <Link href={route("pengaduan.index")}>
-                                        <EditIcon className="w-4 h-4" />
-                                        <span>Edit</span>
-                                    </Link>
-                                </Button>
-                                <Button variant="default" asChild>
-                                    <Link href={route("pengaduan.index")}>
-                                        <CheckCircle className="w-4 h-4" />
-                                        <span>Tandai Selesai</span>
-                                    </Link>
-                                </Button>
+                                {auth.user?.id === issue.user_id && (
+                                    <>
+                                        <Button variant="outline" asChild>
+                                            <Link
+                                                href={route(
+                                                    "pengaduan.edit",
+                                                    issue.id
+                                                )}
+                                            >
+                                                <EditIcon className="w-4 h-4" />
+                                                <span>Edit</span>
+                                            </Link>
+                                        </Button>
+                                        <Button variant="default" asChild>
+                                            <Link
+                                                href={route("pengaduan.index")}
+                                            >
+                                                <CheckCircle className="w-4 h-4" />
+                                                <span>Tandai Selesai</span>
+                                            </Link>
+                                        </Button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </CardHeader>
