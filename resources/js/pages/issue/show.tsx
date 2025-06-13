@@ -123,20 +123,23 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 onClick={onClick}
             >
                 <CardHeader className="w-full">
-                    <div className="flex flex-row justify-between flex-1 w-full gap-4 p-1 md:p-2">
-                        <div className="flex flex-col justify-between w-full gap-2">
+                    <div className="flex flex-col justify-between h-full gap-4 p-1 md:p-2">
+                        {/* Top row: Title and Status */}
+                        <div className="flex flex-wrap items-center justify-between w-full gap-2">
                             <CardTitle className="font-semibold text-start">
                                 {phase.title}
                             </CardTitle>
-                            <CardDescription className="text-start">
-                                {phase.body}
-                            </CardDescription>
-                        </div>
-                        <div className="flex flex-col items-end justify-between h-full">
                             <StatusBadge
                                 status={phase.status}
                                 className="uppercase"
                             />
+                        </div>
+
+                        {/* Bottom row: Description and Order */}
+                        <div className="flex items-end justify-between w-full gap-2">
+                            <CardDescription className="line-clamp-3 text-start">
+                                {phase.body}
+                            </CardDescription>
                             <h3 className="text-sm text-muted-foreground">
                                 {phase.order + 1}
                             </h3>
