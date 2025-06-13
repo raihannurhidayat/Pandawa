@@ -64,16 +64,6 @@ function ShowIssue({ issue }: { issue: Issue }) {
         setActivePhase(issue.phases[idx !== -1 ? idx : 0]);
     }, [issue.phases]);
 
-    function toggleGallery(e: any) {
-        setGalleryIndex(0);
-        setGalleryOpen(true);
-    }
-
-    function togglePhaseGallery(e: any) {
-        setPhaseGalleryIndex(0);
-        setPhaseGalleryOpen(true);
-    }
-
     function resolvePhase() {
         router.post(
             route("phase.resolve", activePhase.id),
@@ -308,24 +298,29 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                         Lampiran
                                     </Label>
                                     <div className="flex flex-row flex-wrap gap-4">
-                                        {issue.attachments.map((attachment) => (
-                                            <Button
-                                                key={attachment.id}
-                                                className="p-0 transition-opacity hover:bg-black/10"
-                                                onClick={toggleGallery}
-                                                asChild
-                                            >
-                                                <div className="w-32 h-24 overflow-hidden rounded-md outline outline-1 outline-neutral-400">
-                                                    <img
-                                                        src={attachment.url}
-                                                        alt={
-                                                            attachment.filename
-                                                        }
-                                                        className="object-cover w-full h-full transition-transform hover:scale-105"
-                                                    />
-                                                </div>
-                                            </Button>
-                                        ))}
+                                        {issue.attachments.map(
+                                            (attachment, index) => (
+                                                <Button
+                                                    key={attachment.id}
+                                                    className="p-0 transition-opacity hover:bg-black/10"
+                                                    onClick={() => {
+                                                        setGalleryIndex(index);
+                                                        setGalleryOpen(true);
+                                                    }}
+                                                    asChild
+                                                >
+                                                    <div className="w-32 h-24 overflow-hidden rounded-md outline outline-1 outline-neutral-400">
+                                                        <img
+                                                            src={attachment.url}
+                                                            alt={
+                                                                attachment.filename
+                                                            }
+                                                            className="object-cover w-full h-full transition-transform hover:scale-105"
+                                                        />
+                                                    </div>
+                                                </Button>
+                                            )
+                                        )}
                                     </div>
                                 </div>
                             </CardContent>
@@ -521,13 +516,18 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                         </Label>
                                         <div className="flex flex-row flex-wrap gap-4">
                                             {activePhase.attachments.map(
-                                                (attachment) => (
+                                                (attachment, index) => (
                                                     <Button
                                                         key={attachment.id}
                                                         className="p-0 transition-opacity hover:bg-black/10"
-                                                        onClick={
-                                                            togglePhaseGallery
-                                                        }
+                                                        onClick={() => {
+                                                            setPhaseGalleryIndex(
+                                                                index
+                                                            );
+                                                            setPhaseGalleryOpen(
+                                                                true
+                                                            );
+                                                        }}
                                                         asChild
                                                     >
                                                         <div className="w-32 h-24 overflow-hidden rounded-md outline outline-1 outline-neutral-400">
