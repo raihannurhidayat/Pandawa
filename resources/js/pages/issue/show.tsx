@@ -367,8 +367,8 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 </Card>
 
                 {/* Mobile */}
-                <div className="block md:hidden">
-                    <DropdownMenu>
+                <div className="block lg:hidden">
+                    <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <Button
                                 variant="outline"
@@ -397,7 +397,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 </div>
 
                 {/* Desktop */}
-                <div className="items-center hidden grid-cols-1 gap-4 p-2 rounded-lg shadow-sm md:grid md:grid-cols-4 md:mt-1 bg-muted outline outline-1 outline-secondary">
+                <div className="items-center hidden grid-cols-1 gap-4 p-2 rounded-lg shadow-sm lg:grid lg:grid-cols-4 lg:mt-1 bg-muted outline outline-1 outline-secondary">
                     {issue.phases.map((phase) => (
                         <PhaseCard
                             key={phase.id}
