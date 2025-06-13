@@ -55,7 +55,7 @@ export default function Register() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
                 {/* form register */}
-                <div className="flex items-center justify-center bg-white flex-col">
+                <div className="flex items-center justify-center flex-col">
                     <div className="flex items-center justify-center gap-2 mb-6">
                         <Leaf className="size-8 text-primary" />
                         <h2 className="text-3xl font-semibold bg-gradient-to-tr from-primary to-ring bg-clip-text text-transparent">

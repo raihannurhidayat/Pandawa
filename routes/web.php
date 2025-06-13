@@ -46,7 +46,22 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // User
-    Route::get('/user/home', [UserController::class, 'index']);
+    Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
+    Route::get('/user/pengaduan', [UserController::class, 'pengaduan'])->name('user.pengaduan');
+    Route::get('/user/pengaduan/create', [UserController::class, 'create'])->name('user.pengaduan.create');
+    Route::post('/user/pengaduan', [UserController::class, 'store'])->name('user.pengaduan.store');
+
+    // Global
+    Route::get('/user/pengaduan-warga', [UserController::class, 'pengaduanWarga'])->name('user.pengaduan-warga');
+
+    // Utils
+    // routes/web.php
+    Route::post('/user/{issue}/like', [UserController::class, 'toggle'])->name("user.like");
+
+
+    // Issue Phase control
+    Route::put('/phase-update/{id}', [IssueController::class, 'updatePhase'])->name('phase.update');
+    Route::put('/phase-resolve/{id}', [IssueController::class, 'resolvePhase'])->name('phase.resolve');
 });
 
 require __DIR__ . '/auth.php';

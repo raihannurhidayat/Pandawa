@@ -18,25 +18,35 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
+import { cn } from "@/lib/utils";
+import { IconType } from "react-icons/lib";
 
 export function NavMain({
     items,
+    title
 }: {
     items: {
         title: string;
         url: string;
-        icon: LucideIcon;
+        icon: LucideIcon | IconType;
         isActive?: boolean;
         items?: {
             title: string;
             url: string;
         }[];
     }[];
+    title?: string
 }) {
+    const { url } = usePage();
+
+    function isActive(urlParams: string) {
+        return urlParams === url;
+    }
+
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+            <SidebarGroupLabel>{title}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => (
                     <Collapsible
@@ -46,7 +56,14 @@ export function NavMain({
                     >
                         <SidebarMenuItem>
                             <SidebarMenuButton asChild tooltip={item.title}>
-                                <Link href={item.url}>
+                                <Link
+                                    href={item.url}
+                                    className={cn(
+                                        "hover:bg-primary/10",
+                                        isActive(item.url) &&
+                                            "bg-primary text-primary-foreground hover:bg-primary/80"
+                                    )}
+                                >
                                     <item.icon />
                                     <span>{item.title}</span>
                                 </Link>
@@ -74,7 +91,7 @@ export function NavMain({
                                                             href={subItem.url}
                                                         >
                                                             <span>
-                                                                {subItem.title}
+                                                                {subItem.title}p
                                                             </span>
                                                         </Link>
                                                     </SidebarMenuSubButton>

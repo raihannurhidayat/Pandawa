@@ -1,0 +1,1 @@
+export const API_WILAYAH = "https://api.goapi.io/regional"

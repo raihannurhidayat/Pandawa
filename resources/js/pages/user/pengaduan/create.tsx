@@ -1,14 +1,7 @@
 import type React from "react";
 
 import { useState, useCallback, useEffect } from "react";
-import {
-    Upload,
-    X,
-    FileText,
-    ImageIcon,
-    ArrowLeft,
-    Loader2,
-} from "lucide-react";
+import { Upload, X, FileText, ImageIcon, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,12 +38,14 @@ import {
 import { toast } from "sonner";
 import { API_WILAYAH } from "@/constant/api-wilayah";
 import { Provinsi } from "@/types/wilayah";
+import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
+
 
 interface FileWithPreview extends File {
     preview?: string;
 }
 
-export default function CreateIssue({
+export default function UserCreateIssue({
     categories: data,
 }: {
     categories: Category[];
@@ -63,8 +58,7 @@ export default function CreateIssue({
     const [files, setFiles] = useState<FileWithPreview[]>([]);
     const [isDragOver, setIsDragOver] = useState(false);
 
-    const [isLoadingHandleCreateIssue, setIsLoadingHandleCreateIssue] =
-        useState(false);
+    const [isLoadingHandleCreateIssue, setIsLoadingHandleCreateIssue] = useState(false);
 
     const form = useForm<CreateIssueFormSchema>({
         resolver: zodResolver(createIssueFormSchema),
@@ -141,11 +135,7 @@ export default function CreateIssue({
         };
 
         fetchWilayah();
-    }, [
-        form.watch("location.provinsi"),
-        form.watch("location.kota"),
-        form.watch("location.kecamatan"),
-    ]);
+    }, [form.watch("location.provinsi"), form.watch("location.kota"), form.watch("location.kecamatan")]);
 
     const handleSubmitCreateIssue = (data: CreateIssueFormSchema) => {
         setIsLoadingHandleCreateIssue(true);
@@ -155,7 +145,7 @@ export default function CreateIssue({
             attachments: files,
         };
 
-        router.post(route("pengaduan.store"), newissueData, {
+        router.post(route("user.pengaduan.store"), newissueData, {
             onSuccess: () => {
                 toast.success("Pengaduan berhasil dibuat", {
                     id: "create-issues",
@@ -238,7 +228,7 @@ export default function CreateIssue({
     };
 
     return (
-        <AuthenticatedLayout header="Pengaduan">
+        <AuthenticatedUserLayout header="Pengaduan">
             <Head title="Pengaduan" />
             <div className="min-h-screen">
                 <div className="">
@@ -534,8 +524,7 @@ export default function CreateIssue({
                                                                     disabled={
                                                                         !form.getValues(
                                                                             "location.provinsi"
-                                                                        ) ||
-                                                                        !kota
+                                                                        ) || !kota
                                                                     }
                                                                 >
                                                                     <SelectTrigger
@@ -692,8 +681,7 @@ export default function CreateIssue({
                                                                     disabled={
                                                                         !form.getValues(
                                                                             "location.kecamatan"
-                                                                        ) ||
-                                                                        !kelurahan
+                                                                        ) || !kelurahan
                                                                     }
                                                                 >
                                                                     <SelectTrigger
@@ -841,9 +829,7 @@ export default function CreateIssue({
                                         <Button
                                             type="submit"
                                             className="w-full"
-                                            disabled={
-                                                isLoadingHandleCreateIssue
-                                            }
+                                            disabled={isLoadingHandleCreateIssue}
                                         >
                                             {isLoadingHandleCreateIssue ? (
                                                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -858,6 +844,6 @@ export default function CreateIssue({
                     </Card>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AuthenticatedUserLayout>
     );
 }

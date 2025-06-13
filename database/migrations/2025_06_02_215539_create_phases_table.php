@@ -12,15 +12,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('issues', function (Blueprint $table) {
+        Schema::create('phases', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->uuidMorphs('phaseable');
             $table->string('title');
             $table->text('body')->nullable();
-            $table->foreignUuid('user_id')->constrained('users');
-            $table->foreignUuid('issue_category_id')->constrained('issue_categories');
-            $table->json('location');
-            $table->string('status')->default(PhaseStatus::Open->value);
+            $table->text('reason')->nullable();
+            $table->unsignedInteger('order')->default(0);
+            $table->boolean('is_active')->default(false);
+            $table->timestamp('activated_at')->nullable();
+            $table->string('status')->default(PhaseStatus::Pending->value);
             $table->timestamps();
+
+            $table->index(['phaseable_id', 'phaseable_type', 'is_active']);
         });
     }
 
@@ -29,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('issues');
+        Schema::dropIfExists('phases');
     }
 };
