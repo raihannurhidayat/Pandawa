@@ -64,16 +64,6 @@ function ShowIssue({ issue }: { issue: Issue }) {
         setActivePhase(issue.phases[idx !== -1 ? idx : 0]);
     }, [issue.phases]);
 
-    function toggleGallery(e: any) {
-        setGalleryIndex(0);
-        setGalleryOpen(true);
-    }
-
-    function togglePhaseGallery(e: any) {
-        setPhaseGalleryIndex(0);
-        setPhaseGalleryOpen(true);
-    }
-
     function resolvePhase() {
         router.post(
             route("phase.resolve", activePhase.id),
@@ -123,20 +113,23 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 onClick={onClick}
             >
                 <CardHeader className="w-full">
-                    <div className="flex flex-row justify-between flex-1 w-full gap-4 p-1 md:p-2">
-                        <div className="flex flex-col justify-between w-full gap-2">
+                    <div className="flex flex-col justify-between h-full gap-4 p-1 md:p-2">
+                        {/* Top row: Title and Status */}
+                        <div className="flex flex-wrap items-center justify-between w-full gap-2">
                             <CardTitle className="font-semibold text-start">
                                 {phase.title}
                             </CardTitle>
-                            <CardDescription className="text-start">
-                                {phase.body}
-                            </CardDescription>
-                        </div>
-                        <div className="flex flex-col items-end justify-between h-full">
                             <StatusBadge
                                 status={phase.status}
                                 className="uppercase"
                             />
+                        </div>
+
+                        {/* Bottom row: Description and Order */}
+                        <div className="flex items-end justify-between w-full gap-2">
+                            <CardDescription className="line-clamp-3 text-start">
+                                {phase.body}
+                            </CardDescription>
                             <h3 className="text-sm text-muted-foreground">
                                 {phase.order + 1}
                             </h3>
@@ -305,24 +298,29 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                         Lampiran
                                     </Label>
                                     <div className="flex flex-row flex-wrap gap-4">
-                                        {issue.attachments.map((attachment) => (
-                                            <Button
-                                                key={attachment.id}
-                                                className="p-0 transition-opacity hover:bg-black/10"
-                                                onClick={toggleGallery}
-                                                asChild
-                                            >
-                                                <div className="w-32 h-24 overflow-hidden rounded-md outline outline-1 outline-neutral-400">
-                                                    <img
-                                                        src={attachment.url}
-                                                        alt={
-                                                            attachment.filename
-                                                        }
-                                                        className="object-cover w-full h-full transition-transform hover:scale-105"
-                                                    />
-                                                </div>
-                                            </Button>
-                                        ))}
+                                        {issue.attachments.map(
+                                            (attachment, index) => (
+                                                <Button
+                                                    key={attachment.id}
+                                                    className="p-0 transition-opacity hover:bg-black/10"
+                                                    onClick={() => {
+                                                        setGalleryIndex(index);
+                                                        setGalleryOpen(true);
+                                                    }}
+                                                    asChild
+                                                >
+                                                    <div className="w-32 h-24 overflow-hidden rounded-md outline outline-1 outline-neutral-400">
+                                                        <img
+                                                            src={attachment.url}
+                                                            alt={
+                                                                attachment.filename
+                                                            }
+                                                            className="object-cover w-full h-full transition-transform hover:scale-105"
+                                                        />
+                                                    </div>
+                                                </Button>
+                                            )
+                                        )}
                                     </div>
                                 </div>
                             </CardContent>
@@ -367,8 +365,8 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 </Card>
 
                 {/* Mobile */}
-                <div className="block md:hidden">
-                    <DropdownMenu>
+                <div className="block lg:hidden">
+                    <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <Button
                                 variant="outline"
@@ -397,7 +395,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 </div>
 
                 {/* Desktop */}
-                <div className="items-center hidden grid-cols-1 gap-4 p-2 rounded-lg shadow-sm md:grid md:grid-cols-4 md:mt-1 bg-muted outline outline-1 outline-secondary">
+                <div className="items-center hidden grid-cols-1 gap-4 p-2 rounded-lg shadow-sm lg:grid lg:grid-cols-4 lg:mt-1 bg-muted outline outline-1 outline-secondary">
                     {issue.phases.map((phase) => (
                         <PhaseCard
                             key={phase.id}
@@ -518,13 +516,18 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                         </Label>
                                         <div className="flex flex-row flex-wrap gap-4">
                                             {activePhase.attachments.map(
-                                                (attachment) => (
+                                                (attachment, index) => (
                                                     <Button
                                                         key={attachment.id}
                                                         className="p-0 transition-opacity hover:bg-black/10"
-                                                        onClick={
-                                                            togglePhaseGallery
-                                                        }
+                                                        onClick={() => {
+                                                            setPhaseGalleryIndex(
+                                                                index
+                                                            );
+                                                            setPhaseGalleryOpen(
+                                                                true
+                                                            );
+                                                        }}
                                                         asChild
                                                     >
                                                         <div className="w-32 h-24 overflow-hidden rounded-md outline outline-1 outline-neutral-400">
