@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { MessageCircle, Phone, Mail, MapPin, ExternalLink } from 'lucide-react';
+import { MessageCircle, Phone, Mail, MapPin, Leaf, ExternalLink } from 'lucide-react';
 
 export default function Footer() {
     return (
@@ -9,7 +9,7 @@ export default function Footer() {
                     <div className="lg:col-span-1">
                         <div className="flex items-center mb-6">
                             <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
-                                <MessageCircle className="w-6 h-6 text-white" />
+                                <Leaf className="w-6 h-6 text-white" />
                             </div>
                             <h3 className="text-xl font-bold">Pandawa</h3>
                         </div>

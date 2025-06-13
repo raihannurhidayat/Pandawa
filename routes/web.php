@@ -3,20 +3,32 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\IssueController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OnboardingController;
-use App\Http\Controllers\UserController;
 
-Route::get('/', function () {
-    return Inertia::render('welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('welcome');
+// Route::get('/', function () {
+//     return Inertia::render('welcome', [
+//         'canLogin' => Route::has('login'),
+//         'canRegister' => Route::has('register'), 
+//         'laravelVersion' => Application::VERSION,
+//         'phpVersion' => PHP_VERSION,
+//     ]);
+// })->name('welcome');
 
+
+Route::get('/profile/{profile}', [ProfileController::class,'show'])->name('profile.show');
+
+Route::get('/', [LandingController::class, 'index'])->name('landing');
+
+// Route untuk menampilkan semua issues (public)
+Route::get('/issues', [LandingController::class, 'issues'])->name('issues.public');
+
+// Route untuk menampilkan detail issue tertentu (public)
+Route::get('/issues/{issue}', [LandingController::class, 'showIssue'])
+    ->name('issues.show.public');
 
 Route::resource('/pengaduan', IssueController::class)->middleware(['auth']);
 
