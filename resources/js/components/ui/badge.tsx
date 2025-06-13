@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-    "inline-flex items-center border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+    "inline-flex items-center border font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
     {
         variants: {
             variant: {
@@ -20,10 +20,16 @@ const badgeVariants = cva(
                 pill: "rounded-full",
                 normal: "rounded-md",
             },
+            size: {
+                sm: "px-2 py-0.5 text-xs",
+                md: "px-3 py-0.5 text-sm",
+                lg: "px-4 py-1 text-base",
+            },
         },
         defaultVariants: {
             variant: "default",
             type: "pill",
+            size: "md",
         },
     }
 );
@@ -34,10 +40,16 @@ export interface BadgeProps
     type?: "pill" | "normal";
 }
 
-function Badge({ className, type = "pill", variant, ...props }: BadgeProps) {
+function Badge({
+    className,
+    type = "pill",
+    variant,
+    size = "sm",
+    ...props
+}: BadgeProps) {
     return (
         <div
-            className={cn(badgeVariants({ variant, type }), className)}
+            className={cn(badgeVariants({ variant, type, size }), className)}
             {...props}
         />
     );
