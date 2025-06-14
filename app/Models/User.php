@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -24,7 +25,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'profile_photo_path',
     ];
+
+    protected $appends = ['profile_photo_url'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -34,6 +38,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'profile_photo_path',
     ];
 
     /**
@@ -49,6 +54,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function getProfilePhotoUrlAttribute(): ?string
+    {
+        return Storage::url($this->profile_photo_path);
+    }
+
 
     public static function booted(): void
     {
@@ -56,5 +66,4 @@ class User extends Authenticatable
             $model->id = (string) Str::orderedUuid();
         });
     }
-
 }

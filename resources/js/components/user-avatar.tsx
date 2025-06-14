@@ -61,7 +61,7 @@ export default function UserAvatar({
         >
             <div className="relative overflow-visible">
                 <Avatar className={cn(userAvatarVariants({ size }))}>
-                    <AvatarImage src={user?.profile_photo_path} />
+                    <AvatarImage src={user?.profile_photo_url} />
                     <AvatarFallback className="flex items-center justify-center w-full h-full">
                         <UserIcon className="w-1/2 h-1/2" />
                     </AvatarFallback>
