@@ -84,7 +84,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
         );
     }
 
-    // to be deleted in prod
+    // TODO: delete in prod
     console.log(issue);
     console.log(activePhase.status === PhaseStatus.Resolved);
 
@@ -103,15 +103,18 @@ function ShowIssue({ issue }: { issue: Issue }) {
             <Card
                 className={cn(
                     "flex flex-1 transition-colors ease-in-out cursor-pointer h-full",
-                    isActive
-                        ? "bg-green-50 border-green-200 hover:bg-green-100"
-                        : "bg-transparent shadow-none border-transparent hover:border-inherit hover:bg-gray-50",
+                    {
+                        "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-secondary dark:border-transparent dark:hover:bg-accent":
+                            isActive,
+                        "bg-transparent shadow-none border-transparent hover:border-inherit hover:bg-gray-50 dark:hover:bg-muted dark:sm:hover:border-accent":
+                            !isActive,
+                    },
                     className
                 )}
                 onClick={onClick}
             >
                 <CardHeader className="w-full">
-                    <div className="flex flex-col justify-between h-full gap-4 p-1 md:p-2">
+                    <div className="flex flex-col justify-between h-full gap-4">
                         {/* Top row: Title and Status */}
                         <div className="flex flex-wrap items-center justify-between w-full gap-2">
                             <CardTitle className="font-semibold text-start">
@@ -144,7 +147,10 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
-                            <Link href={route("pengaduan.index")} className="text-sm sm:text-base">
+                            <Link
+                                href={route("pengaduan.index")}
+                                className="text-sm sm:text-base"
+                            >
                                 Pengaduan
                             </Link>
                         </BreadcrumbItem>
@@ -156,14 +162,14 @@ function ShowIssue({ issue }: { issue: Issue }) {
                 </Breadcrumb>
             }
         >
-            <div className="min-h-screen p-2 sm:p-4 font-poppins bg-slate-50 relative overflow-visible">
+            <div className="relative min-h-screen overflow-visible sm:p-4">
                 <Head title={issue.title} />
 
                 {/* Background decoration */}
                 <div className="absolute inset-0 opacity-20">
-                    <div className="absolute top-10 left-10 w-16 h-16 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-blue-200 rounded-full blur-3xl"></div>
-                    <div className="absolute top-20 sm:top-40 right-10 sm:right-20 w-24 h-24 sm:w-36 sm:h-36 lg:w-48 lg:h-48 bg-purple-200 rounded-full blur-3xl"></div>
-                    <div className="absolute bottom-20 sm:bottom-40 left-16 sm:left-32 w-20 h-20 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-pink-200 rounded-full blur-3xl"></div>
+                    <div className="absolute w-16 h-16 bg-blue-200 rounded-full top-10 left-10 sm:w-24 sm:h-24 lg:w-32 lg:h-32 blur-3xl"></div>
+                    <div className="absolute w-24 h-24 bg-purple-200 rounded-full top-20 sm:top-40 right-10 sm:right-20 sm:w-36 sm:h-36 lg:w-48 lg:h-48 blur-3xl"></div>
+                    <div className="absolute w-20 h-20 bg-pink-200 rounded-full bottom-20 sm:bottom-40 left-16 sm:left-32 sm:w-32 sm:h-32 lg:w-40 lg:h-40 blur-3xl"></div>
                 </div>
 
                 {/* Image gallery */}
@@ -196,60 +202,16 @@ function ShowIssue({ issue }: { issue: Issue }) {
                     </div>
                 </ResponsiveDialog>
 
-                <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 lg:py-8 relative z-10 max-w-7xl">
+                <div className="container relative z-10 flex flex-col gap-4 px-2 py-4 mx-auto sm:gap-6 sm:px-4 sm:py-6 lg:py-8 max-w-7xl">
                     {/* Header Section */}
-                    <div className="mb-6">
-                        <CTAHeader />
-                    </div>
-
-                    {/* Phase Progress - Mobile */}
-                    <div className="block lg:hidden mb-6 sm:mb-8">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="flex items-center justify-between w-full p-0 h-fit bg-white/90 backdrop-blur-sm shadow-lg border border-gray-100"
-                                >
-                                    <PhaseCard phase={activePhase} className="border-none shadow-none" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="p-0 mx-4 w-[calc(100vw-3rem)] bg-white/95 backdrop-blur-sm border border-gray-200">
-                                {issue.phases.map((phase) => (
-                                    <DropdownMenuItem
-                                        key={phase.id}
-                                        onSelect={() => setActivePhase(phase)}
-                                        className="w-full p-0 focus:bg-transparent"
-                                    >
-                                        <PhaseCard
-                                            phase={phase}
-                                            isActive={phase === activePhase}
-                                            onClick={() => setActivePhase(phase)}
-                                            className="w-full border-none shadow-none"
-                                        />
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-
-                    {/* Phase Progress - Desktop */}
-                    <div className="hidden lg:flex items-center gap-2 xl:gap-4 p-2 rounded-lg shadow-sm bg-white/80 backdrop-blur-sm border border-gray-200 mb-6 sm:mb-8 lg:mb-10">
-                        {issue.phases.map((phase) => (
-                            <PhaseCard
-                                key={phase.id}
-                                phase={phase}
-                                isActive={phase === activePhase}
-                                onClick={() => setActivePhase(phase)}
-                            />
-                        ))}
-                    </div>
+                    <CTAHeader />
 
                     {/* Main Section */}
                     <Card className="max-md:bg-transparent max-md:border-none max-md:shadow-none">
-                        <CardHeader className="max-md:px-0">
+                        <CardHeader className="max-md:px-0 max-md:pt-0">
                             <div className="flex flex-row justify-between w-full gap-2 ">
                                 <div className="flex flex-col gap-4 lg:items-center w-fit lg:w-full lg:flex-row">
-                                    <h1 className="flex-1 text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
+                                    <h1 className="flex-1 text-xl font-bold leading-tight text-secondary-foreground sm:text-2xl lg:text-3xl">
                                         {issue.title}
                                     </h1>
                                     <div className="flex gap-2">
@@ -330,7 +292,9 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                             </Button>
                                             <Button variant="default" asChild>
                                                 <Link
-                                                    href={route("pengaduan.index")}
+                                                    href={route(
+                                                        "pengaduan.index"
+                                                    )}
                                                 >
                                                     <CheckCircle className="w-4 h-4" />
                                                     <span>Tandai Selesai</span>
@@ -341,7 +305,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                 </div>
                             </div>
                         </CardHeader>
-                        <CardContent className="flex flex-col w-full gap-4 lg:flex-row max-md:px-0">
+                        <CardContent className="flex flex-col w-full gap-4 lg:flex-row max-md:px-0 max-md:pb-0">
                             <Card className="flex-1">
                                 <CardContent className="flex flex-col gap-4 p-4">
                                     <p className="">{issue.body}</p>
@@ -356,14 +320,20 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                                         key={attachment.id}
                                                         className="p-0 transition-opacity hover:bg-black/10"
                                                         onClick={() => {
-                                                            setGalleryIndex(index);
-                                                            setGalleryOpen(true);
+                                                            setGalleryIndex(
+                                                                index
+                                                            );
+                                                            setGalleryOpen(
+                                                                true
+                                                            );
                                                         }}
                                                         asChild
                                                     >
                                                         <div className="w-32 h-24 overflow-hidden rounded-md outline outline-1 outline-neutral-400">
                                                             <img
-                                                                src={attachment.url}
+                                                                src={
+                                                                    attachment.url
+                                                                }
                                                                 alt={
                                                                     attachment.filename
                                                                 }
@@ -399,7 +369,10 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                         Pembuat
                                     </Label>
                                     <Link
-                                        href={route("onboarding", issue.user.id)}
+                                        href={route(
+                                            "onboarding",
+                                            issue.user.id
+                                        )}
                                         className="text-blue-500 hover:underline"
                                     >
                                         {issue.user.name}
@@ -410,6 +383,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                     <p className="break-words whitespace-pre-wrap">
                                         {/* {issue.location} */}
                                         test
+                                        {/* TODO: fix location */}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -424,10 +398,13 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                     variant="outline"
                                     className="flex items-center justify-between w-full p-0 h-fit"
                                 >
-                                    <PhaseCard phase={activePhase} className="" />
+                                    <PhaseCard
+                                        phase={activePhase}
+                                        className=""
+                                    />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="p-0 mx-4 w-[calc(100vw-3rem)]">
+                            <DropdownMenuContent className="p-0 mx-4 w-[calc(100vw-4rem)]">
                                 {issue.phases.map((phase) => (
                                     <DropdownMenuItem
                                         key={phase.id}
@@ -437,7 +414,9 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                         <PhaseCard
                                             phase={phase}
                                             isActive={phase === activePhase}
-                                            onClick={() => setActivePhase(phase)}
+                                            onClick={() =>
+                                                setActivePhase(phase)
+                                            }
                                             className="w-full"
                                         />
                                     </DropdownMenuItem>
@@ -447,7 +426,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                     </div>
 
                     {/* Desktop */}
-                    <div className="items-center hidden grid-cols-1 gap-4 p-2 rounded-lg shadow-sm lg:grid lg:grid-cols-4 lg:mt-1 bg-muted outline outline-1 outline-secondary">
+                    <div className="items-center hidden grid-cols-1 gap-4 p-2 rounded-lg shadow-sm lg:grid lg:grid-cols-4 bg-muted outline outline-1 outline-secondary">
                         {issue.phases.map((phase) => (
                             <PhaseCard
                                 key={phase.id}
@@ -459,10 +438,10 @@ function ShowIssue({ issue }: { issue: Issue }) {
                     </div>
 
                     {/* Updates */}
-                    <Card className="bg-white/90 backdrop-blur-sm shadow-lg border border-gray-100">
+                    <Card>
                         <CardHeader className="p-4 sm:p-6">
                             <div className="flex items-center justify-between w-full">
-                                <h1 className="text-xl sm:text-2xl font-medium leading-none tracking-tight text-gray-900">
+                                <h1 className="text-lg font-medium leading-none tracking-tight text-secondary-foreground sm:text-2xl">
                                     {activePhase.title}
                                 </h1>
                                 <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
@@ -470,7 +449,10 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                     <div className="flex md:hidden">
                                         <DropdownMenu modal={false}>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                >
                                                     <MoreHorizontal className="w-5 h-5" />
                                                 </Button>
                                             </DropdownMenuTrigger>
@@ -507,7 +489,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                                     >
                                                         <CheckCircle className="w-4 h-4 mr-2" />
                                                         {activePhase.status ===
-                                                            PhaseStatus.Resolved
+                                                        PhaseStatus.Resolved
                                                             ? "Resolved"
                                                             : "Resolve Phase"}
                                                     </Button>
@@ -540,11 +522,14 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                                 <span>Resolve Phase</span>
                                             </Button>
                                         ) : (
-                                            <Button variant="secondary" disabled>
+                                            <Button
+                                                variant="secondary"
+                                                disabled
+                                            >
                                                 <CheckCircle className="w-4 h-4" />
                                                 <span>
                                                     {activePhase.status ===
-                                                        PhaseStatus.Resolved
+                                                    PhaseStatus.Resolved
                                                         ? "Resolved"
                                                         : "Resolve Phase"}
                                                 </span>
@@ -619,7 +604,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
 
                     {/* Comments */}
                 </div>
-                </div>
+            </div>
         </AuthenticatedLayout>
     );
 }
