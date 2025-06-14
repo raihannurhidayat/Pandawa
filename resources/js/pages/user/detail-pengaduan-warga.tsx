@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { BiMessageCheck } from "react-icons/bi";
 import {
     Calendar,
     ChevronLeft,
@@ -24,12 +25,27 @@ import {
     LucideIcon,
     MegaphoneIcon,
     Megaphone,
+    Settings,
+    ThumbsDown,
+    FileCheck,
+    CheckSquare,
+    FileX,
+    Hammer,
+    Ban,
+    FileClock,
+    MessageCircleX,
+
 } from "lucide-react";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
 import { Head } from "@inertiajs/react";
 import { Issue } from "@/types/issue";
 import { Send, Hourglass, ClipboardList, HelpCircle } from "lucide-react";
-import { IoMegaphone, IoMegaphoneOutline, IoMegaphoneSharp } from "react-icons/io5";
+import {
+    IoMegaphone,
+    IoMegaphoneOutline,
+    IoMegaphoneSharp,
+} from "react-icons/io5";
+import { IconType } from "react-icons/lib";
 
 // Mock data for the complaint
 const complaintData = {
@@ -86,51 +102,52 @@ const complaintData = {
     ],
 };
 
-// Enhanced status configuration with individual steps
-const statusSteps = [
-    { name: "Open", icon: AlertCircle, description: "Report submitted" },
-    { name: "Pending", icon: Clock, description: "Under review" },
-    { name: "In Progress", icon: Wrench, description: "Being addressed" },
-    { name: "Resolved", icon: CheckCircle, description: "Issue fixed" },
-    { name: "Closed", icon: XCircle, description: "Case closed" },
-];
-
-// Mock status history to show progress (you can modify this based on your data)
-const statusHistory = {
-    Open: { status: "completed", date: "2024-01-15" },
-    Pending: { status: "completed", date: "2024-01-16" },
-    "In Progress": { status: "current", date: "2024-01-17" },
-    Resolved: { status: "pending", date: null },
-    Closed: { status: "pending", date: null },
-};
-
 const statusColorMap: Record<string, string> = {
     pending: "text-gray-500",
     in_progress: "text-blue-700",
     resolved: "text-green-700",
-    closed: "text-gray-600",
+    closed: "text-red-600",
 };
 
-const StatusIconMap: Record<string, LucideIcon> = {
+const StatusIconMap: Record<string, LucideIcon | IconType> = {
+    // Step 1: Pengajuan
     "Pengaduan diajukan": Send,
+    "Pengaduan diproses": Settings,
+    "Pengaduan diterima": CheckCircle,
+    "Pengaduan ditolak": ThumbsDown,
+
+    // Step 2: Tindak lanjut / Penyusunan solusi
     "Menunggu tindak lanjut": Hourglass,
+    "Penyusunan solusi": FileCheck,
+    "Solusi disetujui": CheckSquare,
+    "Solusi ditolak": FileX,
+
+    // Step 3: Eksekusi solusi
     "Persiapan pelaksanaan": ClipboardList,
+    "Pelaksanaan solusi": Hammer,
+    "Pelaksanaan selesai": CheckCircle,
+    "Pelaksanaan dibatalkan": Ban,
+
+    // Step 4: Penyelesaian
     "Menunggu konfirmasi": HelpCircle,
-};
+    "Konfirmasi diproses": FileClock,
+    "Pengaduan selesai": BiMessageCheck,
+    "Pengaduan ditutup": MessageCircleX,
+  };
 
 const statusIconColor: Record<string, string> = {
     pending: "bg-gray-100 border-gray-300 text-gray-500",
     in_progress:
         "bg-blue-100 border-blue-500 text-blue-700 ring-4 ring-blue-100",
     resolved: "bg-green-100 border-green-500 text-green-700",
-    closed: "bg-gray-200 border-gray-400 text-gray-600",
+    closed: "bg-red-200 border-red-400 text-red-600",
 };
 
 const statusBarColorMap: Record<string, string> = {
     pending: "h-0 bg-gray-300",
     in_progress: "h-1/2 bg-blue-500",
     resolved: "h-full bg-green-500",
-    closed: "h-full bg-gray-400",
+    closed: "h-full bg-red-400",
 };
 
 const categoryIcons = {
@@ -144,7 +161,6 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
     const [newComment, setNewComment] = useState("");
     const [comments, setComments] = useState(complaintData.comments);
 
-    const currentStatus = complaintData.status as keyof typeof statusHistory;
     const CategoryIcon =
         categoryIcons[complaintData.category as keyof typeof categoryIcons];
 
@@ -182,6 +198,22 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
         }
     };
 
+    const isIssueClosed = issue.phases.some(
+        (phase) => phase.status === "closed"
+    );
+
+    const currentIssue = issue?.phases
+        ?.filter((item) => item?.is_active === 1)
+        .sort((a: any, b: any) => {
+            const aTime = new Date(a?.activated_at || a?.created_at).getTime();
+            const bTime = new Date(b?.activated_at || b?.created_at).getTime();
+
+            console.log(bTime - aTime);
+            return bTime - aTime;
+        })[0]?.title ?? "Pengaduan Telah Selesai";
+
+    console.log(currentIssue);
+
     return (
         <AuthenticatedUserLayout header="Detail Pengaduan Warga">
             <Head title="Detail Pengaduan Warga" />
@@ -202,7 +234,11 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                 <CardTitle className="text-2xl font-bold">
                                                     {issue.title}
                                                 </CardTitle>
-                                                <div className={`flex items-center gap-1 text-destructive ${buttonVariants({variant: "outline"})} hover:bg-transparent hover:shadow-none hover:opacity-100 hover:ring-0 hover:border-inherit hover:text-destructive`}>
+                                                <div
+                                                    className={`flex items-center gap-1 text-destructive ${buttonVariants(
+                                                        { variant: "outline" }
+                                                    )} hover:bg-transparent hover:shadow-none hover:opacity-100 hover:ring-0 hover:border-inherit hover:text-destructive`}
+                                                >
                                                     <IoMegaphoneOutline className="h-4 w-4 text-destructive" />
                                                     <span className="text-sm font-medium">
                                                         {issue.likes_count}
@@ -252,37 +288,14 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         {/* Current Status Badge */}
                                         <div className="flex items-center justify-between">
                                             <Badge
-                                                className={` px-3 py-1`}
+                                                className={`${
+                                                    isIssueClosed
+                                                        ? "bg-destructive text-destructive-foreground hover:bg-destructive hover:shadow-none hover:opacity-100 hover:ring-0 hover:border-inherit"
+                                                        : "bg-primary"
+                                                } px-3 py-1`}
                                             >
-                                                {
-                                                    issue?.phases
-                                                        ?.filter(
-                                                            (item) =>
-                                                                item.is_active ===
-                                                                1
-                                                        )
-                                                        .sort(
-                                                            (
-                                                                a: any,
-                                                                b: any
-                                                            ) => {
-                                                                const aTime =
-                                                                    new Date(
-                                                                        a.activated_at ||
-                                                                            a.created_at
-                                                                    ).getTime();
-                                                                const bTime =
-                                                                    new Date(
-                                                                        b.activated_at ||
-                                                                            b.created_at
-                                                                    ).getTime();
-                                                                return (
-                                                                    bTime -
-                                                                    aTime
-                                                                );
-                                                            }
-                                                        )[0].title
-                                                }
+
+                                                    {currentIssue}
                                             </Badge>
                                             <span className="text-sm">
                                                 Last updated:{" "}
@@ -294,14 +307,16 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         <div className="space-y-4">
                                             {issue.phases
                                                 .filter(
-                                                    (phase) =>
-                                                        !!phase.activated_at
+                                                    (p) =>
+                                                        !!p.activated_at
                                                 )
                                                 .map((phase, index) => {
+
+
                                                     const StepIconPhase =
                                                         StatusIconMap[
-                                                            phase.title
-                                                        ] || AlertCircle;
+                                                            phase?.title!
+                                                        ];
 
                                                     const activatedPhase =
                                                         issue.phases.filter(
@@ -314,42 +329,43 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                             key={index}
                                                             className="flex items-center gap-4 "
                                                         >
-                                                            {/* Icon */}
-                                                            <div
-                                                                className={`
+                                                            <div className="flex flex-col w-full">
+                                                                <div className="flex items-center justify-between gap-4">
+                                                                    {/* Icon */}
+                                                                    <div
+                                                                        className={`
     flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300
     ${
         statusIconColor[phase.status] ||
         "bg-gray-100 border-gray-300 text-gray-500"
     }
   `}
-                                                            >
-                                                                <StepIconPhase className="h-5 w-5" />
-                                                            </div>
-
-                                                            {/* Step */}
-                                                            <div className="flex-1">
-                                                                <div className="flex items-center justify-between ">
-                                                                    <div>
-                                                                        <h4
-                                                                            className={`font-medium ${
-                                                                                statusColorMap[
-                                                                                    phase
-                                                                                        .status
-                                                                                ] ||
-                                                                                " border-gray-300 text-gray-500"
-                                                                            }`}
-                                                                        >
-                                                                            {
-                                                                                phase.title
-                                                                            }
-                                                                        </h4>
-                                                                        <p className="text-sm">
-                                                                            {
-                                                                                phase.status
-                                                                            }
-                                                                        </p>
-                                                                        {/* {phase.status ===
+                                                                    >
+                                                                        <StepIconPhase className="h-5 w-5" />
+                                                                    </div>
+                                                                    {/* Step */}
+                                                                    <div className="flex-1">
+                                                                        <div className="flex items-center justify-between ">
+                                                                            <div>
+                                                                                <h4
+                                                                                    className={`font-medium ${
+                                                                                        statusColorMap[
+                                                                                            phase
+                                                                                                .status
+                                                                                        ] ||
+                                                                                        " border-gray-300 text-gray-500"
+                                                                                    }`}
+                                                                                >
+                                                                                    {
+                                                                                        phase.title
+                                                                                    }
+                                                                                </h4>
+                                                                                <p className="text-sm">
+                                                                                    {
+                                                                                        phase.status
+                                                                                    }
+                                                                                </p>
+                                                                                {/* {phase.status ===
                                                                             "rejected" && (
                                                                             <p className="text-sm text-red-600 mt-1">
                                                                                 Reason:{" "}
@@ -357,16 +373,36 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                                                     "See comments for details"
                                                                             </p>
                                                                         )} */}
+                                                                            </div>
+                                                                            {phase.created_at && (
+                                                                                <span className="text-xs text-gray-500">
+                                                                                    {
+                                                                                        phase.created_at_formatted
+                                                                                    }
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
                                                                     </div>
-                                                                    {phase.created_at && (
-                                                                        <span className="text-xs text-gray-500">
-                                                                            {
-                                                                                phase.created_at_formatted
-                                                                            }
-                                                                        </span>
-                                                                    )}
+                                                                    {/* Status indikator */}
+                                                                    <div className="flex items-center">
+                                                                        {phase.status ===
+                                                                            "pending" && (
+                                                                            <div className="w-5 h-5 bg-gray-300 rounded-full" />
+                                                                        )}
+                                                                        {phase.status ===
+                                                                            "in_progress" && (
+                                                                            <div className="w-5 h-5 bg-blue-500 rounded-full animate-pulse" />
+                                                                        )}
+                                                                        {phase.status ===
+                                                                            "resolved" && (
+                                                                            <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                        )}
+                                                                        {phase.status ===
+                                                                            "closed" && (
+                                                                            <XCircle className="h-5 w-5 text-gray-500" />
+                                                                        )}
+                                                                    </div>
                                                                 </div>
-
                                                                 {/* Progress Bar */}
                                                                 {index <
                                                                     activatedPhase.length -
@@ -383,26 +419,6 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                                     </div>
                                                                 )}
                                                             </div>
-
-                                                            {/* Status indikator */}
-                                                            <div className="flex items-center">
-                                                                {phase.status ===
-                                                                    "pending" && (
-                                                                    <div className="w-5 h-5 bg-gray-300 rounded-full" />
-                                                                )}
-                                                                {phase.status ===
-                                                                    "in_progress" && (
-                                                                    <div className="w-5 h-5 bg-blue-500 rounded-full animate-pulse" />
-                                                                )}
-                                                                {phase.status ===
-                                                                    "resolved" && (
-                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
-                                                                )}
-                                                                {phase.status ===
-                                                                    "closed" && (
-                                                                    <XCircle className="h-5 w-5 text-gray-500" />
-                                                                )}
-                                                            </div>
                                                         </div>
                                                     );
                                                 })}
@@ -410,38 +426,61 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
 
                                         {/* Overall Progress Bar */}
                                         <div className="pt-4 border-t">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <span className="text-sm font-medium">
-                                                    Overall Progress
-                                                </span>
-                                                <span className="text-sm">
-                                                    {
-                                                        issue.phases.filter(
-                                                            (s) =>
-                                                                s.status ===
-                                                                "resolved"
-                                                        ).length
-                                                    }{" "}
-                                                    of {issue.phases.length}{" "}
-                                                    Resolved
-                                                </span>
-                                            </div>
-                                            <div className="w-full bg-gray-200 rounded-full h-2">
-                                                <div
-                                                    className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-700"
-                                                    style={{
-                                                        width: `${
-                                                            (issue.phases.filter(
-                                                                (s) =>
-                                                                    s.status ===
-                                                                    "resolved"
-                                                            ).length /
-                                                                statusSteps.length) *
-                                                            100
-                                                        }%`,
-                                                    }}
-                                                />
-                                            </div>
+                                            {isIssueClosed ? (
+                                                <div className="flex items-center text-destructive justify-between mb-2 bg-secondary rounded-md px-2 py-1">
+                                                    <h2 className="text-red-600 text-sm">
+                                                        Pengaduan Ditolak
+                                                    </h2>
+                                                    <div
+                                                        className={`${buttonVariants(
+                                                            { variant: "ghost" }
+                                                        )} bg-secondary`}
+                                                    >
+                                                        <XCircle className="size-6 text-red-600" />
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-sm font-medium">
+                                                            Overall Progress
+                                                        </span>
+                                                        <span className="text-sm">
+                                                            {
+                                                                issue.phases.filter(
+                                                                    (s) =>
+                                                                        s.status ===
+                                                                        "resolved"
+                                                                ).length
+                                                            }{" "}
+                                                            of{" "}
+                                                            {
+                                                                issue.phases
+                                                                    .length
+                                                            }{" "}
+                                                            Resolved
+                                                        </span>
+                                                    </div>
+                                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                                        <div
+                                                            className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-700"
+                                                            style={{
+                                                                width: `${
+                                                                    (issue.phases.filter(
+                                                                        (s) =>
+                                                                            s.status ===
+                                                                            "resolved"
+                                                                    ).length /
+                                                                        issue
+                                                                            .phases
+                                                                            .length) *
+                                                                    100
+                                                                }%`,
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </CardContent>
@@ -450,7 +489,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                             {/* Image Attachments */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Evidence Photos</CardTitle>
+                                    <CardTitle>Bukti Pendukung</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -609,10 +648,10 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-12 w-12">
                                             <AvatarImage
-                                                src={
-                                                    complaintData.reporter
-                                                        .avatar
-                                                }
+                                            // src={
+                                            //     complaintData.reporter
+                                            //         .avatar
+                                            // }
                                             />
                                             <AvatarFallback>
                                                 <User className="h-6 w-6" />
