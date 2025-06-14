@@ -33,7 +33,7 @@ import {
     PencilIcon,
 } from "lucide-react";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
-import { Head, router, usePage } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { IoMegaphone, IoMegaphoneOutline } from "react-icons/io5";
 import { Category } from "@/types/category";
 import { Issue } from "@/types/issue";
@@ -130,9 +130,13 @@ function ComplaintCard({
                         {complaint?.status}
                     </Badge>
                 </div>
-                <h3 className="font-semibold text-lg leading-tight line-clamp-2 group-hover:text-primary/80 transition-colors">
-                    {complaint?.title}
-                </h3>
+                <Link
+                    href={route("user.detail.pengaduan-warga", complaint?.id)}
+                >
+                    <h3 className="font-semibold text-lg leading-tight line-clamp-2 group-hover:text-primary/80 transition-colors">
+                        {complaint?.title}
+                    </h3>
+                </Link>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between">
                 <p className="text-sm text-gray-600 line-clamp-3 mb-4">
@@ -297,10 +301,14 @@ export default function PengaduanWargaPage({
                     if (typeof router.reload === "function") {
                         router.reload({ only: ["issues"] });
                     } else {
-                        router.get(window.location.pathname, {}, { only: ["issues"], preserveScroll: true });
+                        router.get(
+                            window.location.pathname,
+                            {},
+                            { only: ["issues"], preserveScroll: true }
+                        );
                     }
-                }
-            },
+                },
+            }
         );
     };
 
