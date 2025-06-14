@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { useIsMobile } from "@/hooks/use-mobile";
 import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { cn } from "@/lib/utils";
 import { PageProps } from "@/types";
@@ -45,6 +46,8 @@ import { toast } from "sonner";
 
 function ShowIssue({ issue }: { issue: Issue }) {
     const { auth } = usePage<PageProps<{ auth: Auth }>>().props;
+
+    const isMobile = useIsMobile();
 
     const [galleryOpen, setGalleryOpen] = useState(false);
     const [galleryIndex, setGalleryIndex] = useState(0);
@@ -103,32 +106,30 @@ function ShowIssue({ issue }: { issue: Issue }) {
             <Card
                 className={cn(
                     "flex flex-1 transition-colors ease-in-out cursor-pointer h-full",
-                    {
-                        "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-secondary dark:border-transparent dark:hover:bg-accent":
-                            isActive,
-                        "bg-transparent shadow-none border-transparent hover:border-inherit hover:bg-gray-50 dark:hover:bg-muted dark:sm:hover:border-accent":
-                            !isActive,
-                    },
+                    isActive
+                        ? "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-secondary dark:border-transparent dark:hover:bg-accent"
+                        : "bg-transparent shadow-none border-transparent hover:border-inherit hover:bg-gray-50 dark:hover:bg-muted dark:sm:hover:border-accent",
                     className
                 )}
                 onClick={onClick}
             >
-                <CardHeader className="w-full">
+                <CardHeader className="w-full max-md:p-4">
                     <div className="flex flex-col justify-between h-full gap-4">
                         {/* Top row: Title and Status */}
                         <div className="flex flex-wrap items-center justify-between w-full gap-2">
-                            <CardTitle className="font-semibold text-start">
+                            <CardTitle className="font-semibold text-start max-md:text-lg">
                                 {phase.title}
                             </CardTitle>
                             <StatusBadge
                                 status={phase.status}
                                 className="uppercase"
+                                size={isMobile ? "sm" : "md"}
                             />
                         </div>
 
                         {/* Bottom row: Description and Order */}
                         <div className="flex items-end justify-between w-full gap-2">
-                            <CardDescription className="line-clamp-3 text-start">
+                            <CardDescription className="line-clamp-3 text-start max-md:text-sm">
                                 {phase.body}
                             </CardDescription>
                             <h3 className="text-sm text-muted-foreground">
