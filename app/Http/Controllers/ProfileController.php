@@ -31,6 +31,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        // dd($request->all());
         $user = $request->user();
 
         // 1) If the photo form was submitted, swap the image:
@@ -42,7 +43,7 @@ class ProfileController extends Controller
             // store new
             $user->profile_photo_path = $request
                 ->file('photo')
-                ->store('profile-photos');
+                ->store('public/profile-photos');
         }
 
         // 2) Otherwise (or in addition) fill name/email if they came through:
