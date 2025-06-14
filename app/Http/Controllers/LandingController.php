@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\IssueStatus;
+use App\Enums\PhaseStatus;
 use Inertia\Inertia;
 use App\Models\Issue;
 use Illuminate\Http\Request;
@@ -69,7 +69,7 @@ class LandingController extends Controller
         }
 
         $categories = IssueCategory::all();
-        $status = IssueStatus::cases();
+        $status = PhaseStatus::cases();
         $issues = $query->get();
 
         return Inertia::render('issues', [
@@ -87,7 +87,7 @@ class LandingController extends Controller
      */
     public function showIssue($pengaduan)
     {
-        $issue = Issue::findOrFail($pengaduan)->load('user', 'issueCategory', 'attachments');
+        $issue = Issue::findOrFail($pengaduan)->load('user', 'issueCategory', 'phases', 'phases.attachments', 'attachments');
 
         return Inertia::render('showIssue', [
             'issue' => $issue
@@ -122,7 +122,7 @@ class LandingController extends Controller
 
         return Cache::remember($cacheKey, 300, function () use ($includeAnalytics) {
             try {
-                $allStatuses = collect(IssueStatus::cases())->mapWithKeys(function ($status) {
+                $allStatuses = collect(PhaseStatus::cases())->mapWithKeys(function ($status) {
                     return [$status->value => 0];
                 });
 
@@ -162,7 +162,6 @@ class LandingController extends Controller
             } catch (\Exception $e) {
                 Log::error('Failed to calculate statistics: ' . $e->getMessage());
 
-                // Return empty statistics on error
                 return [
                     'issuesByStatus' => collect(),
                     'totals' => ['total' => 0, 'active' => 0, 'resolved' => 0],
