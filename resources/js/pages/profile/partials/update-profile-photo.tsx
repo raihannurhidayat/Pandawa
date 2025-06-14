@@ -23,7 +23,7 @@ function UpdateProfilePhoto() {
 
     return (
         <div className="flex flex-col items-center justify-between w-full gap-4 py-4 md:flex-row">
-            <UserAvatar user={user} size={20} showInformation={true} />
+            <UserAvatar user={user} size="lg" showInformation={true} />
             <div>
                 <Button variant="outline">
                     <Edit className="w-4 h-4" />

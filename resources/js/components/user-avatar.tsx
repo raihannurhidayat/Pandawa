@@ -2,15 +2,29 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { PageProps, User } from "@/types";
 import { usePage } from "@inertiajs/react";
+import { cva, VariantProps } from "class-variance-authority";
+import { User as UserIcon } from "lucide-react";
 
-interface UserAvatarProps {
+const userAvatarVariants = cva("size-10", {
+    variants: {
+        size: {
+            sm: "size-8",
+            md: "size-10",
+            lg: "size-20",
+        },
+    },
+    defaultVariants: {
+        size: "md",
+    },
+});
+
+export interface UserAvatarProps
+    extends VariantProps<typeof userAvatarVariants> {
     /**
      * The user to display. If not provided, display from auth user.
      */
     user?: User;
 
-    /** numeric size for the Avatar (will be applied as `size-${size}`) */
-    size?: number;
     /** extra Tailwind classes to apply to the outer wrapper */
     className?: string;
     /**
@@ -21,11 +35,11 @@ interface UserAvatarProps {
 }
 
 export default function UserAvatar({
-    user = usePage<PageProps>().props.auth.user,
-    size,
+    user = usePage<PageProps>().props.auth.user ?? undefined,
+    size = "md",
     className = "",
     showInformation = false,
-}: Partial<UserAvatarProps> = {}) {
+}: UserAvatarProps) {
     return (
         <div
             className={cn(
@@ -33,9 +47,11 @@ export default function UserAvatar({
                 className
             )}
         >
-            <Avatar className={`size-${size}`}>
+            <Avatar className={cn(userAvatarVariants({ size }))}>
                 <AvatarImage src={user?.profile_photo_path} />
-                <AvatarFallback>SC</AvatarFallback>
+                <AvatarFallback className="flex items-center justify-center w-full h-full">
+                    <UserIcon className="w-1/2 h-1/2" />
+                </AvatarFallback>
             </Avatar>
 
             {showInformation && (
