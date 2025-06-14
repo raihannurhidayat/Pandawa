@@ -87,7 +87,17 @@ class UserController extends Controller
 
     public function detailPengaduanWarga(Request $request, string $issueId)
     {
-        $issue = Issue::findOrFail($issueId)->load('user', 'issueCategory', 'phases', 'attachments');
+        $issue = Issue::withCount('likes')
+            ->with([
+                'likes' => function ($q) {
+                    $q->where('user_id', Auth::id());
+                },
+                'user',
+                'issueCategory',
+                'phases',
+                'attachments',
+            ])
+            ->findOrFail($issueId);
 
         return Inertia::render("user/detail-pengaduan-warga", [
             "issue" => $issue,

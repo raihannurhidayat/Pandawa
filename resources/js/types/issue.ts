@@ -64,7 +64,7 @@ type Phase = {
     body: string;
     reason: string | null;
     order: number;
-    is_active: boolean;
+    is_active: boolean | number;
     activated_at: string | null;
     status: PhaseStatus;
     created_at: string; // ISO 8601 date string

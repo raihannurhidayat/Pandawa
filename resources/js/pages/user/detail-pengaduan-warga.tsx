@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,10 +21,15 @@ import {
     CheckCircle,
     XCircle,
     AlertCircle,
+    LucideIcon,
+    MegaphoneIcon,
+    Megaphone,
 } from "lucide-react";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
 import { Head } from "@inertiajs/react";
 import { Issue } from "@/types/issue";
+import { Send, Hourglass, ClipboardList, HelpCircle } from "lucide-react";
+import { IoMegaphone, IoMegaphoneOutline, IoMegaphoneSharp } from "react-icons/io5";
 
 // Mock data for the complaint
 const complaintData = {
@@ -99,14 +104,34 @@ const statusHistory = {
     Closed: { status: "pending", date: null },
 };
 
-// You can also simulate a rejected case by uncommenting below:
-// const statusHistory = {
-//   "Open": { status: "completed", date: "2024-01-15" },
-//   "Pending": { status: "completed", date: "2024-01-16" },
-//   "In Progress": { status: "rejected", date: "2024-01-17", reason: "Insufficient information" },
-//   "Resolved": { status: "pending", date: null },
-//   "Closed": { status: "pending", date: null },
-// }
+const statusColorMap: Record<string, string> = {
+    pending: "text-gray-500",
+    in_progress: "text-blue-700",
+    resolved: "text-green-700",
+    closed: "text-gray-600",
+};
+
+const StatusIconMap: Record<string, LucideIcon> = {
+    "Pengaduan diajukan": Send,
+    "Menunggu tindak lanjut": Hourglass,
+    "Persiapan pelaksanaan": ClipboardList,
+    "Menunggu konfirmasi": HelpCircle,
+};
+
+const statusIconColor: Record<string, string> = {
+    pending: "bg-gray-100 border-gray-300 text-gray-500",
+    in_progress:
+        "bg-blue-100 border-blue-500 text-blue-700 ring-4 ring-blue-100",
+    resolved: "bg-green-100 border-green-500 text-green-700",
+    closed: "bg-gray-200 border-gray-400 text-gray-600",
+};
+
+const statusBarColorMap: Record<string, string> = {
+    pending: "h-0 bg-gray-300",
+    in_progress: "h-1/2 bg-blue-500",
+    resolved: "h-full bg-green-500",
+    closed: "h-full bg-gray-400",
+};
 
 const categoryIcons = {
     Infrastructure: Construction,
@@ -175,43 +200,41 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <CardTitle className="text-2xl font-bold">
-                                                    {complaintData.title}
+                                                    {issue.title}
                                                 </CardTitle>
-                                                <div className="flex items-center gap-1 text-destructive">
-                                                    <ThumbsUp className="h-4 w-4" />
+                                                <div className={`flex items-center gap-1 text-destructive ${buttonVariants({variant: "outline"})} hover:bg-transparent hover:shadow-none hover:opacity-100 hover:ring-0 hover:border-inherit hover:text-destructive`}>
+                                                    <IoMegaphoneOutline className="h-4 w-4 text-destructive" />
                                                     <span className="text-sm font-medium">
-                                                        {complaintData.upvotes}
+                                                        {issue.likes_count}
                                                     </span>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-4 text-sm mb-4">
                                                 <span className="flex items-center gap-1">
                                                     <Calendar className="h-4 w-4" />
-                                                    Submitted:{" "}
-                                                    {
-                                                        complaintData.submissionDate
-                                                    }
+                                                    Diajukan:{" "}
+                                                    {issue.updated_at_relative}
                                                 </span>
-                                                <span className="flex items-center gap-1">
+                                                {/* <span className="flex items-center gap-1">
                                                     <MapPin className="h-4 w-4" />
                                                     {
                                                         complaintData.location
                                                             .address
                                                     }
-                                                </span>
+                                                </span> */}
                                             </div>
                                             <Badge
                                                 variant="secondary"
                                                 className="mb-4"
                                             >
-                                                {complaintData.category}
+                                                {issue.issue_category.name}
                                             </Badge>
                                         </div>
                                     </div>
                                 </CardHeader>
                                 <CardContent>
                                     <p className="leading-relaxed">
-                                        {complaintData.description}
+                                        {issue.body}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -229,162 +252,160 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         {/* Current Status Badge */}
                                         <div className="flex items-center justify-between">
                                             <Badge
-                                                className={`${
-                                                    statusHistory[
-                                                        complaintData.status as keyof typeof statusHistory
-                                                    ]?.status === "completed"
-                                                        ? "bg-green-500"
-                                                        : statusHistory[
-                                                              complaintData.status as keyof typeof statusHistory
-                                                          ]?.status ===
-                                                          "current"
-                                                        ? "bg-blue-500"
-                                                        : statusHistory[
-                                                              complaintData.status as keyof typeof statusHistory
-                                                          ]?.status ===
-                                                          "rejected"
-                                                        ? "bg-red-500"
-                                                        : "bg-gray-500"
-                                                } px-3 py-1`}
+                                                className={` px-3 py-1`}
                                             >
-                                                {complaintData.status}
+                                                {
+                                                    issue?.phases
+                                                        ?.filter(
+                                                            (item) =>
+                                                                item.is_active ===
+                                                                1
+                                                        )
+                                                        .sort(
+                                                            (
+                                                                a: any,
+                                                                b: any
+                                                            ) => {
+                                                                const aTime =
+                                                                    new Date(
+                                                                        a.activated_at ||
+                                                                            a.created_at
+                                                                    ).getTime();
+                                                                const bTime =
+                                                                    new Date(
+                                                                        b.activated_at ||
+                                                                            b.created_at
+                                                                    ).getTime();
+                                                                return (
+                                                                    bTime -
+                                                                    aTime
+                                                                );
+                                                            }
+                                                        )[0].title
+                                                }
                                             </Badge>
                                             <span className="text-sm">
                                                 Last updated:{" "}
-                                                {complaintData.lastUpdated}
+                                                {issue.updated_at_formatted}
                                             </span>
                                         </div>
 
                                         {/* Step-by-step Progress */}
                                         <div className="space-y-4">
-                                            {statusSteps.map((step, index) => {
-                                                const stepStatus =
-                                                    statusHistory[
-                                                        step.name as keyof typeof statusHistory
-                                                    ];
-                                                const StepIcon = step.icon;
+                                            {issue.phases
+                                                .filter(
+                                                    (phase) =>
+                                                        !!phase.activated_at
+                                                )
+                                                .map((phase, index) => {
+                                                    const StepIconPhase =
+                                                        StatusIconMap[
+                                                            phase.title
+                                                        ] || AlertCircle;
 
-                                                return (
-                                                    <div
-                                                        key={step.name}
-                                                        className="flex items-center gap-4"
-                                                    >
-                                                        {/* Step Icon with Status Color */}
+                                                    const activatedPhase =
+                                                        issue.phases.filter(
+                                                            (phase) =>
+                                                                !!phase.activated_at
+                                                        );
+
+                                                    return (
                                                         <div
-                                                            className={`
-                            flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300
-                            ${
-                                stepStatus.status === "completed"
-                                    ? "bg-green-100 border-green-500 text-green-700"
-                                    : stepStatus.status === "current"
-                                    ? "bg-blue-100 border-blue-500 text-blue-700 ring-4 ring-blue-100"
-                                    : stepStatus.status === "rejected"
-                                    ? "bg-red-100 border-red-500 text-red-700"
-                                    : "bg-gray-100 border-gray-300 text-gray-500"
-                            }
-                          `}
+                                                            key={index}
+                                                            className="flex items-center gap-4 "
                                                         >
-                                                            <StepIcon className="h-5 w-5" />
-                                                        </div>
+                                                            {/* Icon */}
+                                                            <div
+                                                                className={`
+    flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300
+    ${
+        statusIconColor[phase.status] ||
+        "bg-gray-100 border-gray-300 text-gray-500"
+    }
+  `}
+                                                            >
+                                                                <StepIconPhase className="h-5 w-5" />
+                                                            </div>
 
-                                                        {/* Step Content */}
-                                                        <div className="flex-1">
-                                                            <div className="flex items-center justify-between">
-                                                                <div>
-                                                                    <h4
-                                                                        className={`font-medium ${
-                                                                            stepStatus.status ===
-                                                                            "completed"
-                                                                                ? "text-green-700"
-                                                                                : stepStatus.status ===
-                                                                                  "current"
-                                                                                ? "text-blue-700"
-                                                                                : stepStatus.status ===
-                                                                                  "rejected"
-                                                                                ? "text-red-700"
-                                                                                : "text-gray-500"
-                                                                        }`}
-                                                                    >
-                                                                        {
-                                                                            step.name
-                                                                        }
-                                                                    </h4>
-                                                                    <p className="text-sm">
-                                                                        {
-                                                                            step.description
-                                                                        }
-                                                                    </p>
-                                                                    {stepStatus.status ===
-                                                                        "rejected" && (
-                                                                        <p className="text-sm text-red-600 mt-1">
-                                                                            Reason:{" "}
-                                                                            {(
-                                                                                statusHistory as any
-                                                                            )[
-                                                                                step
-                                                                                    .name
-                                                                            ]
-                                                                                ?.reason ||
-                                                                                "See comments for details"}
+                                                            {/* Step */}
+                                                            <div className="flex-1">
+                                                                <div className="flex items-center justify-between ">
+                                                                    <div>
+                                                                        <h4
+                                                                            className={`font-medium ${
+                                                                                statusColorMap[
+                                                                                    phase
+                                                                                        .status
+                                                                                ] ||
+                                                                                " border-gray-300 text-gray-500"
+                                                                            }`}
+                                                                        >
+                                                                            {
+                                                                                phase.title
+                                                                            }
+                                                                        </h4>
+                                                                        <p className="text-sm">
+                                                                            {
+                                                                                phase.status
+                                                                            }
                                                                         </p>
+                                                                        {/* {phase.status ===
+                                                                            "rejected" && (
+                                                                            <p className="text-sm text-red-600 mt-1">
+                                                                                Reason:{" "}
+
+                                                                                    "See comments for details"
+                                                                            </p>
+                                                                        )} */}
+                                                                    </div>
+                                                                    {phase.created_at && (
+                                                                        <span className="text-xs text-gray-500">
+                                                                            {
+                                                                                phase.created_at_formatted
+                                                                            }
+                                                                        </span>
                                                                     )}
                                                                 </div>
-                                                                {stepStatus.date && (
-                                                                    <span className="text-xs text-gray-500">
-                                                                        {
-                                                                            stepStatus.date
-                                                                        }
-                                                                    </span>
+
+                                                                {/* Progress Bar */}
+                                                                {index <
+                                                                    activatedPhase.length -
+                                                                        1 && (
+                                                                    <div className="mt-3 ml-5">
+                                                                        <div className="w-0.5 h-8 bg-gray-200 relative">
+                                                                            <div
+                                                                                className={`
+                                    absolute top-0 w-full transition-all duration-500
+                                    ${statusBarColorMap[phase.status]}
+                                  `}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
                                                                 )}
                                                             </div>
 
-                                                            {/* Progress Bar */}
-                                                            {index <
-                                                                statusSteps.length -
-                                                                    1 && (
-                                                                <div className="mt-3 ml-5">
-                                                                    <div className="w-0.5 h-8 bg-gray-200 relative">
-                                                                        <div
-                                                                            className={`
-                                    absolute top-0 w-full transition-all duration-500
-                                    ${
-                                        stepStatus.status === "completed"
-                                            ? "h-full bg-green-500"
-                                            : stepStatus.status === "current"
-                                            ? "h-1/2 bg-blue-500"
-                                            : stepStatus.status === "rejected"
-                                            ? "h-full bg-red-500"
-                                            : "h-0 bg-gray-300"
-                                    }
-                                  `}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            )}
+                                                            {/* Status indikator */}
+                                                            <div className="flex items-center">
+                                                                {phase.status ===
+                                                                    "pending" && (
+                                                                    <div className="w-5 h-5 bg-gray-300 rounded-full" />
+                                                                )}
+                                                                {phase.status ===
+                                                                    "in_progress" && (
+                                                                    <div className="w-5 h-5 bg-blue-500 rounded-full animate-pulse" />
+                                                                )}
+                                                                {phase.status ===
+                                                                    "resolved" && (
+                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                )}
+                                                                {phase.status ===
+                                                                    "closed" && (
+                                                                    <XCircle className="h-5 w-5 text-gray-500" />
+                                                                )}
+                                                            </div>
                                                         </div>
-
-                                                        {/* Status Indicator */}
-                                                        <div className="flex items-center">
-                                                            {stepStatus.status ===
-                                                                "completed" && (
-                                                                <CheckCircle className="h-5 w-5 text-green-500" />
-                                                            )}
-                                                            {stepStatus.status ===
-                                                                "current" && (
-                                                                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse" />
-                                                            )}
-                                                            {stepStatus.status ===
-                                                                "rejected" && (
-                                                                <XCircle className="h-5 w-5 text-red-500" />
-                                                            )}
-                                                            {stepStatus.status ===
-                                                                "pending" && (
-                                                                <div className="w-3 h-3 bg-gray-300 rounded-full" />
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
+                                                    );
+                                                })}
                                         </div>
 
                                         {/* Overall Progress Bar */}
@@ -395,16 +416,14 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                 </span>
                                                 <span className="text-sm">
                                                     {
-                                                        Object.values(
-                                                            statusHistory
-                                                        ).filter(
+                                                        issue.phases.filter(
                                                             (s) =>
                                                                 s.status ===
-                                                                "completed"
+                                                                "resolved"
                                                         ).length
                                                     }{" "}
-                                                    of {statusSteps.length}{" "}
-                                                    completed
+                                                    of {issue.phases.length}{" "}
+                                                    Resolved
                                                 </span>
                                             </div>
                                             <div className="w-full bg-gray-200 rounded-full h-2">
@@ -412,12 +431,10 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                     className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-700"
                                                     style={{
                                                         width: `${
-                                                            (Object.values(
-                                                                statusHistory
-                                                            ).filter(
+                                                            (issue.phases.filter(
                                                                 (s) =>
                                                                     s.status ===
-                                                                    "completed"
+                                                                    "resolved"
                                                             ).length /
                                                                 statusSteps.length) *
                                                             100
@@ -585,7 +602,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="text-lg">
-                                        Reporter Information
+                                        Informasi Pengadu
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
@@ -594,8 +611,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                             <AvatarImage
                                                 src={
                                                     complaintData.reporter
-                                                        .avatar ||
-                                                    "/placeholder.svg"
+                                                        .avatar
                                                 }
                                             />
                                             <AvatarFallback>
@@ -604,10 +620,10 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         </Avatar>
                                         <div>
                                             <h3 className="font-semibold">
-                                                {complaintData.reporter.name}
+                                                {issue.user.name}
                                             </h3>
                                             <p className="text-sm text-gray-600">
-                                                Citizen Reporter
+                                                Masyarakat
                                             </p>
                                         </div>
                                     </div>
