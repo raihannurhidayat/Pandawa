@@ -96,6 +96,7 @@ class UserController extends Controller
                 'issueCategory',
                 'phases',
                 'attachments',
+                'phases.attachments'
             ])
             ->findOrFail($issueId);
 
