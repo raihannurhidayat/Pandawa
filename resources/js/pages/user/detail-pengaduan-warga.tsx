@@ -34,7 +34,6 @@ import {
     Ban,
     FileClock,
     MessageCircleX,
-
 } from "lucide-react";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
 import { Head } from "@inertiajs/react";
@@ -46,6 +45,7 @@ import {
     IoMegaphoneSharp,
 } from "react-icons/io5";
 import { IconType } from "react-icons/lib";
+import FeedbackComponent from "@/components/shared/tabbed-feedback";
 
 // Mock data for the complaint
 const complaintData = {
@@ -133,7 +133,7 @@ const StatusIconMap: Record<string, LucideIcon | IconType> = {
     "Konfirmasi diproses": FileClock,
     "Pengaduan selesai": BiMessageCheck,
     "Pengaduan ditutup": MessageCircleX,
-  };
+};
 
 const statusIconColor: Record<string, string> = {
     pending: "bg-gray-100 border-gray-300 text-gray-500",
@@ -202,23 +202,25 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
         (phase) => phase.status === "closed"
     );
 
-    const currentIssue = issue?.phases
-        ?.filter((item) => item?.is_active === 1)
-        .sort((a: any, b: any) => {
-            const aTime = new Date(a?.activated_at || a?.created_at).getTime();
-            const bTime = new Date(b?.activated_at || b?.created_at).getTime();
+    const currentIssue =
+        issue?.phases
+            ?.filter((item) => item?.is_active === 1)
+            .sort((a: any, b: any) => {
+                const aTime = new Date(
+                    a?.activated_at || a?.created_at
+                ).getTime();
+                const bTime = new Date(
+                    b?.activated_at || b?.created_at
+                ).getTime();
 
-            console.log(bTime - aTime);
-            return bTime - aTime;
-        })[0]?.title ?? "Pengaduan Telah Selesai";
-
-    console.log(currentIssue);
+                return bTime - aTime;
+            })[0]?.title ?? "Pengaduan Telah Selesai";
 
     return (
         <AuthenticatedUserLayout header="Detail Pengaduan Warga">
             <Head title="Detail Pengaduan Warga" />
             <div className="min-h-screen p-4 md:p-6">
-                <div className="max-w-7xl mx-auto">
+                <div className="max-w-7xl mx-auto space-y-6">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Main Content - Left 2/3 */}
                         <div className="lg:col-span-2 space-y-6">
@@ -294,8 +296,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                         : "bg-primary"
                                                 } px-3 py-1`}
                                             >
-
-                                                    {currentIssue}
+                                                {currentIssue}
                                             </Badge>
                                             <span className="text-sm">
                                                 Last updated:{" "}
@@ -306,13 +307,8 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         {/* Step-by-step Progress */}
                                         <div className="space-y-4">
                                             {issue.phases
-                                                .filter(
-                                                    (p) =>
-                                                        !!p.activated_at
-                                                )
+                                                .filter((p) => !!p.activated_at)
                                                 .map((phase, index) => {
-
-
                                                     const StepIconPhase =
                                                         StatusIconMap[
                                                             phase?.title!
@@ -492,81 +488,101 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                     <CardTitle>Bukti Pendukung</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                        {issue.attachments.map(
-                                            (image, index) => (
-                                                <Dialog key={index}>
-                                                    <DialogTrigger asChild>
-                                                        <div
-                                                            className="relative aspect-square rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
-                                                            onClick={() =>
-                                                                setSelectedImage(
-                                                                    index
-                                                                )
-                                                            }
-                                                        >
-                                                            <img
-                                                                src={image.url}
-                                                                alt={`Evidence ${
-                                                                    index + 1
-                                                                }`}
-                                                                className="w-full h-full object-cover"
-                                                            />
-                                                        </div>
-                                                    </DialogTrigger>
-                                                    <DialogContent className="max-w-4xl w-full p-0">
-                                                        <div className="relative">
-                                                            <img
-                                                                src={
-                                                                    issue
-                                                                        .attachments[
-                                                                        selectedImage ||
-                                                                            0
-                                                                    ].url
-                                                                }
-                                                                alt="Evidence"
-                                                                className="w-full h-auto max-h-[80vh] object-contain"
-                                                            />
-                                                            <Button
-                                                                variant="outline"
-                                                                size="icon"
-                                                                className="absolute left-4 top-1/2 transform -translate-y-1/2 "
+                                    {issue.attachments.length > 0 ? (
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                            {issue.attachments.map(
+                                                (image, index) => (
+                                                    <Dialog key={index}>
+                                                        <DialogTrigger asChild>
+                                                            <div
+                                                                className="relative aspect-square rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
                                                                 onClick={() =>
-                                                                    navigateImage(
-                                                                        "prev"
+                                                                    setSelectedImage(
+                                                                        index
                                                                     )
                                                                 }
                                                             >
-                                                                <ChevronLeft className="h-4 w-4" />
-                                                            </Button>
-                                                            <Button
-                                                                variant="outline"
-                                                                size="icon"
-                                                                className="absolute right-4 top-1/2 transform -translate-y-1/2 "
-                                                                onClick={() =>
-                                                                    navigateImage(
-                                                                        "next"
-                                                                    )
-                                                                }
-                                                            >
-                                                                <ChevronRight className="h-4 w-4" />
-                                                            </Button>
-                                                            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-                                                                {(selectedImage ||
-                                                                    0) + 1}{" "}
-                                                                of{" "}
-                                                                {
-                                                                    issue
-                                                                        .attachments
-                                                                        .length
-                                                                }
+                                                                <img
+                                                                    src={
+                                                                        image.url
+                                                                    }
+                                                                    alt={`Evidence ${
+                                                                        index +
+                                                                        1
+                                                                    }`}
+                                                                    className="w-full h-full object-cover"
+                                                                />
                                                             </div>
-                                                        </div>
-                                                    </DialogContent>
-                                                </Dialog>
-                                            )
-                                        )}
-                                    </div>
+                                                        </DialogTrigger>
+                                                        <DialogContent className="max-w-4xl w-full p-0">
+                                                            <div className="relative">
+                                                                <img
+                                                                    src={
+                                                                        issue
+                                                                            .attachments[
+                                                                            selectedImage ||
+                                                                                0
+                                                                        ].url
+                                                                    }
+                                                                    alt="Evidence"
+                                                                    className="w-full h-auto max-h-[80vh] object-contain"
+                                                                />
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="icon"
+                                                                    className="absolute left-4 top-1/2 transform -translate-y-1/2 "
+                                                                    onClick={() =>
+                                                                        navigateImage(
+                                                                            "prev"
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <ChevronLeft className="h-4 w-4" />
+                                                                </Button>
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="icon"
+                                                                    className="absolute right-4 top-1/2 transform -translate-y-1/2 "
+                                                                    onClick={() =>
+                                                                        navigateImage(
+                                                                            "next"
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <ChevronRight className="h-4 w-4" />
+                                                                </Button>
+                                                                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                                                                    {(selectedImage ||
+                                                                        0) +
+                                                                        1}{" "}
+                                                                    of{" "}
+                                                                    {
+                                                                        issue
+                                                                            .attachments
+                                                                            .length
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </DialogContent>
+                                                    </Dialog>
+                                                )
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center py-12 text-center border-dashed border-2">
+                                            <div className="rounded-full bg-muted p-4 mb-4">
+                                                <FileX className="h-8 w-8 text-muted-foreground" />
+                                            </div>
+                                            <h3 className="text-lg font-medium text-foreground mb-2">
+                                                Tidak Ada Bukti Pendukung
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground mb-4 max-w-sm">
+                                                Tidak ada file atau gambar yang
+                                                diunggah sebagai bukti pendukung
+                                                untuk laporan ini.
+                                            </p>
+                                        </div>
+                                    )}
                                 </CardContent>
                             </Card>
 
@@ -753,6 +769,11 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                 </CardContent>
                             </Card>
                         </div>
+                    </div>
+
+                    {/* Feedback Section */}
+                    <div className="sm:max-w-full max-w-sm">
+                        <FeedbackComponent phasesData={issue.phases} />
                     </div>
                 </div>
             </div>
