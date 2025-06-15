@@ -46,9 +46,9 @@ class ProfileController extends Controller
                 ->store('public/profile-photos');
         }
 
-        // 2) Otherwise (or in addition) fill name/email if they came through:
-        if ($request->filled('name') || $request->filled('email')) {
-            $user->fill($request->only('name', 'email'));
+        // 2) Otherwise (or in addition) fill username/name/email if they came through:
+        if ($request->filled('name') || $request->filled('email') || $request->filled('username')) {
+            $user->fill($request->only('name', 'email', 'username'));
 
             if ($user->isDirty('email')) {
                 $user->email_verified_at = null;
