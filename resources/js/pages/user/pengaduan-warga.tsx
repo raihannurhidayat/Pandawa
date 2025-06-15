@@ -73,27 +73,27 @@ function ComplaintCard({
 }) {
     if (isLoading) {
         return (
-            <Card className="h-80 flex flex-col">
+            <Card className="flex flex-col h-80">
                 <CardHeader className="pb-3">
                     <div className="flex items-center gap-3 mb-2">
                         <Skeleton className="w-8 h-8 rounded" />
-                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="w-24 h-4" />
                     </div>
-                    <Skeleton className="h-5 w-full" />
-                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="w-full h-5" />
+                    <Skeleton className="w-3/4 h-5" />
                 </CardHeader>
-                <CardContent className="flex-1 flex flex-col justify-between">
+                <CardContent className="flex flex-col justify-between flex-1">
                     <div className="space-y-2">
-                        <Skeleton className="h-4 w-full" />
-                        <Skeleton className="h-4 w-full" />
-                        <Skeleton className="h-4 w-2/3" />
+                        <Skeleton className="w-full h-4" />
+                        <Skeleton className="w-full h-4" />
+                        <Skeleton className="w-2/3 h-4" />
                     </div>
                     <div className="flex items-center justify-between pt-4">
                         <div className="space-y-1">
-                            <Skeleton className="h-3 w-20" />
-                            <Skeleton className="h-3 w-16" />
+                            <Skeleton className="w-20 h-3" />
+                            <Skeleton className="w-16 h-3" />
                         </div>
-                        <Skeleton className="h-8 w-16" />
+                        <Skeleton className="w-16 h-8" />
                     </div>
                 </CardContent>
             </Card>
@@ -111,10 +111,10 @@ function ComplaintCard({
 
     return (
         <Link href={route("user.detail.pengaduan-warga", complaint?.id)}>
-            <Card className="h-80 flex flex-col transition-all duration-200 hover:shadow-lg hover:-translate-y-1 cursor-pointer group">
+            <Card className="flex flex-col transition-all duration-200 cursor-pointer h-80 hover:shadow-lg hover:-translate-y-1 group">
                 <CardHeader className="pb-3">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 rounded-lg bg-primary group-hover:bg-primary/80 transition-colors">
+                        <div className="p-2 transition-colors rounded-lg bg-primary group-hover:bg-primary/80">
                             <IconComponent
                                 className="w-4 h-4 text-primary-foreground"
                                 aria-hidden="true"
@@ -131,16 +131,16 @@ function ComplaintCard({
                             {complaint?.status}
                         </Badge>
                     </div>
-                    <h3 className="font-semibold text-lg leading-tight line-clamp-2 group-hover:text-primary/80 transition-colors">
+                    <h3 className="text-lg font-semibold leading-tight transition-colors line-clamp-2 group-hover:text-primary/80">
                         {complaint?.title}
                     </h3>
                 </CardHeader>
-                <CardContent className="flex-1 flex flex-col justify-between">
-                    <p className="text-sm text-gray-600 line-clamp-3 mb-4">
+                <CardContent className="flex flex-col justify-between flex-1">
+                    <p className="mb-4 text-sm text-gray-600 line-clamp-3">
                         {complaint?.body}
                     </p>
                     <div className="flex items-center justify-between">
-                        <div className="text-xs text-gray-500 space-y-1">
+                        <div className="space-y-1 text-xs text-gray-500">
                             <div className="flex items-center gap-1">
                                 <Calendar
                                     className="w-3 h-3"
@@ -171,7 +171,7 @@ function ComplaintCard({
                             }`}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                e.preventDefault()
+                                e.preventDefault();
                                 onUpvote(complaint?.id!);
                             }}
                             aria-label={`${
@@ -198,12 +198,12 @@ function ComplaintCard({
 
 function EmptyState() {
     return (
-        <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4">
+        <div className="flex flex-col items-center justify-center py-16 text-center col-span-full">
+            <div className="flex items-center justify-center w-16 h-16 mb-4 rounded-full">
                 <Search className="w-8 h-8" />
             </div>
-            <h3 className="text-lg font-semibold  mb-2">No complaints found</h3>
-            <p className=" max-w-md">
+            <h3 className="mb-2 text-lg font-semibold">No complaints found</h3>
+            <p className="max-w-md ">
                 Try adjusting your search terms or filters to find what you're
                 looking for.
             </p>
@@ -340,10 +340,10 @@ export default function PengaduanWargaPage({
         <AuthenticatedUserLayout header="Pengaduan Warga">
             <Head title="Pengaduan Warga" />
             <div className="min-h-screen">
-                <div className="max-w-7xl mx-auto">
+                <div className="mx-auto max-w-7xl">
                     {/* Header */}
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold mb-2 text-secondary-foreground">
+                        <h1 className="mb-2 text-3xl font-bold text-secondary-foreground">
                             Pengaduan Warga
                         </h1>
                         <p className="text-secondary-foreground">
@@ -352,8 +352,8 @@ export default function PengaduanWargaPage({
                     </div>
 
                     {/* Filters and Search */}
-                    <div className="rounded-lg shadow-sm border p-6 mb-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="p-6 mb-8 border rounded-lg shadow-sm">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                             {/* Search */}
                             <div className="relative">
                                 <Input
@@ -436,7 +436,7 @@ export default function PengaduanWargaPage({
                             selectedCategory !== "All" ||
                             selectedStatus !== "All" ||
                             sortBy !== "newest") && (
-                            <div className="flex items-center gap-2 mt-4 pt-4 border-t">
+                            <div className="flex items-center gap-2 pt-4 mt-4 border-t">
                                 <span className="text-sm">Filter aktif:</span>
                                 {searchTerm && (
                                     <Badge
@@ -479,7 +479,7 @@ export default function PengaduanWargaPage({
                                     variant="ghost"
                                     size="sm"
                                     onClick={clearFilters}
-                                    className="text-xs h-6 px-2"
+                                    className="h-6 px-2 text-xs"
                                 >
                                     Hapus Semua
                                 </Button>
@@ -510,7 +510,7 @@ export default function PengaduanWargaPage({
                     </div>
 
                     {/* Complaints Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3">
                         {isLoading ? (
                             // Loading skeletons
                             Array.from({ length: itemsPerPage }).map(
@@ -541,7 +541,7 @@ export default function PengaduanWargaPage({
 
                     {/* Pagination */}
                     {filteredAndSortedComplaints.length > 0 && (
-                        <div className="flex items-center justify-between rounded-lg shadow-sm border p-4 mt-8">
+                        <div className="flex items-center justify-between p-4 mt-8 border rounded-lg shadow-sm">
                             {/* Page Info */}
                             <div className="text-sm">
                                 Halaman {currentPage} dari {totalPages} (
@@ -559,7 +559,7 @@ export default function PengaduanWargaPage({
                                             setCurrentPage(1); // Reset to first page when changing items per page
                                         }}
                                     >
-                                        <SelectTrigger className=" h-8 text-sm">
+                                        <SelectTrigger className="h-8 text-sm ">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -629,7 +629,7 @@ export default function PengaduanWargaPage({
                                                                 pageNum
                                                             )
                                                         }
-                                                        className="h-8 w-8 p-0 text-sm"
+                                                        className="w-8 h-8 p-0 text-sm"
                                                     >
                                                         {pageNum}
                                                     </Button>

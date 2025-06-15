@@ -104,6 +104,7 @@ class UserController extends Controller
 
         return Inertia::render("user/detail-pengaduan-warga", [
             "issue" => $issue,
+            'comments' => $issue->comments
         ]);
     }
 
