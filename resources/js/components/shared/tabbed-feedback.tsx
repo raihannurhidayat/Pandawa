@@ -229,18 +229,18 @@ export default function FeedbackComponent({
     const [phaseGalleryIndex, setPhaseGalleryIndex] = useState(0);
 
     return (
-        <div className="sm:max-w-7xl mx-auto w-full">
+        <div className="w-full mx-auto sm:max-w-7xl">
             <ImageGallery
                 images={activePhase?.attachments!}
                 isOpen={isGaleryModalOpen}
                 onClose={() => setIsGaleryModalOpen(false)}
                 initialIndex={phaseGalleryIndex}
             />
-            <div className="rounded-xl shadow-sm border overflow-hidden">
+            <div className="overflow-hidden border shadow-sm rounded-xl">
                 {/* Tab Navigation */}
                 <div className="border-b">
                     {/* Mobile Dropdown */}
-                    <div className="block md:hidden p-4">
+                    <div className="block p-4 md:hidden">
                         <Select
                             value={activeTab}
                             onValueChange={(value) => setActiveTab(value)}
@@ -266,7 +266,7 @@ export default function FeedbackComponent({
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="hidden md:flex overflow-x-auto">
+                    <div className="hidden overflow-x-visible md:flex">
                         {phasesData.map((phase) => {
                             const StatusIcon =
                                 statusConfig[
@@ -286,7 +286,7 @@ export default function FeedbackComponent({
                                             : "text-secondary-foreground hover:text-secondary-foreground/80"
                                     }`}
                                 >
-                                    <div className="flex items-center justify-center gap-2 relative z-10">
+                                    <div className="relative z-10 flex items-center justify-center gap-2">
                                         <StatusIcon
                                             className={`w-4 h-4 ${
                                                 statusConfig[
@@ -332,9 +332,9 @@ export default function FeedbackComponent({
                                 className="space-y-6"
                             >
                                 {/* Header */}
-                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                                     <div>
-                                        <h2 className="md:text-2xl text-xl font-bold text-secondary-foreground mb-2">
+                                        <h2 className="mb-2 text-xl font-bold md:text-2xl text-secondary-foreground">
                                             {activePhase.title}
                                         </h2>
                                         <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -376,14 +376,14 @@ export default function FeedbackComponent({
 
                                 {/* Description */}
                                 <div className="prose prose-gray max-w-none">
-                                    <p className="text-secondary-foreground leading-relaxed">
+                                    <p className="leading-relaxed text-secondary-foreground">
                                         {activePhase.reason}
                                     </p>
                                 </div>
 
                                 {/* Key Points */}
                                 <div>
-                                    <h3 className="text-lg font-semibold text-secondary-foreground mb-3">
+                                    <h3 className="mb-3 text-lg font-semibold text-secondary-foreground">
                                         Lampiran
                                     </h3>
                                     <div className="flex flex-row flex-wrap gap-4">
@@ -418,14 +418,14 @@ export default function FeedbackComponent({
                                                 )
                                             )
                                         ) : (
-                                            <div className="flex flex-col items-center justify-center py-12 text-center border-dashed border-2 w-full">
-                                                <div className="rounded-full bg-muted p-4 mb-4">
+                                            <div className="flex flex-col items-center justify-center w-full py-12 text-center border-2 border-dashed">
+                                                <div className="p-4 mb-4 rounded-full bg-muted">
                                                     <FileX className="md:h-8 md:w-8 size-6 text-muted-foreground" />
                                                 </div>
-                                                <h3 className="md:text-lg text-sm font-medium text-foreground mb-2">
+                                                <h3 className="mb-2 text-sm font-medium md:text-lg text-foreground">
                                                     Tidak Ada Bukti Pendukung
                                                 </h3>
-                                                <p className="md:text-sm text-xs text-muted-foreground mb-4 max-w-sm">
+                                                <p className="max-w-sm mb-4 text-xs md:text-sm text-muted-foreground">
                                                     Tidak ada file atau gambar
                                                     yang diunggah sebagai bukti
                                                     pendukung untuk feedback

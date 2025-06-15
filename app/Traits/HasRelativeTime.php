@@ -48,7 +48,7 @@ trait HasRelativeTime
      */
     public function getCreatedAtFormattedAttribute()
     {
-        return $this->created_at ? $this->created_at->format('d/m/Y') : null;
+        return $this->created_at ? $this->created_at->format('d-m-Y') : null;
     }
 
     /**
@@ -56,7 +56,7 @@ trait HasRelativeTime
      */
     public function getUpdatedAtFormattedAttribute()
     {
-        return $this->updated_at ? $this->updated_at->format('d/m/Y') : null;
+        return $this->updated_at ? $this->updated_at->format('d-m-Y') : null;
     }
 
     /**
@@ -96,7 +96,7 @@ trait HasRelativeTime
      * @param string $format
      * @return string|null
      */
-    public function getFormattedDateFor($field, $format = 'd/m/Y')
+    public function getFormattedDateFor($field, $format = 'd-m-Y')
     {
         if (!$this->{$field}) return null;
 

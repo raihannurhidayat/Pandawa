@@ -38,9 +38,7 @@ import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
 import { Head, router, useForm } from "@inertiajs/react";
 import { Issue } from "@/types/issue";
 import { Send, Hourglass, ClipboardList, HelpCircle } from "lucide-react";
-import {
-    IoMegaphoneOutline,
-} from "react-icons/io5";
+import { IoMegaphoneOutline } from "react-icons/io5";
 import { IconType } from "react-icons/lib";
 import FeedbackComponent from "@/components/shared/tabbed-feedback";
 import { toast } from "sonner";
@@ -558,14 +556,14 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                             )}
                                         </div>
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center py-12 text-center border-dashed border-2">
-                                            <div className="rounded-full bg-muted p-4 mb-4">
+                                        <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed">
+                                            <div className="p-4 mb-4 rounded-full bg-muted">
                                                 <FileX className="md:h-8 md:w-8 size-6 text-muted-foreground" />
                                             </div>
-                                            <h3 className="md:text-lg text-sm font-medium text-foreground mb-2">
+                                            <h3 className="mb-2 text-sm font-medium md:text-lg text-foreground">
                                                 Tidak Ada Bukti Pendukung
                                             </h3>
-                                            <p className="md:text-sm text-xs text-muted-foreground mb-4 max-w-sm">
+                                            <p className="max-w-sm mb-4 text-xs md:text-sm text-muted-foreground">
                                                 Tidak ada file atau gambar yang
                                                 diunggah sebagai bukti pendukung
                                                 untuk pengaduan ini.
@@ -613,7 +611,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                             )}
                                                             <span className="text-xs">
                                                                 {
-                                                                    comment.created_at_relative
+                                                                    comment.updated_at_formatted
                                                                 }
                                                             </span>
                                                         </div>
@@ -694,9 +692,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                     <div className="space-y-3">
                                         <div className="flex items-center gap-2 text-sm">
                                             <Mail className="w-4 h-4 text-gray-500" />
-                                            <span>
-                                                {issue.user.email}
-                                            </span>
+                                            <span>{issue.user.email}</span>
                                         </div>
                                         <div className="flex items-center gap-2 text-sm">
                                             <Phone className="w-4 h-4 text-gray-500" />
@@ -713,7 +709,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         <div className="flex items-center gap-2 text-sm">
                                             <Calendar className="w-4 h-4 text-gray-500" />
                                             <span>
-                                                Diajukan {" "}
+                                                Diajukan{" "}
                                                 {issue.created_at_relative}
                                             </span>
                                         </div>
@@ -778,7 +774,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                     </div>
 
                     {/* Feedback Section */}
-                    <div className="sm:max-w-full max-w-md">
+                    <div className="max-w-md sm:max-w-full">
                         <FeedbackComponent phasesData={issue.phases} />
                     </div>
                 </div>
