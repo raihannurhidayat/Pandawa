@@ -17,7 +17,7 @@ export interface TimestampDetail extends Timestamp {
 }
 
 
-export interface User {
+export interface User extends Timestamp {
     id: number;
     name: string;
     email: string;
