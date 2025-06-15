@@ -1,3 +1,6 @@
+import { Timestamp, TimestampDetail } from "@/types";
+import { Comment } from "@/types/comment"
+
 interface Location {
     province: number;
     city: number;
@@ -14,13 +17,11 @@ interface User {
     updated_at: string;
 }
 
-interface IssueCategory {
+interface IssueCategory extends Timestamp {
     id: string;
     name: string;
     slug: string;
     description: string;
-    created_at: string;
-    updated_at: string;
 }
 
 export enum CaseStatus {
@@ -67,16 +68,10 @@ type Phase = {
     is_active: boolean | number;
     activated_at: string | null;
     status: PhaseStatus;
-    created_at: string; // ISO 8601 date string
-    updated_at: string;
-    created_at_relative: string;
-    updated_at_relative: string;
-    created_at_formatted: string;
-    updated_at_formatted: string;
     attachments: Attachment[];
-};
+} & TimestampDetail;
 
-interface Attachment {
+interface Attachment extends Timestamp {
     id: string;
     filename: string;
     path: string;
@@ -87,7 +82,7 @@ interface Attachment {
     updated_at: string;
 }
 
-interface Issue {
+interface Issue extends TimestampDetail {
     id: string;
     title: string;
     body: string;
@@ -95,18 +90,13 @@ interface Issue {
     issue_category_id: string;
     location: string;
     status: CaseStatus;
-    created_at: string;
-    updated_at: string;
-    created_at_relative: string;
-    updated_at_relative: string;
-    created_at_formatted: string;
-    updated_at_formatted: string;
     user: User;
     issue_category: IssueCategory;
     phases: Phase[];
     likes: any[],
     likes_count: number
     attachments: Attachment[];
+    comments: Comment[];
 }
 
 // Alternative with parsed location if you want to work with the location as an object

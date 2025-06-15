@@ -3,6 +3,20 @@ import { ForwardRefExoticComponent, ReactNode, RefAttributes } from "react";
 
 export type Role = "admin" | "user";
 
+
+export interface Timestamp {
+    created_at: string,
+    updated_at: string,
+}
+
+export interface TimestampDetail extends Timestamp {
+    created_at_relative: string,
+    updated_at_relative: string,
+    created_at_formatted: string,
+    updated_at_formatted: string,
+}
+
+
 export interface User {
     id: number;
     name: string;
