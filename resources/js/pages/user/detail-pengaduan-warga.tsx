@@ -645,7 +645,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                                         }
                                                                     </span>
                                                                 </div>
-                                                                <div className="p-3 text-sm rounded-lg bg-secondary">
+                                                                <div className="p-3 text-sm rounded-lg bg-muted">
                                                                     {
                                                                         comment.body
                                                                     }

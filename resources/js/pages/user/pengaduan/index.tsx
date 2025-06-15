@@ -368,7 +368,10 @@ export default function Component({
                         {paginatedComplaints.map((complaint) => (
                             <Link
                                 key={complaint.id}
-                                href={route("pengaduan.show", complaint.id)}
+                                href={route(
+                                    "user.detail.pengaduan-warga",
+                                    complaint?.id
+                                )}
                             >
                                 <Card className="transition-shadow duration-200 cursor-pointer hover:shadow-lg group">
                                     <CardHeader className="pb-3">
