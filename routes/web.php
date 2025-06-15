@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -12,14 +13,14 @@ use App\Http\Controllers\OnboardingController;
 // Route::get('/', function () {
 //     return Inertia::render('welcome', [
 //         'canLogin' => Route::has('login'),
-//         'canRegister' => Route::has('register'), 
+//         'canRegister' => Route::has('register'),
 //         'laravelVersion' => Application::VERSION,
 //         'phpVersion' => PHP_VERSION,
 //     ]);
 // })->name('welcome');
 
 
-Route::get('/profile/{profile}', [ProfileController::class,'show'])->name('profile.show');
+Route::get('/profile/{profile}', [ProfileController::class, 'show'])->name('profile.show');
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
@@ -57,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Utils
     Route::post('/user/{issue}/like', [UserController::class, 'toggle'])->name("user.like");
+    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
 
 
     // Issue Phase control
