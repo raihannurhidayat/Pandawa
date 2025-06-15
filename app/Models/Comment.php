@@ -18,6 +18,16 @@ class Comment extends Model
         'rating',
     ];
 
+    public $hidden = [
+        'commentable_id',
+        'commentable_type',
+        'user_id'
+    ];
+
+    public $appends = [
+        'user'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class)->withDefault();
@@ -26,6 +36,11 @@ class Comment extends Model
     public function commentable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function getUserAttribute(): User
+    {
+        return $this->user()->first();
     }
 
     public static function booted(): void
