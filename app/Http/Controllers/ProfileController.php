@@ -31,7 +31,6 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        // dd($request->all());
         $user = $request->user();
 
         // 1) If the photo form was submitted, swap the image:
@@ -46,13 +45,19 @@ class ProfileController extends Controller
                 ->store('public/profile-photos');
         }
 
-        // 2) Otherwise (or in addition) fill name/email if they came through:
-        if ($request->filled('name') || $request->filled('email')) {
-            $user->fill($request->only('name', 'email'));
+        // 2) Fill username / name / email if provided
+        if ($request->filled('name') || $request->filled('email') || $request->filled('username')) {
+            $user->fill($request->only('name', 'email', 'username'));
 
             if ($user->isDirty('email')) {
                 $user->email_verified_at = null;
             }
+        }
+
+        // 3) Fill any of the nested location fields if sent
+        if ($request->has('location')) {
+            // dd($request->input('location'));
+            $user->address = $request->input('location');
         }
 
         $user->save();
@@ -81,12 +86,25 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function show($profile)
+    public function show(User $user)
     {
-        $user = User::findOrFail($profile);
-
         return Inertia::render('profile', [
             'user' => $user
+        ]);
+    }
+
+    public function usernameCheck(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string|alpha_dash',
+        ]);
+
+        $exists = User::where('username', $request->username)
+            ->where('id', '!=', auth()->id())
+            ->exists();
+
+        return response()->json([
+            'available' => !$exists,
         ]);
     }
 }

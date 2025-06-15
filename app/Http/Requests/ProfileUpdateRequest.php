@@ -16,9 +16,41 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required_without:photo', 'string', 'max:255'],
-            'email' => ['required_without:photo', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
-            'photo' => ['required_without_all:name,email', 'image', 'mimes:png,jpg,jpeg', 'max:2048'],
+            'username' => [
+                'required_without_all:photo,location.provinsi,location.kota,location.kecamatan,location.kelurahan',
+                'string',
+                'alpha_dash',
+                'max:255',
+                Rule::unique(User::class)->ignore($this->user()->id)
+            ],
+            'name' => [
+                'required_without_all:photo,location.provinsi,location.kota,location.kecamatan,location.kelurahan',
+                'string',
+                'max:255'
+            ],
+            'email' => [
+                'required_without_all:photo,location.provinsi,location.kota,location.kecamatan,location.kelurahan',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                Rule::unique(User::class)->ignore($this->user()->id)
+            ],
+            'photo' => [
+                'required_without_all:username,name,email,location.provinsi,location.kota,location.kecamatan,location.kelurahan',
+                'image',
+                'mimes:png,jpg,jpeg',
+                'max:2048'
+            ],
+
+            // location itself can be omitted, but if present must be an array (i.e. not null)
+            'location' => ['sometimes', 'array'],
+
+            // each nested field may be sent on its own, but cannot be null
+            'location.provinsi' => ['sometimes', 'string'],
+            'location.kota' => ['sometimes', 'string'],
+            'location.kecamatan' => ['sometimes', 'string'],
+            'location.kelurahan' => ['sometimes', 'string'],
         ];
     }
 }

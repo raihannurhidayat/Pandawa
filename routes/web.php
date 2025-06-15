@@ -20,7 +20,7 @@ use App\Http\Controllers\OnboardingController;
 // })->name('welcome');
 
 
-Route::get('/profile/{profile}', [ProfileController::class, 'show'])->name('profile.show');
+Route::get('/profile/@{user}', [ProfileController::class, 'show'])->name('profile.show');
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
@@ -45,6 +45,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/username-check', [ProfileController::class, 'usernameCheck'])->name('username.check');
 
     // User
     Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');

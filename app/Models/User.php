@@ -25,12 +25,26 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
         'profile_photo_path',
     ];
 
-    protected $appends = ['profile_photo_url'];
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<string>
+     */
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
 
     /**
      * The attributes that should be hidden for serialization.
@@ -51,6 +65,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'address' => 'array',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
@@ -59,6 +74,11 @@ class User extends Authenticatable
     public function getProfilePhotoUrlAttribute(): ?string
     {
         return Storage::url($this->profile_photo_path);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'username';
     }
 
     /**
@@ -78,7 +98,6 @@ class User extends Authenticatable
      * @param string $comment The content of the comment.
      * @return $this
      */
-
     public function comment(Commentable $commentable, string $comment): self
     {
         $comment = new Comment([

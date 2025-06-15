@@ -1,5 +1,6 @@
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, ReactNode, RefAttributes } from "react";
+import { Address, PartialAddress } from "@/types/location";
 
 export type Role = "admin" | "user";
 
@@ -20,10 +21,12 @@ export interface TimestampDetail extends Timestamp {
 export interface User extends Timestamp {
     id: number;
     name: string;
+    username: string;
     email: string;
     profile_photo_url: string;
     email_verified_at: string;
     role: Role;
+    address: PartialAddress | Address
 }
 
 export type PageProps<

@@ -3,6 +3,7 @@ import DeleteUserForm from "@/pages/profile/partials/delete-user-form";
 import UpdatePasswordForm from "@/pages/profile/partials/update-password-form";
 import UpdateProfilePhoto from "@/pages/profile/partials/update-profile-photo";
 import UpdateProfileInformationForm from "@/pages/profile/partials/update-profile-information-form";
+import UpdateAddressForm from "@/pages/profile/partials/update-address-form";
 import { Head, usePage } from "@inertiajs/react";
 import {
     Card,
@@ -64,6 +65,19 @@ export default function Edit({
 
                         <CardContent>
                             <UpdatePasswordForm className="max-w-xl" />
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Update Address</CardTitle>
+                            <CardDescription>
+                                Update your account's address
+                            </CardDescription>
+                        </CardHeader>
+
+                        <CardContent>
+                            <UpdateAddressForm className="max-w-xl" />
                         </CardContent>
                     </Card>
 
