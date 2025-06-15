@@ -23,6 +23,14 @@ import {
 import { Phase } from "@/types/issue";
 import { BiMessageCheck } from "react-icons/bi";
 import ImageGallery from "../image-gallery";
+import { Button } from "../ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "../ui/select";
 
 const phases = [
     {
@@ -222,28 +230,41 @@ export default function FeedbackComponent({
 
     return (
         <div className="sm:max-w-7xl mx-auto w-full">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <ImageGallery
+                images={activePhase?.attachments!}
+                isOpen={isGaleryModalOpen}
+                onClose={() => setIsGaleryModalOpen(false)}
+                initialIndex={phaseGalleryIndex}
+            />
+            <div className="rounded-xl shadow-sm border overflow-hidden">
                 {/* Tab Navigation */}
-                <div className="border-b border-gray-200 bg-gray-50">
+                <div className="border-b">
                     {/* Mobile Dropdown */}
                     <div className="block md:hidden p-4">
-                        <select
+                        <Select
                             value={activeTab}
-                            onChange={(e) => setActiveTab(e.target.value)}
-                            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            onValueChange={(value) => setActiveTab(value)}
                         >
-                            {phasesData.map((phase) => {
-                                const statusLabel =
-                                    statusConfig[
-                                        phase.status as keyof typeof statusConfig
-                                    ].label;
-                                return (
-                                    <option key={phase.id} value={phase.id}>
-                                        {phase.title} - {statusLabel}
-                                    </option>
-                                );
-                            })}
-                        </select>
+                            <SelectTrigger className="w-full px-4 py-3 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <SelectValue placeholder="Pilih fase" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {phasesData.map((phase) => {
+                                    const statusLabel =
+                                        statusConfig[
+                                            phase.status as keyof typeof statusConfig
+                                        ].label;
+                                    return (
+                                        <SelectItem
+                                            key={phase.id}
+                                            value={phase.id.toString()}
+                                        >
+                                            {phase.title} - {statusLabel}
+                                        </SelectItem>
+                                    );
+                                })}
+                            </SelectContent>
+                        </Select>
                     </div>
                     <div className="hidden md:flex overflow-x-auto">
                         {phasesData.map((phase) => {
@@ -255,14 +276,14 @@ export default function FeedbackComponent({
                                 <button
                                     key={phase.id}
                                     onClick={() => setActiveTab(phase.id)}
-                                    className={`relative flex-1 min-w-0 px-6 py-4 text-sm font-medium transition-all duration-200 hover:bg-white/50 ${
+                                    className={`relative flex-1 min-w-0 px-6 py-4 text-sm font-medium transition-all duration-200 ${
                                         activeTab === phase.id
                                             ? `${
                                                   statusConfig[
                                                       phase.title as keyof typeof statusConfig
                                                   ].color
-                                              } bg-white border-b-2 border-primary`
-                                            : "text-gray-600 hover:text-gray-900"
+                                              }  border-b-2 border-primary`
+                                            : "text-secondary-foreground hover:text-secondary-foreground/80"
                                     }`}
                                 >
                                     <div className="flex items-center justify-center gap-2 relative z-10">
@@ -280,7 +301,7 @@ export default function FeedbackComponent({
                                     {activeTab === phase.id && (
                                         <motion.div
                                             layoutId="activeTab"
-                                            className="absolute inset-0 bg-white border-b-2 border-primary"
+                                            className="absolute inset-0 border-b-2 border-primary"
                                             initial={false}
                                             transition={{
                                                 type: "spring",
@@ -313,7 +334,7 @@ export default function FeedbackComponent({
                                 {/* Header */}
                                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                     <div>
-                                        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                                        <h2 className="md:text-2xl text-xl font-bold text-secondary-foreground mb-2">
                                             {activePhase.title}
                                         </h2>
                                         <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -324,13 +345,6 @@ export default function FeedbackComponent({
                                                     {
                                                         activePhase.updated_at_relative
                                                     }
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <User className="w-4 h-4" />
-                                                <span>
-                                                    {/* {activePhase.assignee} */}
-                                                    Admin
                                                 </span>
                                             </div>
                                         </div>
@@ -362,24 +376,64 @@ export default function FeedbackComponent({
 
                                 {/* Description */}
                                 <div className="prose prose-gray max-w-none">
-                                    <p className="text-gray-700 leading-relaxed">
+                                    <p className="text-secondary-foreground leading-relaxed">
                                         {activePhase.reason}
                                     </p>
                                 </div>
 
                                 {/* Key Points */}
                                 <div>
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                                    <h3 className="text-lg font-semibold text-secondary-foreground mb-3">
                                         Lampiran
                                     </h3>
-                                    <ImageGallery
-                                        images={activePhase?.attachments}
-                                        isOpen={isGaleryModalOpen}
-                                        onClose={() =>
-                                            setIsGaleryModalOpen(false)
-                                        }
-                                        initialIndex={phaseGalleryIndex}
-                                    />
+                                    <div className="flex flex-row flex-wrap gap-4">
+                                        {activePhase.attachments.length > 0 ? (
+                                            activePhase.attachments.map(
+                                                (attachment, index) => (
+                                                    <Button
+                                                        key={attachment.id}
+                                                        className="p-0 transition-opacity hover:bg-black/10"
+                                                        onClick={() => {
+                                                            setPhaseGalleryIndex(
+                                                                index
+                                                            );
+                                                            setIsGaleryModalOpen(
+                                                                true
+                                                            );
+                                                        }}
+                                                        asChild
+                                                    >
+                                                        <div className="w-32 h-24 overflow-hidden rounded-md outline outline-1 outline-neutral-400">
+                                                            <img
+                                                                src={
+                                                                    attachment.url
+                                                                }
+                                                                alt={
+                                                                    attachment.filename
+                                                                }
+                                                                className="object-cover w-full h-full transition-transform hover:scale-105"
+                                                            />
+                                                        </div>
+                                                    </Button>
+                                                )
+                                            )
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center py-12 text-center border-dashed border-2 w-full">
+                                                <div className="rounded-full bg-muted p-4 mb-4">
+                                                    <FileX className="md:h-8 md:w-8 size-6 text-muted-foreground" />
+                                                </div>
+                                                <h3 className="md:text-lg text-sm font-medium text-foreground mb-2">
+                                                    Tidak Ada Bukti Pendukung
+                                                </h3>
+                                                <p className="md:text-sm text-xs text-muted-foreground mb-4 max-w-sm">
+                                                    Tidak ada file atau gambar
+                                                    yang diunggah sebagai bukti
+                                                    pendukung untuk feedback
+                                                    ini.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </motion.div>
                         )}
