@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEventHandler, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,7 +35,7 @@ import {
     MessageCircleX,
 } from "lucide-react";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, router, useForm } from "@inertiajs/react";
 import { Issue } from "@/types/issue";
 import { Send, Hourglass, ClipboardList, HelpCircle } from "lucide-react";
 import {
@@ -43,6 +43,8 @@ import {
 } from "react-icons/io5";
 import { IconType } from "react-icons/lib";
 import FeedbackComponent from "@/components/shared/tabbed-feedback";
+import { toast } from "sonner";
+import UserAvatar from "@/components/user-avatar";
 
 // Mock data for the complaint
 const complaintData = {
@@ -71,32 +73,6 @@ const complaintData = {
         address: "123 Oak Avenue, Downtown District",
         avatar: "/placeholder.svg?height=40&width=40",
     },
-    comments: [
-        {
-            id: 1,
-            author: "City Maintenance Dept",
-            date: "2024-01-16",
-            message:
-                "Thank you for reporting this issue. We have dispatched a team to assess the situation and will provide an update within 48 hours.",
-            isOfficial: true,
-        },
-        {
-            id: 2,
-            author: "Mike Chen",
-            date: "2024-01-17",
-            message:
-                "I live nearby and can confirm this is a real safety concern. Thank you Sarah for reporting it!",
-            isOfficial: false,
-        },
-        {
-            id: 3,
-            author: "City Maintenance Dept",
-            date: "2024-01-18",
-            message:
-                "Update: Our technician has identified the issue as a faulty transformer. Replacement parts have been ordered and installation is scheduled for January 20th.",
-            isOfficial: true,
-        },
-    ],
 };
 
 const statusColorMap: Record<string, string> = {
@@ -156,25 +132,41 @@ const categoryIcons = {
 export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
     const [selectedImage, setSelectedImage] = useState<number | null>(null);
     const [newComment, setNewComment] = useState("");
-    const [comments, setComments] = useState(complaintData.comments);
 
     const CategoryIcon =
         categoryIcons[complaintData.category as keyof typeof categoryIcons];
 
+    const { data, setData, post, processing, errors } = useForm({
+        comment: "",
+    });
+
     console.log(issue);
 
-    const handleSubmitComment = () => {
-        if (newComment.trim()) {
-            const comment = {
-                id: comments.length + 1,
-                author: "Current User",
-                date: new Date().toISOString().split("T")[0],
-                message: newComment,
-                isOfficial: false,
-            };
-            setComments([...comments, comment]);
-            setNewComment("");
-        }
+    const handleSubmitComment: FormEventHandler = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        router.post(
+            route("comments.store"),
+            {
+                commentable_type: "App\\Models\\Issue",
+                id: issue.id,
+                comment: data.comment,
+            },
+            {
+                only: ["comments"],
+                preserveScroll: true,
+                onStart: () => toast.loading("Updating...", { id: "update" }),
+                onSuccess: () => {
+                    toast.success("Update successful", {
+                        id: "update",
+                        richColors: true,
+                    });
+                    router.reload();
+                },
+                onError: () => toast.error("Update failed", { id: "update" }),
+            }
+        );
     };
 
     const navigateImage = (direction: "prev" | "next") => {
@@ -217,16 +209,16 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
         <AuthenticatedUserLayout header="Detail Pengaduan Warga">
             <Head title="Detail Pengaduan Warga" />
             <div className="min-h-screen p-4 md:p-6">
-                <div className="max-w-7xl mx-auto space-y-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="mx-auto space-y-6 max-w-7xl">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                         {/* Main Content - Left 2/3 */}
-                        <div className="lg:col-span-2 space-y-6">
+                        <div className="space-y-6 lg:col-span-2">
                             {/* Complaint Overview */}
                             <Card>
                                 <CardHeader>
                                     <div className="flex items-start gap-4">
                                         <div className="p-2 rounded-lg">
-                                            <CategoryIcon className="h-6 w-6 text-primary" />
+                                            <CategoryIcon className="w-6 h-6 text-primary" />
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between gap-3 mb-2">
@@ -238,20 +230,20 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                         { variant: "outline" }
                                                     )} hover:bg-transparent hover:shadow-none hover:opacity-100 hover:ring-0 hover:border-inherit hover:text-destructive`}
                                                 >
-                                                    <IoMegaphoneOutline className="h-4 w-4 text-destructive" />
+                                                    <IoMegaphoneOutline className="w-4 h-4 text-destructive" />
                                                     <span className="text-sm font-medium">
                                                         {issue.likes_count}
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-4 text-sm mb-4">
+                                            <div className="flex items-center gap-4 mb-4 text-sm">
                                                 <span className="flex items-center gap-1">
-                                                    <Calendar className="h-4 w-4" />
+                                                    <Calendar className="w-4 h-4" />
                                                     Diajukan:{" "}
                                                     {issue.created_at_relative}
                                                 </span>
                                                 {/* <span className="flex items-center gap-1">
-                                                    <MapPin className="h-4 w-4" />
+                                                    <MapPin className="w-4 h-4" />
                                                     {
                                                         complaintData.location
                                                             .address
@@ -278,7 +270,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
-                                        <Construction className="h-5 w-5" />
+                                        <Construction className="w-5 h-5" />
                                         Status Progress
                                     </CardTitle>
                                 </CardHeader>
@@ -334,7 +326,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
     }
   `}
                                                                     >
-                                                                        <StepIconPhase className="h-5 w-5" />
+                                                                        <StepIconPhase className="w-5 h-5" />
                                                                     </div>
                                                                     {/* Step */}
                                                                     <div className="flex-1">
@@ -360,7 +352,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                                                 </p>
                                                                                 {/* {phase.status ===
                                                                             "rejected" && (
-                                                                            <p className="text-sm text-red-600 mt-1">
+                                                                            <p className="mt-1 text-sm text-red-600">
                                                                                 Reason:{" "}
 
                                                                                     "See comments for details"
@@ -388,11 +380,11 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                                         )}
                                                                         {phase.status ===
                                                                             "resolved" && (
-                                                                            <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                            <CheckCircle className="w-5 h-5 text-green-500" />
                                                                         )}
                                                                         {phase.status ===
                                                                             "closed" && (
-                                                                            <XCircle className="h-5 w-5 text-gray-500" />
+                                                                            <XCircle className="w-5 h-5 text-gray-500" />
                                                                         )}
                                                                     </div>
                                                                 </div>
@@ -420,8 +412,8 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         {/* Overall Progress Bar */}
                                         <div className="pt-4 border-t">
                                             {isIssueClosed ? (
-                                                <div className="flex items-center text-destructive justify-between mb-2 bg-secondary rounded-md px-2 py-1">
-                                                    <h2 className="text-red-600 text-sm">
+                                                <div className="flex items-center justify-between px-2 py-1 mb-2 rounded-md text-destructive bg-secondary">
+                                                    <h2 className="text-sm text-red-600">
                                                         Pengaduan Ditolak
                                                     </h2>
                                                     <div
@@ -429,7 +421,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                             { variant: "ghost" }
                                                         )} bg-secondary`}
                                                     >
-                                                        <XCircle className="size-6 text-red-600" />
+                                                        <XCircle className="text-red-600 size-6" />
                                                     </div>
                                                 </div>
                                             ) : (
@@ -454,9 +446,9 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                             Resolved
                                                         </span>
                                                     </div>
-                                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                                    <div className="w-full h-2 bg-gray-200 rounded-full">
                                                         <div
-                                                            className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-700"
+                                                            className="h-2 transition-all duration-700 rounded-full bg-gradient-to-r from-green-500 to-blue-500"
                                                             style={{
                                                                 width: `${
                                                                     (issue.phases.filter(
@@ -486,13 +478,13 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                 </CardHeader>
                                 <CardContent>
                                     {issue.attachments.length > 0 ? (
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                                             {issue.attachments.map(
                                                 (image, index) => (
                                                     <Dialog key={index}>
                                                         <DialogTrigger asChild>
                                                             <div
-                                                                className="relative aspect-square rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                                                                className="relative overflow-hidden transition-opacity rounded-lg cursor-pointer aspect-square hover:opacity-90"
                                                                 onClick={() =>
                                                                     setSelectedImage(
                                                                         index
@@ -507,11 +499,11 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                                         index +
                                                                         1
                                                                     }`}
-                                                                    className="w-full h-full object-cover"
+                                                                    className="object-cover w-full h-full"
                                                                 />
                                                             </div>
                                                         </DialogTrigger>
-                                                        <DialogContent className="max-w-4xl w-full p-0">
+                                                        <DialogContent className="w-full max-w-4xl p-0">
                                                             <div className="relative">
                                                                 <img
                                                                     src={
@@ -527,28 +519,28 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                                 <Button
                                                                     variant="outline"
                                                                     size="icon"
-                                                                    className="absolute left-4 top-1/2 transform -translate-y-1/2 "
+                                                                    className="absolute transform -translate-y-1/2 left-4 top-1/2 "
                                                                     onClick={() =>
                                                                         navigateImage(
                                                                             "prev"
                                                                         )
                                                                     }
                                                                 >
-                                                                    <ChevronLeft className="h-4 w-4" />
+                                                                    <ChevronLeft className="w-4 h-4" />
                                                                 </Button>
                                                                 <Button
                                                                     variant="outline"
                                                                     size="icon"
-                                                                    className="absolute right-4 top-1/2 transform -translate-y-1/2 "
+                                                                    className="absolute transform -translate-y-1/2 right-4 top-1/2 "
                                                                     onClick={() =>
                                                                         navigateImage(
                                                                             "next"
                                                                         )
                                                                     }
                                                                 >
-                                                                    <ChevronRight className="h-4 w-4" />
+                                                                    <ChevronRight className="w-4 h-4" />
                                                                 </Button>
-                                                                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                                                                <div className="absolute px-3 py-1 text-sm text-white transform -translate-x-1/2 rounded-full bottom-4 left-1/2 bg-black/50">
                                                                     {(selectedImage ||
                                                                         0) +
                                                                         1}{" "}
@@ -586,64 +578,81 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                             {/* Comments Section */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Updates & Comments</CardTitle>
+                                    <CardTitle>Comments</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    {comments.map((comment) => (
-                                        <div
-                                            key={comment.id}
-                                            className="flex gap-3"
-                                        >
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarFallback>
-                                                    {comment.author
-                                                        .split(" ")
-                                                        .map((n) => n[0])
-                                                        .join("")}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <span className="font-medium text-sm">
-                                                        {comment.author}
-                                                    </span>
-                                                    {comment.isOfficial && (
-                                                        <Badge
-                                                            variant="outline"
-                                                            className="text-xs"
-                                                        >
-                                                            Official
-                                                        </Badge>
-                                                    )}
-                                                    <span className="text-xs">
-                                                        {comment.date}
-                                                    </span>
+                                    {issue.comments ? (
+                                        <div className="space-y-4">
+                                            {issue.comments.map((comment) => (
+                                                <div
+                                                    key={comment.id}
+                                                    className="flex gap-3"
+                                                >
+                                                    <UserAvatar
+                                                        user={comment.user}
+                                                        size="sm"
+                                                    />
+
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <span className="text-sm font-medium">
+                                                                {
+                                                                    comment.user
+                                                                        .name
+                                                                }
+                                                            </span>
+                                                            {comment.user
+                                                                .role ===
+                                                                "admin" && (
+                                                                <Badge
+                                                                    variant="outline"
+                                                                    className="text-xs"
+                                                                >
+                                                                    Official
+                                                                </Badge>
+                                                            )}
+                                                            <span className="text-xs">
+                                                                {
+                                                                    comment.created_at_relative
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                        <div className="p-3 text-sm rounded-lg bg-secondary">
+                                                            {comment.body}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="rounded-lg bg-secondary p-3 text-sm">
-                                                    {comment.message}
-                                                </div>
-                                            </div>
+                                            ))}
                                         </div>
-                                    ))}
+                                    ) : (
+                                        <></>
+                                    )}
 
                                     <Separator />
 
-                                    <div className="space-y-3">
+                                    <form
+                                        onSubmit={handleSubmitComment}
+                                        className="space-y-3"
+                                    >
                                         <Textarea
                                             placeholder="Add a comment or update..."
-                                            value={newComment}
+                                            // value={newComment}
                                             onChange={(e) =>
-                                                setNewComment(e.target.value)
+                                                setData(
+                                                    "comment",
+                                                    e.target.value
+                                                )
                                             }
                                             className="min-h-[80px]"
                                         />
                                         <Button
-                                            onClick={handleSubmitComment}
-                                            disabled={!newComment.trim()}
+                                            // onClick={handleSubmitComment}
+                                            type="submit"
+                                            // disabled={!newComment.trim()}
                                         >
                                             Post Comment
                                         </Button>
-                                    </div>
+                                    </form>
                                 </CardContent>
                             </Card>
                         </div>
@@ -659,7 +668,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex items-center gap-3">
-                                        <Avatar className="h-12 w-12">
+                                        <Avatar className="w-12 h-12">
                                             <AvatarImage
                                             // src={
                                             //     complaintData.reporter
@@ -667,7 +676,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                             // }
                                             />
                                             <AvatarFallback>
-                                                <User className="h-6 w-6" />
+                                                <User className="w-6 h-6" />
                                             </AvatarFallback>
                                         </Avatar>
                                         <div>
@@ -684,13 +693,13 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
 
                                     <div className="space-y-3">
                                         <div className="flex items-center gap-2 text-sm">
-                                            <Mail className="h-4 w-4 text-gray-500" />
+                                            <Mail className="w-4 h-4 text-gray-500" />
                                             <span>
                                                 {issue.user.email}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-2 text-sm">
-                                            <Phone className="h-4 w-4 text-gray-500" />
+                                            <Phone className="w-4 h-4 text-gray-500" />
                                             <span>
                                                 {complaintData.reporter.phone}
                                             </span>
@@ -702,7 +711,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-2 text-sm">
-                                            <Calendar className="h-4 w-4 text-gray-500" />
+                                            <Calendar className="w-4 h-4 text-gray-500" />
                                             <span>
                                                 Diajukan {" "}
                                                 {issue.created_at_relative}
@@ -720,9 +729,9 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <div className="flex items-center justify-center bg-gray-200 rounded-lg aspect-video">
                                         <div className="text-center text-gray-500">
-                                            <MapPin className="h-8 w-8 mx-auto mb-2" />
+                                            <MapPin className="w-8 h-8 mx-auto mb-2" />
                                             <p className="text-sm">
                                                 Map Preview
                                             </p>
@@ -744,23 +753,23 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                 <CardContent className="space-y-2">
                                     <Button
                                         variant="outline"
-                                        className="w-full justify-start"
+                                        className="justify-start w-full"
                                     >
-                                        <ThumbsUp className="h-4 w-4 mr-2" />
+                                        <ThumbsUp className="w-4 h-4 mr-2" />
                                         Support This Report
                                     </Button>
                                     <Button
                                         variant="outline"
-                                        className="w-full justify-start"
+                                        className="justify-start w-full"
                                     >
-                                        <MapPin className="h-4 w-4 mr-2" />
+                                        <MapPin className="w-4 h-4 mr-2" />
                                         View on Map
                                     </Button>
                                     <Button
                                         variant="outline"
-                                        className="w-full justify-start"
+                                        className="justify-start w-full"
                                     >
-                                        <Mail className="h-4 w-4 mr-2" />
+                                        <Mail className="w-4 h-4 mr-2" />
                                         Contact Reporter
                                     </Button>
                                 </CardContent>

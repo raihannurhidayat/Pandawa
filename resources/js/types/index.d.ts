@@ -3,15 +3,27 @@ import { ForwardRefExoticComponent, ReactNode, RefAttributes } from "react";
 
 export type Role = "admin" | "user";
 
-export interface User {
+
+export interface Timestamp {
+    created_at: string,
+    updated_at: string,
+}
+
+export interface TimestampDetail extends Timestamp {
+    created_at_relative: string,
+    updated_at_relative: string,
+    created_at_formatted: string,
+    updated_at_formatted: string,
+}
+
+
+export interface User extends Timestamp {
     id: number;
     name: string;
     email: string;
     profile_photo_url: string;
     email_verified_at: string;
     role: Role;
-    created_at: string;
-    updated_at: string;
 }
 
 export type PageProps<

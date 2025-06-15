@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Contracts\Commentable;
 use App\Enums\PhaseStatus;
 use App\Traits\HasAttachments;
 use App\Traits\HasComments;
 use App\Traits\HasPhases;
 use App\Traits\HasRelativeTime;
 use App\IssueProgressTemplates;
+use App\Models\Concerns\Comments;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
@@ -15,10 +17,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Issue extends Model
+class Issue extends Model implements Commentable
 {
     /** @use HasFactory<\Database\Factories\IssueFactory> */
-    use HasFactory, HasAttachments, HasComments, HasPhases, HasRelativeTime;
+    use HasFactory, HasAttachments, Comments, HasPhases, HasRelativeTime;
 
     protected $keyType = 'string';
     public $incrementing = false;
@@ -43,14 +45,14 @@ class Issue extends Model
     }
 
     public function likes()
-{
-    return $this->hasMany(Like::class);
-}
+    {
+        return $this->hasMany(Like::class);
+    }
 
-public function isLikedBy(User $user)
-{
-    return $this->likes()->where('user_id', $user->id)->exists();
-}
+    public function isLikedBy(User $user)
+    {
+        return $this->likes()->where('user_id', $user->id)->exists();
+    }
 
     public function issueCategory(): BelongsTo
     {

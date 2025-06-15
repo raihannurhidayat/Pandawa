@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Enums\PhaseStatus;
@@ -94,6 +95,7 @@ class UserController extends Controller
                 },
                 'user',
                 'issueCategory',
+                'comments',
                 'phases',
                 'attachments',
                 'phases.attachments'
@@ -102,6 +104,7 @@ class UserController extends Controller
 
         return Inertia::render("user/detail-pengaduan-warga", [
             "issue" => $issue,
+            'comments' => $issue->comments
         ]);
     }
 
