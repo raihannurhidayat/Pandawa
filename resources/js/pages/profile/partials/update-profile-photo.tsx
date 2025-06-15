@@ -1,4 +1,4 @@
-import React, { useState, FormEventHandler } from "react";
+import React, { useState, FormEventHandler, useEffect } from "react";
 import FileUpload from "@/components/file-upload";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,9 +16,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import UserAvatar from "@/components/user-avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { router, useForm } from "@inertiajs/react";
+import { router, useForm, usePage } from "@inertiajs/react";
 import { Edit, Edit3Icon, EllipsisVertical } from "lucide-react";
 import { toast } from "sonner";
+import { PageProps, User } from "@/types";
 
 interface UploadDialogProps {
     open: boolean;
@@ -26,10 +27,21 @@ interface UploadDialogProps {
 }
 
 function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
+    const user = usePage<PageProps<{ user: User }>>().props.auth.user;
+
     const { data, setData, patch, processing, errors } = useForm<{
         photo: File | null;
     }>({ photo: null });
-    const [preview, setPreview] = useState<string | null>(null);
+    const [preview, setPreview] = useState<string | null>(
+        user.profile_photo_url ?? null
+    );
+
+    // if the dialog re-opens and no new file is chosen, reset preview back to live profile URL
+    useEffect(() => {
+        if (open && !data.photo) {
+            setPreview(user.profile_photo_url || null);
+        }
+    }, [open, user.profile_photo_url, data.photo]);
 
     const handleFileChange = (file: File) => {
         setData("photo", file);
@@ -55,7 +67,8 @@ function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
                         id: "update",
                         richColors: true,
                     });
-                    setPreview(null);
+                    // clear the FileUpload and close
+                    setData("photo", null);
                     onOpenChange(false);
                 },
                 onError: () => toast.error("Update failed", { id: "update" }),
@@ -70,27 +83,35 @@ function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
                     <DialogTitle>Change Avatar</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={submit} className="space-y-4">
-                    <FileUpload
-                        files={data.photo ? [data.photo] : []}
-                        onFilesChange={(files) =>
-                            files.length && handleFileChange(files[0])
-                        }
-                        presets={["image"]}
-                        maxFiles={1}
-                    />
-                    {preview && (
-                        <img
-                            src={preview}
-                            alt="Preview"
-                            className="w-32 h-32 mx-auto rounded-full"
+                    {!data.photo ? (
+                        <FileUpload
+                            files={data.photo ? [data.photo] : []}
+                            onFilesChange={(files) =>
+                                files.length && handleFileChange(files[0])
+                            }
+                            presets={["image"]}
+                            maxFiles={1}
                         />
+                    ) : (
+                        <div className="flex justify-center">
+                            {preview && (
+                                <img
+                                    src={preview}
+                                    alt="Preview"
+                                    className="w-32 h-32 mx-auto rounded-full"
+                                />
+                            )}
+                        </div>
                     )}
-                    <DialogFooter>
+                    <DialogFooter className="flex justify-end max-md:gap-2">
                         <Button
-                            type="submit"
-                            disabled={processing}
-                            className="w-full"
+                            variant="outline"
+                            disabled={processing || !data.photo}
+                            onClick={() => data.photo && setData("photo", null)}
                         >
+                            Remove
+                        </Button>
+                        <Button type="submit" disabled={processing}>
                             Save
                         </Button>
                     </DialogFooter>
