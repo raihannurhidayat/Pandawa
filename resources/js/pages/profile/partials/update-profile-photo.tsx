@@ -71,6 +71,7 @@ function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
                 </DialogHeader>
                 <form onSubmit={submit} className="space-y-4">
                     <FileUpload
+                        files={data.photo ? [data.photo] : []}
                         onFilesChange={(files) =>
                             files.length && handleFileChange(files[0])
                         }

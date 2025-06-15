@@ -1,4 +1,4 @@
-import React, { useState, useCallback, ChangeEvent } from "react";
+import React, { useState, useCallback, useRef, ChangeEvent } from "react";
 import { Upload } from "lucide-react";
 import {
     getAcceptedTypes,
@@ -8,8 +8,10 @@ import {
 import { cn } from "@/lib/utils";
 
 interface FileUploadProps {
+    /** Initial files */
+    files: File[];
     /** Callback when files change */
-    onFilesChange?: (files: File[]) => void;
+    onFilesChange: (files: File[]) => void;
     /** Type presets (e.g. ["image","document"]) or explicit MIME */
     presets?: string[];
     /** Max file size in bytes */
@@ -22,17 +24,17 @@ interface FileUploadProps {
     maxFiles?: number;
 }
 
-function FileUpload({
+export default function FileUpload({
+    files = [],
     onFilesChange,
     presets = ["image", "document"],
     maxSize = DEFAULT_MAX_SIZE,
     extraTypes = [],
-    isShowList = false,
     maxFiles = Infinity,
 }: FileUploadProps) {
-    const [files, setFiles] = useState<File[]>([]);
     const [errors, setErrors] = useState<string[]>([]);
     const [isDragOver, setIsDragOver] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const acceptedTypes = getAcceptedTypes(presets, extraTypes);
     const isDisabled = files.length >= maxFiles;
@@ -40,28 +42,28 @@ function FileUpload({
     const processFiles = useCallback(
         (fileList: FileList) => {
             if (isDisabled) return;
+
             const valid: File[] = [];
             const errs: string[] = [];
-            const availableSlots = Math.max(maxFiles - files.length, 0);
+            const slots = Math.max(maxFiles - files.length, 0);
+
             Array.from(fileList)
-                .slice(0, availableSlots)
-                .forEach((file) => {
-                    const err = validateFile(file, { maxSize, acceptedTypes });
-                    if (err) errs.push(`${file.name}: ${err}`);
-                    else valid.push(file);
+                .slice(0, slots)
+                .forEach((f) => {
+                    const err = validateFile(f, { maxSize, acceptedTypes });
+                    if (err) errs.push(`${f.name}: ${err}`);
+                    else valid.push(f);
                 });
-            setFiles(valid);
+
+            if (valid.length) {
+                const next = [...files, ...valid];
+                onFilesChange(next); // notify parent
+            }
             setErrors(errs);
-            onFilesChange?.(valid);
+
+            if (inputRef.current) inputRef.current.value = "";
         },
-        [
-            acceptedTypes,
-            files.length,
-            maxFiles,
-            maxSize,
-            onFilesChange,
-            isDisabled,
-        ]
+        [acceptedTypes, files, isDisabled, maxFiles, maxSize, onFilesChange]
     );
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -108,6 +110,7 @@ function FileUpload({
             >
                 {/* Invisible input covers entire drop area for click/tap */}
                 <input
+                    ref={inputRef}
                     type="file"
                     multiple={maxFiles > 1}
                     disabled={isDisabled}
@@ -141,15 +144,6 @@ function FileUpload({
                     ))}
                 </div>
             )}
-            {isShowList && files.length > 0 && (
-                <ul className="mt-2 text-sm list-disc list-inside">
-                    {files.map((file) => (
-                        <li key={file.name}>{file.name}</li>
-                    ))}
-                </ul>
-            )}
         </div>
     );
 }
-
-export default FileUpload;

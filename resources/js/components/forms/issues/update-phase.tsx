@@ -27,6 +27,9 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import FileUpload from "@/components/file-upload";
+import FileItem from "@/components/file-card";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function UpdatePhase({
     phase,
@@ -52,6 +55,12 @@ export default function UpdatePhase({
     }, [phase, form]);
 
     const [attachments, setAttachments] = useState<File[]>([]);
+
+    function handleRemoveFile(index: number) {
+        const newFiles = attachments.filter((_, i) => i !== index);
+        setAttachments(newFiles);
+        console.log(attachments);
+    }
 
     function onSubmit(values: any) {
         const data = {
@@ -88,9 +97,7 @@ export default function UpdatePhase({
                                 <FormItem>
                                     <FormControl>
                                         <div className="flex items-center justify-between w-full mb-2">
-                                            <Label htmlFor="status">
-                                                Set Reason
-                                            </Label>
+                                            <h1>Set Reason</h1>
                                             <Select
                                                 value={form.getValues("status")}
                                                 onValueChange={(value) =>
@@ -135,10 +142,34 @@ export default function UpdatePhase({
                             )}
                         />
                     </div>
-                    <AttachmentsInput
-                        attachments={attachments}
-                        setAttachments={setAttachments}
+                    <FileUpload
+                        files={attachments}
+                        onFilesChange={setAttachments}
+                        presets={["image", "document"]}
+                        maxFiles={10}
                     />
+                    <div className="flex w-full max-h-[9.2rem]">
+                        {attachments.length > 0 && (
+                            <ScrollArea
+                                type="always"
+                                className="flex-1 w-1 mt-2"
+                            >
+                                <div className="flex flex-col gap-2">
+                                    {attachments.map((file, index) => (
+                                        <FileItem
+                                            key={index}
+                                            file={file}
+                                            onRemove={() =>
+                                                handleRemoveFile(index)
+                                            }
+                                            preview="md"
+                                        />
+                                    ))}
+                                </div>
+                                <ScrollBar orientation="vertical" />
+                            </ScrollArea>
+                        )}
+                    </div>
                 </div>
                 <Button variant="default" type="submit" className="w-full mt-4">
                     Save Update
