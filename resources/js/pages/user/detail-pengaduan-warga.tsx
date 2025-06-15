@@ -229,7 +229,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                             <CategoryIcon className="h-6 w-6 text-primary" />
                                         </div>
                                         <div className="flex-1">
-                                            <div className="flex items-center gap-3 mb-2">
+                                            <div className="flex items-center justify-between gap-3 mb-2">
                                                 <CardTitle className="text-2xl font-bold">
                                                     {issue.title}
                                                 </CardTitle>
@@ -291,7 +291,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                     isIssueClosed
                                                         ? "bg-destructive text-destructive-foreground hover:bg-destructive hover:shadow-none hover:opacity-100 hover:ring-0 hover:border-inherit"
                                                         : "bg-primary"
-                                                } px-3 py-1`}
+                                                } px-3 py-1 hidden md:block`}
                                             >
                                                 {currentIssue}
                                             </Badge>
@@ -568,12 +568,12 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                     ) : (
                                         <div className="flex flex-col items-center justify-center py-12 text-center border-dashed border-2">
                                             <div className="rounded-full bg-muted p-4 mb-4">
-                                                <FileX className="h-8 w-8 text-muted-foreground" />
+                                                <FileX className="md:h-8 md:w-8 size-6 text-muted-foreground" />
                                             </div>
-                                            <h3 className="text-lg font-medium text-foreground mb-2">
+                                            <h3 className="md:text-lg text-sm font-medium text-foreground mb-2">
                                                 Tidak Ada Bukti Pendukung
                                             </h3>
-                                            <p className="text-sm text-muted-foreground mb-4 max-w-sm">
+                                            <p className="md:text-sm text-xs text-muted-foreground mb-4 max-w-sm">
                                                 Tidak ada file atau gambar yang
                                                 diunggah sebagai bukti pendukung
                                                 untuk pengaduan ini.
@@ -735,7 +735,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                             </Card>
 
                             {/* Quick Actions */}
-                            <Card>
+                            {/* <Card>
                                 <CardHeader>
                                     <CardTitle className="text-lg">
                                         Quick Actions
@@ -764,12 +764,12 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         Contact Reporter
                                     </Button>
                                 </CardContent>
-                            </Card>
+                            </Card> */}
                         </div>
                     </div>
 
                     {/* Feedback Section */}
-                    <div className="sm:max-w-full max-w-sm">
+                    <div className="sm:max-w-full max-w-md">
                         <FeedbackComponent phasesData={issue.phases} />
                     </div>
                 </div>
