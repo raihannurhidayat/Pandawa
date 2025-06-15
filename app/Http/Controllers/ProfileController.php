@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -30,13 +31,31 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        // dd($request->all());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // 1) If the photo form was submitted, swap the image:
+        if ($request->hasFile('photo')) {
+            // delete old
+            if ($user->profile_photo_path) {
+                Storage::delete($user->profile_photo_path);
+            }
+            // store new
+            $user->profile_photo_path = $request
+                ->file('photo')
+                ->store('public/profile-photos');
         }
 
-        $request->user()->save();
+        // 2) Otherwise (or in addition) fill name/email if they came through:
+        if ($request->filled('name') || $request->filled('email')) {
+            $user->fill($request->only('name', 'email'));
+
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+        }
+
+        $user->save();
 
         return Redirect::route('profile.edit');
     }

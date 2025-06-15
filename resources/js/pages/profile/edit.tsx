@@ -1,6 +1,7 @@
 import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import DeleteUserForm from "@/pages/profile/partials/delete-user-form";
 import UpdatePasswordForm from "@/pages/profile/partials/update-password-form";
+import UpdateProfilePhoto from "@/pages/profile/partials/update-profile-photo";
 import UpdateProfileInformationForm from "@/pages/profile/partials/update-profile-information-form";
 import { Head, usePage } from "@inertiajs/react";
 import {
@@ -87,6 +88,12 @@ export default function Edit({
             <Head title="Profile" />
 
             <div className="space-y-6">
+                <Card>
+                    <CardContent className="pb-0">
+                        <UpdateProfilePhoto />
+                    </CardContent>
+                </Card>
+
                 <Card>
                     <CardHeader>
                         <CardTitle>Profile Information</CardTitle>
