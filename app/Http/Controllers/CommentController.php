@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function store(Request $request)
+    public function store(CreateCommentRequest $request)
     {
-        dd($request->all());
+        // dd($request->all());
 
-        $request->user()->comments($request->commentable());
+        $request->user()->comment($request->commentable(), $request->validated('comment'));
 
         // return redirect()->back();
     }
