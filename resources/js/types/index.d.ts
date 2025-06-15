@@ -20,10 +20,12 @@ export interface TimestampDetail extends Timestamp {
 export interface User extends Timestamp {
     id: number;
     name: string;
+    username: string;
     email: string;
     profile_photo_url: string;
     email_verified_at: string;
     role: Role;
+    address: string;
 }
 
 export type PageProps<

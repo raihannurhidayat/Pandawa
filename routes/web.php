@@ -20,7 +20,7 @@ use App\Http\Controllers\OnboardingController;
 // })->name('welcome');
 
 
-Route::get('/profile/{profile}', [ProfileController::class, 'show'])->name('profile.show');
+Route::get('/profile/@{user}', [ProfileController::class, 'show'])->name('profile.show');
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 

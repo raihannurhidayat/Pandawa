@@ -81,10 +81,8 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function show($profile)
+    public function show(User $user)
     {
-        $user = User::findOrFail($profile);
-
         return Inertia::render('profile', [
             'user' => $user
         ]);
