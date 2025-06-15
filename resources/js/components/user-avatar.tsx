@@ -11,6 +11,8 @@ const userAvatarVariants = cva("size-10", {
             sm: "size-8",
             md: "size-10",
             lg: "size-20",
+            xl: "size-24",
+            "2xl": "size-32",
         },
         indicator: {
             default: "bg-primary",
