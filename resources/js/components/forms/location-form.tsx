@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { UseFormReturn, Controller } from "react-hook-form";
+import {
+    UseFormReturn,
+    Controller,
+    useFormContext,
+    useWatch,
+} from "react-hook-form";
 import {
     FormControl,
     FormField,
@@ -18,15 +23,13 @@ import { API_WILAYAH } from "@/constant/api-wilayah";
 import { Provinsi } from "@/types/wilayah";
 import { LocationFormSchema } from "@/forms/location";
 
-interface LocationSelectorProps {
-    form: UseFormReturn<LocationFormSchema>;
-}
+export function LocationSelector() {
+    const { control, reset, setValue, getValues } =
+        useFormContext<LocationFormSchema>();
 
-export function LocationSelector({ form }: LocationSelectorProps) {
-    const { control, watch, setValue, getValues } = form;
-    const provinsiValue = watch("location.provinsi");
-    const kotaValue = watch("location.kota");
-    const kecamatanValue = watch("location.kecamatan");
+    const provinsiValue = useWatch({ control, name: "location.provinsi" });
+    const kotaValue = useWatch({ control, name: "location.kota" });
+    const kecamatanValue = useWatch({ control, name: "location.kecamatan" });
 
     const [provinsiList, setProvinsiList] = useState<Provinsi[]>([]);
     const [kotaList, setKotaList] = useState<any[]>([]);
@@ -35,7 +38,12 @@ export function LocationSelector({ form }: LocationSelectorProps) {
 
     const headers = { "X-API-KEY": import.meta.env.VITE_API_WILAYAH };
 
-    // now fetchList just returns data
+    useEffect(() => {
+        setTimeout(() => {
+            reset();
+        }, 100);
+    }, [reset]);
+
     const fetchList = async (url: string) => {
         const res = await fetch(url, { headers });
         if (!res.ok) throw new Error("Failed to fetch " + url);

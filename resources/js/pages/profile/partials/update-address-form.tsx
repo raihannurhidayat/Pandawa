@@ -6,7 +6,7 @@ import { PageProps, User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, usePage } from "@inertiajs/react";
 import { FormEventHandler, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 function UpdateAddressForm({ className }: { className?: string }) {
@@ -18,10 +18,10 @@ function UpdateAddressForm({ className }: { className?: string }) {
         resolver: zodResolver(locationFormSchema),
         defaultValues: {
             location: {
-                provinsi: address?.provinsi,
-                kota: address?.kota,
-                kelurahan: address?.kelurahan,
-                kecamatan: address?.kecamatan,
+                provinsi: address.provinsi ?? "",
+                kota: address.kota ?? "",
+                kelurahan: address.kelurahan ?? "",
+                kecamatan: address.kecamatan ?? "",
             },
         },
     });
@@ -29,11 +29,13 @@ function UpdateAddressForm({ className }: { className?: string }) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
+        console.log(address);
+
         const data = { ...form.getValues(), _method: "patch" };
 
         console.log(data);
 
-        return;
+        // return;
 
         router.patch(route("profile.update"), data, {
             preserveScroll: true,
@@ -64,7 +66,9 @@ function UpdateAddressForm({ className }: { className?: string }) {
     return (
         <Form {...form}>
             <form onSubmit={submit} className={className}>
-                <LocationSelector form={form} />
+                <FormProvider {...form}>
+                    <LocationSelector />
+                </FormProvider>
                 <div className="flex justify-end gap-2 mt-2">
                     <Button variant="outline" type="reset">
                         Reset
