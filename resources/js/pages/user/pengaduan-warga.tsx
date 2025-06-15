@@ -541,7 +541,7 @@ export default function PengaduanWargaPage({
 
                     {/* Pagination */}
                     {filteredAndSortedComplaints.length > 0 && (
-                        <div className="flex items-center justify-between p-4 mt-8 border rounded-lg shadow-sm">
+                        <div className="flex flex-col md:flex-row gap-4 md:gap-0 items-center justify-between p-4 mt-8 border rounded-lg shadow-sm">
                             {/* Page Info */}
                             <div className="text-sm">
                                 Halaman {currentPage} dari {totalPages} (
@@ -549,9 +549,9 @@ export default function PengaduanWargaPage({
                             </div>
 
                             {/* Pagination Controls */}
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 md:flex-row flex-col">
                                 {/* Items per page selector */}
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 w-full">
                                     <Select
                                         value={itemsPerPage.toString()}
                                         onValueChange={(value) => {
