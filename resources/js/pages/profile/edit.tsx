@@ -31,6 +31,12 @@ export default function Edit({
 
                 <div className="space-y-6">
                     <Card>
+                        <CardContent className="pb-0">
+                            <UpdateProfilePhoto />
+                        </CardContent>
+                    </Card>
+
+                    <Card>
                         <CardHeader>
                             <CardTitle>Profile Information</CardTitle>
                             <CardDescription>
@@ -82,9 +88,7 @@ export default function Edit({
     }
 
     return (
-        <AuthenticatedUserLayout
-            header={'Edit Profile'}
-        >
+        <AuthenticatedUserLayout header={"Edit Profile"}>
             <Head title="Profile" />
 
             <div className="space-y-6">
