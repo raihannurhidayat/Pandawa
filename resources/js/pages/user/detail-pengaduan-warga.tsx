@@ -33,6 +33,8 @@ import {
     Ban,
     FileClock,
     MessageCircleX,
+    MessageSquare,
+    Plus,
 } from "lucide-react";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
 import { Head, router, useForm } from "@inertiajs/react";
@@ -130,11 +132,12 @@ const categoryIcons = {
 export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
     const [selectedImage, setSelectedImage] = useState<number | null>(null);
     const [newComment, setNewComment] = useState("");
+    const [isHandleSubmitLoading, setIsHandleSubmitLoading] = useState(false);
 
     const CategoryIcon =
         categoryIcons[complaintData.category as keyof typeof categoryIcons];
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData } = useForm({
         comment: "",
     });
 
@@ -154,15 +157,23 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
             {
                 only: ["comments"],
                 preserveScroll: true,
-                onStart: () => toast.loading("Updating...", { id: "update" }),
+                onStart: () => {
+                    setIsHandleSubmitLoading(true);
+                    toast.loading("Updating...", { id: "update" });
+                },
                 onSuccess: () => {
                     toast.success("Update successful", {
                         id: "update",
                         richColors: true,
                     });
+
                     router.reload();
                 },
                 onError: () => toast.error("Update failed", { id: "update" }),
+                onFinish: () => {
+                    setNewComment("");
+                    setIsHandleSubmitLoading(false);
+                },
             }
         );
     };
@@ -202,6 +213,19 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
 
                 return bTime - aTime;
             })[0]?.title ?? "Pengaduan Telah Selesai";
+
+    const [visibleComments, setVisibleComments] = useState(5);
+    const COMMENTS_PER_LOAD = 5;
+    const totalComments = issue.comments.length;
+    const hasMoreComments = visibleComments < totalComments;
+
+    const handleShowMore = () => {
+        setVisibleComments((prev) =>
+            Math.min(prev + COMMENTS_PER_LOAD, totalComments)
+        );
+    };
+
+    const displayedComments = issue.comments.slice(0, visibleComments);
 
     return (
         <AuthenticatedUserLayout header="Detail Pengaduan Warga">
@@ -579,51 +603,103 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                     <CardTitle>Comments</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    {issue.comments ? (
-                                        <div className="space-y-4">
-                                            {issue.comments.map((comment) => (
-                                                <div
-                                                    key={comment.id}
-                                                    className="flex gap-3"
-                                                >
-                                                    <UserAvatar
-                                                        user={comment.user}
-                                                        size="sm"
-                                                    />
-
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <span className="text-sm font-medium">
-                                                                {
+                                    {issue.comments.length > 0 ? (
+                                        <div className="">
+                                            <div className="space-y-4">
+                                                {displayedComments.map(
+                                                    (comment) => (
+                                                        <div
+                                                            key={comment.id}
+                                                            className="flex gap-3"
+                                                        >
+                                                            <UserAvatar
+                                                                user={
                                                                     comment.user
-                                                                        .name
                                                                 }
-                                                            </span>
-                                                            {comment.user
-                                                                .role ===
-                                                                "admin" && (
-                                                                <Badge
-                                                                    variant="outline"
-                                                                    className="text-xs"
-                                                                >
-                                                                    Official
-                                                                </Badge>
-                                                            )}
-                                                            <span className="text-xs">
-                                                                {
-                                                                    comment.updated_at_formatted
-                                                                }
-                                                            </span>
+                                                                size="sm"
+                                                            />
+
+                                                            <div className="flex-1">
+                                                                <div className="flex items-center gap-2 mb-1">
+                                                                    <span className="text-sm font-medium">
+                                                                        {
+                                                                            comment
+                                                                                .user
+                                                                                .name
+                                                                        }
+                                                                    </span>
+                                                                    {comment
+                                                                        .user
+                                                                        .role ===
+                                                                        "admin" && (
+                                                                        <Badge
+                                                                            variant="outline"
+                                                                            className="text-xs"
+                                                                        >
+                                                                            Official
+                                                                        </Badge>
+                                                                    )}
+                                                                    <span className="text-xs text-muted-foreground">
+                                                                        {
+                                                                            comment.updated_at_formatted
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                                <div className="p-3 text-sm rounded-lg bg-secondary">
+                                                                    {
+                                                                        comment.body
+                                                                    }
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div className="p-3 text-sm rounded-lg bg-secondary">
-                                                            {comment.body}
-                                                        </div>
-                                                    </div>
+                                                    )
+                                                )}
+                                            </div>
+
+                                            {hasMoreComments && (
+                                                <div className="mt-6 text-center">
+                                                    <Button
+                                                        variant="link"
+                                                        onClick={handleShowMore}
+                                                        className="w-full sm:w-auto"
+                                                    >
+                                                        Show (
+                                                        {Math.min(
+                                                            COMMENTS_PER_LOAD,
+                                                            totalComments -
+                                                                visibleComments
+                                                        )}
+                                                        ) more comments
+                                                    </Button>
                                                 </div>
-                                            ))}
+                                            )}
+
+                                            {!hasMoreComments &&
+                                                totalComments > 5 && (
+                                                    <div className="mt-6 text-center">
+                                                        <p className="text-sm text-muted-foreground">
+                                                            All {totalComments}{" "}
+                                                            comments loaded
+                                                        </p>
+                                                    </div>
+                                                )}
                                         </div>
                                     ) : (
-                                        <></>
+                                        <div className="border rounded-xl p-8 text-center ">
+                                            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4">
+                                                <MessageSquare className="w-6 h-6 text-secondary-foreground" />
+                                            </div>
+
+                                            <h3 className="text-base font-medium mb-2">
+                                                No comments
+                                            </h3>
+
+                                            <p className="text-sm text-secondary-foreground mb-6 max-w-xs mx-auto">
+                                                Start a conversation by sharing
+                                                your thoughts or asking a
+                                                question.
+                                            </p>
+                                        </div>
                                     )}
 
                                     <Separator />
@@ -634,19 +710,22 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                     >
                                         <Textarea
                                             placeholder="Add a comment or update..."
-                                            // value={newComment}
-                                            onChange={(e) =>
+                                            value={newComment}
+                                            onChange={(e) => {
+                                                setNewComment(e.target.value);
                                                 setData(
                                                     "comment",
                                                     e.target.value
-                                                )
-                                            }
+                                                );
+                                            }}
                                             className="min-h-[80px]"
                                         />
                                         <Button
-                                            // onClick={handleSubmitComment}
                                             type="submit"
-                                            // disabled={!newComment.trim()}
+                                            disabled={
+                                                !newComment.trim() ||
+                                                isHandleSubmitLoading
+                                            }
                                         >
                                             Post Comment
                                         </Button>
