@@ -72,14 +72,20 @@ class User extends Authenticatable
     }
 
     /**
-     * Add a comment to a commentable model.
+     * Create a new comment associated with the given commentable model.
      *
-     * @param  \App\Contracts\Commentable  $commentable
+     * @param \App\Contracts\Commentable $commentable The model to associate the comment with.
+     * @param string $comment The content of the comment.
      * @return $this
      */
-    public function comment(Commentable $commentable): self
+
+    public function comment(Commentable $commentable, string $comment): self
     {
-        (new Comment())
+        $comment = new Comment([
+            'body' => $comment,
+        ]);
+
+        $comment
             ->user()->associate($this)
             ->commentable()->associate($commentable)
             ->save();
