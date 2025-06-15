@@ -25,6 +25,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
         'profile_photo_path',
@@ -61,6 +62,11 @@ class User extends Authenticatable
         return Storage::url($this->profile_photo_path);
     }
 
+    public function getRouteKeyName()
+    {
+        return 'username';
+    }
+
     /**
      * Get all of the user's comments.
      *
@@ -78,7 +84,6 @@ class User extends Authenticatable
      * @param string $comment The content of the comment.
      * @return $this
      */
-
     public function comment(Commentable $commentable, string $comment): self
     {
         $comment = new Comment([
