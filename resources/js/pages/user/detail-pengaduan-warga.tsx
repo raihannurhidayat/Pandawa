@@ -11,7 +11,6 @@ import {
     Calendar,
     ChevronLeft,
     ChevronRight,
-    Clock,
     Construction,
     Mail,
     MapPin,
@@ -36,13 +35,11 @@ import {
     MessageCircleX,
 } from "lucide-react";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { Issue } from "@/types/issue";
 import { Send, Hourglass, ClipboardList, HelpCircle } from "lucide-react";
 import {
-    IoMegaphone,
     IoMegaphoneOutline,
-    IoMegaphoneSharp,
 } from "react-icons/io5";
 import { IconType } from "react-icons/lib";
 import FeedbackComponent from "@/components/shared/tabbed-feedback";
@@ -232,7 +229,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                             <CategoryIcon className="h-6 w-6 text-primary" />
                                         </div>
                                         <div className="flex-1">
-                                            <div className="flex items-center gap-3 mb-2">
+                                            <div className="flex items-center justify-between gap-3 mb-2">
                                                 <CardTitle className="text-2xl font-bold">
                                                     {issue.title}
                                                 </CardTitle>
@@ -251,7 +248,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                 <span className="flex items-center gap-1">
                                                     <Calendar className="h-4 w-4" />
                                                     Diajukan:{" "}
-                                                    {issue.updated_at_relative}
+                                                    {issue.created_at_relative}
                                                 </span>
                                                 {/* <span className="flex items-center gap-1">
                                                     <MapPin className="h-4 w-4" />
@@ -294,7 +291,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                     isIssueClosed
                                                         ? "bg-destructive text-destructive-foreground hover:bg-destructive hover:shadow-none hover:opacity-100 hover:ring-0 hover:border-inherit"
                                                         : "bg-primary"
-                                                } px-3 py-1`}
+                                                } px-3 py-1 hidden md:block`}
                                             >
                                                 {currentIssue}
                                             </Badge>
@@ -571,15 +568,15 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                     ) : (
                                         <div className="flex flex-col items-center justify-center py-12 text-center border-dashed border-2">
                                             <div className="rounded-full bg-muted p-4 mb-4">
-                                                <FileX className="h-8 w-8 text-muted-foreground" />
+                                                <FileX className="md:h-8 md:w-8 size-6 text-muted-foreground" />
                                             </div>
-                                            <h3 className="text-lg font-medium text-foreground mb-2">
+                                            <h3 className="md:text-lg text-sm font-medium text-foreground mb-2">
                                                 Tidak Ada Bukti Pendukung
                                             </h3>
-                                            <p className="text-sm text-muted-foreground mb-4 max-w-sm">
+                                            <p className="md:text-sm text-xs text-muted-foreground mb-4 max-w-sm">
                                                 Tidak ada file atau gambar yang
                                                 diunggah sebagai bukti pendukung
-                                                untuk laporan ini.
+                                                untuk pengaduan ini.
                                             </p>
                                         </div>
                                     )}
@@ -689,7 +686,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         <div className="flex items-center gap-2 text-sm">
                                             <Mail className="h-4 w-4 text-gray-500" />
                                             <span>
-                                                {complaintData.reporter.email}
+                                                {issue.user.email}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-2 text-sm">
@@ -707,8 +704,8 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         <div className="flex items-center gap-2 text-sm">
                                             <Calendar className="h-4 w-4 text-gray-500" />
                                             <span>
-                                                Submitted on{" "}
-                                                {complaintData.submissionDate}
+                                                Diajukan {" "}
+                                                {issue.created_at_relative}
                                             </span>
                                         </div>
                                     </div>
@@ -738,7 +735,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                             </Card>
 
                             {/* Quick Actions */}
-                            <Card>
+                            {/* <Card>
                                 <CardHeader>
                                     <CardTitle className="text-lg">
                                         Quick Actions
@@ -767,12 +764,12 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                         Contact Reporter
                                     </Button>
                                 </CardContent>
-                            </Card>
+                            </Card> */}
                         </div>
                     </div>
 
                     {/* Feedback Section */}
-                    <div className="sm:max-w-full max-w-sm">
+                    <div className="sm:max-w-full max-w-md">
                         <FeedbackComponent phasesData={issue.phases} />
                     </div>
                 </div>
