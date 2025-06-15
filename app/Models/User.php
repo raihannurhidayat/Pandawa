@@ -31,7 +31,20 @@ class User extends Authenticatable
         'profile_photo_path',
     ];
 
-    protected $appends = ['profile_photo_url'];
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<string>
+     */
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
 
     /**
      * The attributes that should be hidden for serialization.
@@ -52,6 +65,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'address' => 'array',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
