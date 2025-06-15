@@ -85,7 +85,12 @@ export default function FileItem({
             <Button
                 variant="ghost"
                 size="icon"
-                onClick={onRemove}
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    onRemove();
+                }}
                 className="z-50"
             >
                 <X className="w-4 h-4" />
