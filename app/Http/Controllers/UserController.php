@@ -20,7 +20,7 @@ class UserController extends Controller
 
     public function pengaduan(Request $request)
     {
-        $query = Issue::query()->with(['user', 'issueCategory', 'attachments'])->orderBy('updated_at', 'desc');
+        $query = Issue::query()->with(['user', 'issueCategory', 'attachments'])->where("user_id", "=", Auth::id())->orderBy('updated_at', 'desc');
 
         if ($request->has('title')) {
             $query->where('title', 'like', '%' . $request->title . '%');

@@ -23,6 +23,7 @@ import {
 import { Phase } from "@/types/issue";
 import { BiMessageCheck } from "react-icons/bi";
 import ImageGallery from "../image-gallery";
+import { Button } from "../ui/button";
 
 const phases = [
     {
@@ -222,6 +223,12 @@ export default function FeedbackComponent({
 
     return (
         <div className="sm:max-w-7xl mx-auto w-full">
+            <ImageGallery
+                images={activePhase?.attachments!}
+                isOpen={isGaleryModalOpen}
+                onClose={() => setIsGaleryModalOpen(false)}
+                initialIndex={phaseGalleryIndex}
+            />
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 {/* Tab Navigation */}
                 <div className="border-b border-gray-200 bg-gray-50">
@@ -326,13 +333,7 @@ export default function FeedbackComponent({
                                                     }
                                                 </span>
                                             </div>
-                                            <div className="flex items-center gap-1">
-                                                <User className="w-4 h-4" />
-                                                <span>
-                                                    {/* {activePhase.assignee} */}
-                                                    Admin
-                                                </span>
-                                            </div>
+
                                         </div>
                                     </div>
                                     <div
@@ -372,14 +373,54 @@ export default function FeedbackComponent({
                                     <h3 className="text-lg font-semibold text-gray-900 mb-3">
                                         Lampiran
                                     </h3>
-                                    <ImageGallery
-                                        images={activePhase?.attachments}
-                                        isOpen={isGaleryModalOpen}
-                                        onClose={() =>
-                                            setIsGaleryModalOpen(false)
-                                        }
-                                        initialIndex={phaseGalleryIndex}
-                                    />
+                                    <div className="flex flex-row flex-wrap gap-4">
+                                        {activePhase.attachments.length > 0 ? (
+                                            activePhase.attachments.map(
+                                                (attachment, index) => (
+                                                    <Button
+                                                        key={attachment.id}
+                                                        className="p-0 transition-opacity hover:bg-black/10"
+                                                        onClick={() => {
+                                                            setPhaseGalleryIndex(
+                                                                index
+                                                            );
+                                                            setIsGaleryModalOpen(
+                                                                true
+                                                            );
+                                                        }}
+                                                        asChild
+                                                    >
+                                                        <div className="w-32 h-24 overflow-hidden rounded-md outline outline-1 outline-neutral-400">
+                                                            <img
+                                                                src={
+                                                                    attachment.url
+                                                                }
+                                                                alt={
+                                                                    attachment.filename
+                                                                }
+                                                                className="object-cover w-full h-full transition-transform hover:scale-105"
+                                                            />
+                                                        </div>
+                                                    </Button>
+                                                )
+                                            )
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center py-12 text-center border-dashed border-2 w-full">
+                                                <div className="rounded-full bg-muted p-4 mb-4">
+                                                    <FileX className="h-8 w-8 text-muted-foreground" />
+                                                </div>
+                                                <h3 className="text-lg font-medium text-foreground mb-2">
+                                                    Tidak Ada Bukti Pendukung
+                                                </h3>
+                                                <p className="text-sm text-muted-foreground mb-4 max-w-sm">
+                                                    Tidak ada file atau gambar
+                                                    yang diunggah sebagai bukti
+                                                    pendukung untuk feedback ini
+                                                    ini.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </motion.div>
                         )}
