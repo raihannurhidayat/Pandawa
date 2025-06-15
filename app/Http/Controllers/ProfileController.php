@@ -87,4 +87,19 @@ class ProfileController extends Controller
             'user' => $user
         ]);
     }
+
+    public function usernameCheck(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string|alpha_dash',
+        ]);
+
+        $exists = User::where('username', $request->username)
+            ->where('id', '!=', auth()->id())
+            ->exists();
+
+        return response()->json([
+            'available' => !$exists,
+        ]);
+    }
 }
