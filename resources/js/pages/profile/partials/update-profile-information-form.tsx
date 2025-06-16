@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useDebounce } from "@uidotdev/usehooks";
 import axios from "axios";
 import { cn } from "@/lib/utils";
+import { useUsernameAvailability } from "@/hooks/use-username-availibility";
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -28,9 +29,10 @@ export default function UpdateProfileInformation({
             email: user.email,
         });
 
-    const [available, setAvailable] = useState(null);
-    const [checking, setChecking] = useState(false);
-    const debounceUsername = useDebounce(data.username, 500);
+    // Use custom hook for availability check
+    const { available, checking, debouncedUsername } = useUsernameAvailability(
+        data.username
+    );
 
     function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
         setData(
@@ -38,31 +40,6 @@ export default function UpdateProfileInformation({
             e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "")
         );
     }
-
-    const checkAvailability = async (username: string) => {
-        if (!username) return;
-
-        setChecking(true);
-
-        try {
-            const res = await axios.get(route("username.check"), {
-                params: { username },
-            });
-
-            setAvailable(res.data.available);
-        } catch (e) {
-            setAvailable(null);
-        } finally {
-            setChecking(false);
-        }
-    };
-
-    useEffect(() => {
-        if (debounceUsername) {
-            checkAvailability(debounceUsername);
-        }
-    }, [debounceUsername]);
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
@@ -78,12 +55,12 @@ export default function UpdateProfileInformation({
 
                         <p
                             className={cn(
-                                "transition-opacity duration-200 text-base",
+                                "transition-opacity duration-200 text-sm",
                                 (!(
                                     data.username !== user.username &&
                                     available !== null
                                 ) ||
-                                    debounceUsername === "") &&
+                                    debouncedUsername === "") &&
                                     "invisible",
                                 {
                                     "text-primary": available === true,
@@ -94,9 +71,9 @@ export default function UpdateProfileInformation({
                         >
                             {!checking
                                 ? available === true
-                                    ? `${debounceUsername} is available`
+                                    ? `${debouncedUsername} is available`
                                     : available === false
-                                    ? `${debounceUsername} is taken`
+                                    ? `${debouncedUsername} is taken`
                                     : ""
                                 : "Checking availability..."}
                         </p>
