@@ -30,6 +30,7 @@ export function useLocation(
     const [kecamatan, setKecamatan] = useState<string | null>(null);
     const [kelurahan, setKelurahan] = useState<string | null>(null);
 
+
     // Parse if input is JSON string
     let locationObj: PartialAddress | Address | null;
     if (typeof location === "string") {
@@ -41,6 +42,8 @@ export function useLocation(
     } else {
         locationObj = location;
     }
+
+    const [coordinats, setCoordinats] = useState(locationObj?.coordinats!)
 
     useEffect(() => {
         const fetchWilayah = async () => {
@@ -149,5 +152,6 @@ export function useLocation(
         fetchWilayah();
     }, [location]);
 
-    return { provinsi, kota, kecamatan, kelurahan, isFetching: isFetching };
+    return { provinsi, kota, kecamatan, kelurahan, coordinats, isFetching: isFetching };
+
 }
