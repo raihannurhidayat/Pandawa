@@ -4,6 +4,8 @@ import { PageProps, User } from "@/types";
 import { usePage } from "@inertiajs/react";
 import { cva, VariantProps } from "class-variance-authority";
 import { Edit, User as UserIcon } from "lucide-react";
+import { Badge } from "./ui/badge";
+import UsernameLink from "./username-link";
 
 const userAvatarVariants = cva("size-10", {
     variants: {
@@ -89,10 +91,13 @@ export default function UserAvatar({
 
             {showInformation && (
                 <div className="flex flex-col items-center gap-1 leading-tight lg:items-start">
-                    <h1 className="mb-2 text-lg">{user?.name}</h1>
-                    <h2 className="text-slate-700 dark:text-slate-300">
-                        {user?.role}
-                    </h2>
+                    <div className="flex flex-col items-center md:gap-2 md:flex-row md:mb-2">
+                        <h1 className="text-lg">{user?.name}</h1>
+                        <Badge variant="outline" className="w-fit">
+                            {user?.role}
+                        </Badge>
+                    </div>
+                    <UsernameLink user={user} />
                     <p className="text-sm text-muted-foreground">
                         {user?.email}
                     </p>

@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import UsernameLink from "@/components/username-link";
 import { useIsMobile } from "@/hooks/use-mobile";
 import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { cn } from "@/lib/utils";
@@ -86,10 +87,6 @@ function ShowIssue({ issue }: { issue: Issue }) {
             }
         );
     }
-
-    // TODO: delete in prod
-    console.log(issue);
-    console.log(activePhase.status === PhaseStatus.Resolved);
 
     function PhaseCard({
         phase,
@@ -369,15 +366,7 @@ function ShowIssue({ issue }: { issue: Issue }) {
                                     <Label className="leading-tight text-md text-muted-foreground">
                                         Pembuat
                                     </Label>
-                                    <Link
-                                        href={route(
-                                            "onboarding",
-                                            issue.user.id
-                                        )}
-                                        className="text-blue-500 hover:underline"
-                                    >
-                                        {issue.user.name}
-                                    </Link>
+                                    <UsernameLink user={issue.user} />
                                     <Label className="leading-tight text-md text-muted-foreground">
                                         Lokasi
                                     </Label>

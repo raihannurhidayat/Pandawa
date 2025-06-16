@@ -7,6 +7,7 @@ import { useLocation } from "@/hooks/use-location";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PartialAddress } from "@/types/location";
 import { motion } from "framer-motion";
+import UsernameLink from "@/components/username-link";
 
 export default function Profile({ user }: { user: User }) {
     const address = useLocation(user.address);
@@ -15,8 +16,6 @@ export default function Profile({ user }: { user: User }) {
         keyof PartialAddress,
         string
     ][];
-
-    console.log(address);
 
     return (
         <>
@@ -54,9 +53,10 @@ export default function Profile({ user }: { user: User }) {
                                         <h2 className="mb-2 text-2xl font-black text-gray-900">
                                             {user.name}
                                         </h2>
-                                        <h3 className="mb-2 text-lg font-medium text-gray-700">
+                                        {/* <h3 className="mb-2 text-lg font-medium text-gray-700">
                                             @{user.username}
-                                        </h3>
+                                        </h3> */}
+                                        <UsernameLink user={user} />
                                         <div className="flex items-center gap-2 mb-4">
                                             {user.email_verified_at && (
                                                 <span className="px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">
