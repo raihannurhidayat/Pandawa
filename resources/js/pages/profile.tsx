@@ -3,8 +3,21 @@ import { Head } from "@inertiajs/react";
 import { User as UserIcon, Mail, Calendar, Shield, Hash } from "lucide-react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { useLocation } from "@/hooks/use-location";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PartialAddress } from "@/types/location";
+import { motion } from "framer-motion";
 
 export default function Profile({ user }: { user: User }) {
+    const address = useLocation(user.address);
+
+    const addressEntries = Object.entries(address) as [
+        keyof PartialAddress,
+        string
+    ][];
+
+    console.log(address);
+
     return (
         <>
             <Head title={`${user.username} | Profile`} />
@@ -121,6 +134,53 @@ export default function Profile({ user }: { user: User }) {
                                     </div>
                                 </div>
                             </div>
+
+                            <Card>
+                                <motion.div
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{
+                                        duration: 0.5,
+                                        ease: "easeOut",
+                                    }}
+                                >
+                                    <CardHeader>
+                                        <CardTitle>Address</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="grid grid-cols-2 gap-6">
+                                            {addressEntries.map(
+                                                ([field, value], index) => (
+                                                    <motion.div
+                                                        key={field}
+                                                        initial={{
+                                                            opacity: 0,
+                                                            x: -10,
+                                                        }}
+                                                        animate={{
+                                                            opacity: 1,
+                                                            x: 0,
+                                                        }}
+                                                        transition={{
+                                                            delay: 0.1 * index,
+                                                            duration: 0.3,
+                                                        }}
+                                                    >
+                                                        <div key={field}>
+                                                            <p className="text-sm uppercase text-muted-foreground">
+                                                                {field}
+                                                            </p>
+                                                            <p className="mt-1 text-base font-medium">
+                                                                {value}
+                                                            </p>
+                                                        </div>
+                                                    </motion.div>
+                                                )
+                                            )}
+                                        </div>
+                                    </CardContent>
+                                </motion.div>
+                            </Card>
 
                             <div className="p-6 transition-all duration-300 bg-white border border-gray-200 shadow-sm rounded-2xl hover:shadow-lg md:col-span-2">
                                 <h3 className="mb-4 text-lg font-bold text-gray-900">
