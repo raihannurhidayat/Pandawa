@@ -1,11 +1,15 @@
 import { Link, useForm, usePage } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
-import { FormEventHandler } from "react";
+import { FormEventHandler, useEffect, useState } from "react";
 import { PageProps } from "@/types";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { InputError } from "@/components/ui/input-error";
 import { Button } from "@/components/ui/button";
+import { useDebounce } from "@uidotdev/usehooks";
+import axios from "axios";
+import { cn } from "@/lib/utils";
+import { useUsernameAvailability } from "@/hooks/use-username-availibility";
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -20,10 +24,22 @@ export default function UpdateProfileInformation({
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
+            username: user.username,
             name: user.name,
             email: user.email,
         });
 
+    // Use custom hook for availability check
+    const { available, checking, debouncedUsername } = useUsernameAvailability(
+        data.username
+    );
+
+    function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
+        setData(
+            "username",
+            e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "")
+        );
+    }
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
@@ -33,12 +49,58 @@ export default function UpdateProfileInformation({
     return (
         <section className={className}>
             <form onSubmit={submit} className="mt-6 space-y-6">
+                <div className="space-x-1">
+                    <div className="flex items-center gap-2">
+                        <Label htmlFor="username">Username</Label>
+
+                        <p
+                            className={cn(
+                                "transition-opacity duration-200 text-sm",
+                                (!(
+                                    data.username !== user.username &&
+                                    available !== null
+                                ) ||
+                                    debouncedUsername === "") &&
+                                    "invisible",
+                                {
+                                    "text-primary": available === true,
+                                    "text-destructive": available === false,
+                                    "text-accent": checking,
+                                }
+                            )}
+                        >
+                            {!checking
+                                ? available === true
+                                    ? `${debouncedUsername} is available`
+                                    : available === false
+                                    ? `${debouncedUsername} is taken`
+                                    : ""
+                                : "Checking availability..."}
+                        </p>
+                    </div>
+
+                    <Input
+                        id="username"
+                        className="block w-full mt-1"
+                        value={data.username}
+                        onChange={handleUsernameChange}
+                        onBlur={() => {
+                            if (!data.username)
+                                setData("username", user.username);
+                        }}
+                        required
+                        autoComplete="username"
+                    />
+
+                    <InputError className="mt-2" message={errors.username} />
+                </div>
+
                 <div>
                     <Label htmlFor="name">Name</Label>
 
                     <Input
                         id="name"
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         value={data.name}
                         onChange={(e) => setData("name", e.target.value)}
                         required
@@ -54,7 +116,7 @@ export default function UpdateProfileInformation({
                     <Input
                         id="email"
                         type="email"
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         value={data.email}
                         onChange={(e) => setData("email", e.target.value)}
                         required
@@ -66,20 +128,20 @@ export default function UpdateProfileInformation({
 
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
-                        <p className="text-sm mt-2 text-gray-800">
+                        <p className="mt-2 text-sm text-gray-800">
                             Your email address is unverified.
                             <Link
                                 href={route("verification.send")}
                                 method="post"
                                 as="button"
-                                className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                className="text-sm text-gray-600 underline rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
                                 Click here to re-send the verification email.
                             </Link>
                         </p>
 
                         {status === "verification-link-sent" && (
-                            <div className="mt-2 font-medium text-sm text-green-600">
+                            <div className="mt-2 text-sm font-medium text-green-600">
                                 A new verification link has been sent to your
                                 email address.
                             </div>
