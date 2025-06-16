@@ -15,14 +15,28 @@ import { InputError } from "@/components/ui/input-error";
 import { Leaf } from "lucide-react";
 import registerIlustration from "@/assets/images/Consent-pana.png";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { useUsernameAvailability } from "@/hooks/use-username-availibility";
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
+        username: "",
         email: "",
         password: "",
         password_confirmation: "",
     });
+
+    const { available, checking, debouncedUsername } = useUsernameAvailability(
+        data.username
+    );
+
+    function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
+        setData(
+            "username",
+            e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "")
+        );
+    }
 
     useEffect(() => {
         return () => {
@@ -53,18 +67,18 @@ export default function Register() {
         <React.Fragment>
             <Head title="Register" />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
+            <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
                 {/* form register */}
-                <div className="flex items-center justify-center flex-col">
+                <div className="flex flex-col items-center justify-center">
                     <div className="flex items-center justify-center gap-2 mb-6">
                         <Leaf className="size-8 text-primary" />
-                        <h2 className="text-3xl font-semibold bg-gradient-to-tr from-primary to-ring bg-clip-text text-transparent">
+                        <h2 className="text-3xl font-semibold text-transparent bg-gradient-to-tr from-primary to-ring bg-clip-text">
                             {" "}
                             Pandawa
                         </h2>
                     </div>
                     <form onSubmit={submit}>
-                        <Card className="mx-auto max-w-sm">
+                        <Card className="max-w-sm mx-auto">
                             <CardHeader>
                                 <CardTitle className="text-xl">
                                     Sign Up
@@ -87,6 +101,44 @@ export default function Register() {
                                             required
                                         />
                                         <InputError message={errors.name} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <Label htmlFor="username">
+                                                Username
+                                            </Label>
+
+                                            <p
+                                                className={cn(
+                                                    "transition-opacity duration-200 text-sm",
+                                                    debouncedUsername === "" &&
+                                                        "invisible",
+                                                    {
+                                                        "text-primary":
+                                                            available === true,
+                                                        "text-destructive":
+                                                            available === false,
+                                                        "text-accent": checking,
+                                                    }
+                                                )}
+                                            >
+                                                {!checking
+                                                    ? available === true
+                                                        ? `${debouncedUsername} is available`
+                                                        : available === false
+                                                        ? `${debouncedUsername} is taken`
+                                                        : ""
+                                                    : "Checking availability..."}
+                                            </p>
+                                        </div>
+                                        <Input
+                                            id="username"
+                                            placeholder="johndoe"
+                                            onChange={handleUsernameChange}
+                                            value={data.username}
+                                            required
+                                        />
+                                        <InputError message={errors.username} />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="email">Email</Label>
@@ -144,7 +196,7 @@ export default function Register() {
                                         Create an account
                                     </Button>
                                 </div>
-                                <div className="mt-4 text-center text-sm">
+                                <div className="mt-4 text-sm text-center">
                                     Already have an account?{" "}
                                     <Link href="/login" className="underline">
                                         Sign in
@@ -154,7 +206,7 @@ export default function Register() {
                         </Card>
                     </form>
                 </div>
-                <div className="bg-primary hidden md:flex items-center justify-center">
+                <div className="items-center justify-center hidden bg-primary md:flex">
                     <div className="max-w-96 ">
                         <img
                             src={registerIlustration}
