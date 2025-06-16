@@ -1,4 +1,4 @@
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -48,6 +48,7 @@ import UserAvatar from "@/components/user-avatar";
 import UsernameLink from "@/components/username-link";
 import { useLocation } from "@/hooks/use-location";
 import LocationInput from "@/components/forms/location-utils";
+import { PartialAddress } from "@/types/location";
 
 // Mock data for the complaint
 const complaintData = {
@@ -136,6 +137,25 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
     const [selectedImage, setSelectedImage] = useState<number | null>(null);
     const [newComment, setNewComment] = useState("");
     const [isHandleSubmitLoading, setIsHandleSubmitLoading] = useState(false);
+
+    const [addressString, setAddressString] = useState<string | null>(null);
+
+    const { provinsi, kota, kecamatan, kelurahan, isFetching } = useLocation(
+        issue.user.address
+    );
+
+    const address = { provinsi, kota, kecamatan, kelurahan };
+
+    useEffect(() => {
+        if (!isFetching && provinsi && kota && kecamatan && kelurahan) {
+            setAddressString(
+                [provinsi, kota, kecamatan, kelurahan]
+                    .filter(Boolean)
+                    .join(", ")
+                    .toLowerCase()
+            );
+        }
+    }, [isFetching]);
 
     const CategoryIcon =
         categoryIcons[complaintData.category as keyof typeof categoryIcons];
@@ -607,7 +627,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                     (comment) => (
                                                         <div
                                                             key={comment.id}
-                                                            className="flex gap-3"
+                                                            className="flex items-start gap-3"
                                                         >
                                                             <UserAvatar
                                                                 user={
@@ -618,13 +638,12 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
 
                                                             <div className="flex-1">
                                                                 <div className="flex items-center gap-2 mb-1">
-                                                                    <span className="text-sm font-medium">
-                                                                        {
-                                                                            comment
-                                                                                .user
-                                                                                .name
+                                                                    <UsernameLink
+                                                                        user={
+                                                                            comment.user
                                                                         }
-                                                                    </span>
+                                                                        className="text-sm font-medium text-secondary-foreground"
+                                                                    />
                                                                     {comment
                                                                         .user
                                                                         .role ===
@@ -742,26 +761,11 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex items-center gap-3">
-                                        <Avatar className="w-12 h-12">
-                                            <AvatarImage
-                                            // src={
-                                            //     complaintData.reporter
-                                            //         .avatar
-                                            // }
-                                            />
-                                            <AvatarFallback>
-                                                <User className="w-6 h-6" />
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <h3 className="font-semibold">
-                                                {issue.user.name}
-                                            </h3>
-                                            <UsernameLink user={issue.user} />
-                                            <p className="text-sm text-gray-600">
-                                                Masyarakat
-                                            </p>
-                                        </div>
+                                        <UserAvatar
+                                            user={issue.user}
+                                            size="lg"
+                                            showInformation={true}
+                                        />
                                     </div>
 
                                     <Separator />

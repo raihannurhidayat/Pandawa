@@ -2,6 +2,20 @@ import { API_WILAYAH } from "@/constant/api-wilayah";
 import { JsonStringified, PartialAddress, Address } from "@/types/location";
 import { useEffect, useState } from "react";
 
+/**
+ * Custom hook to fetch and manage location data based on a provided location input.
+ *
+ * @param {JsonStringified<PartialAddress | Address> | PartialAddress | Address | null} location -
+ * Input location which can be a JSON stringified object, a partial or full address object, or null.
+ *
+ * @returns {Object} - An object containing the state of the location fields and isFetching status:
+ *  - provinsi: The name of the province.
+ *  - kota: The name of the city.
+ *  - kecamatan: The name of the district.
+ *  - kelurahan: The name of the village.
+ *  - isFetching: Boolean indicating if the data fetching is in progress.
+ */
+
 export function useLocation(
     location:
         | JsonStringified<PartialAddress | Address>
@@ -9,6 +23,8 @@ export function useLocation(
         | Address
         | null
 ) {
+    const [isFetching, setIsFetching] = useState<boolean>(false);
+
     const [provinsi, setProvinsi] = useState<string | null>(null);
     const [kota, setKota] = useState<string | null>(null);
     const [kecamatan, setKecamatan] = useState<string | null>(null);
@@ -42,6 +58,8 @@ export function useLocation(
                 if (!locationObj) {
                     return;
                 }
+
+                setIsFetching(true);
 
                 // 1. Provinsi
                 if (locationObj.provinsi) {
@@ -126,11 +144,14 @@ export function useLocation(
                 }
             } catch (error) {
                 console.error("Error fetching wilayah data:", error);
+            } finally {
+                setIsFetching(false);
             }
         };
 
         fetchWilayah();
     }, [location]);
 
-    return { provinsi, kota, kecamatan, kelurahan, coordinats };
+    return { provinsi, kota, kecamatan, kelurahan, coordinats, isFetching: isFetching };
+
 }

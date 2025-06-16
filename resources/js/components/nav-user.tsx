@@ -21,6 +21,7 @@ import {
 import { User } from "@/types";
 import { Link } from "@inertiajs/react";
 import { getInitialNameUser } from "@/lib/utils";
+import UserAvatar from "./user-avatar";
 
 export function NavUser({ user }: { user: User }) {
     const { isMobile } = useSidebar();
@@ -34,17 +35,12 @@ export function NavUser({ user }: { user: User }) {
                             size="lg"
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
-                            <Avatar className="h-8 w-8 rounded-lg">
-                                {/*<AvatarImage src={user.avatar} alt={user.name} />*/}
-                                <AvatarFallback className="rounded-lg">
-                                    {getInitialNameUser(user?.name! ?? "")}
-                                </AvatarFallback>
-                            </Avatar>
-                            <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-semibold">
+                            <UserAvatar user={user} size="md" />
+                            <div className="grid flex-1 text-sm leading-tight text-left">
+                                <span className="font-semibold truncate">
                                     {user.name}
                                 </span>
-                                <span className="truncate text-xs">
+                                <span className="text-xs truncate">
                                     {user.email}
                                 </span>
                             </div>
@@ -59,17 +55,12 @@ export function NavUser({ user }: { user: User }) {
                     >
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                <Avatar className="h-8 w-8 rounded-lg">
-                                    {/*<AvatarImage src={user.avatar} alt={user.name} />*/}
-                                    <AvatarFallback className="rounded-lg">
-                                        AC
-                                    </AvatarFallback>
-                                </Avatar>
-                                <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-semibold">
+                                <UserAvatar user={user} size="md" />
+                                <div className="grid flex-1 text-sm leading-tight text-left">
+                                    <span className="font-semibold truncate">
                                         {user.name}
                                     </span>
-                                    <span className="truncate text-xs">
+                                    <span className="text-xs truncate">
                                         {user.email}
                                     </span>
                                 </div>

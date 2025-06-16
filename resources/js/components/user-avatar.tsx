@@ -59,13 +59,19 @@ export default function UserAvatar({
     return (
         <div
             className={cn(
-                "flex flex-col lg:flex-row items-center gap-2 lg:gap-4",
+                "flex lg:flex-row items-center gap-2 lg:gap-4 w-full md:w-fit",
                 className
             )}
         >
             <div className="relative overflow-visible">
                 <Avatar className={cn(userAvatarVariants({ size }))}>
-                    <AvatarImage src={user?.profile_photo_url} />
+                    <AvatarImage
+                        src={
+                            user?.profile_photo_url !== "/storage/"
+                                ? user?.profile_photo_url
+                                : undefined
+                        }
+                    />
                     <AvatarFallback className="flex items-center justify-center w-full h-full">
                         <UserIcon className="w-1/2 h-1/2" />
                     </AvatarFallback>
@@ -90,8 +96,8 @@ export default function UserAvatar({
             </div>
 
             {showInformation && (
-                <div className="flex flex-col items-center gap-1 leading-tight lg:items-start">
-                    <div className="flex flex-col items-center md:gap-2 md:flex-row md:mb-2">
+                <div className="flex flex-col items-start leading-tight lg:items-start">
+                    <div className="flex flex-col flex-wrap mb-1 md:items-center md:gap-1 md:flex-row">
                         <h1 className="text-lg">{user?.name}</h1>
                         <Badge variant="outline" className="w-fit">
                             {user?.role}
