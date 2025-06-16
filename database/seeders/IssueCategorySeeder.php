@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\IssueCategory;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Str;
 
 class IssueCategorySeeder extends Seeder
 {
@@ -13,26 +13,41 @@ class IssueCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $issueCategories = [
-            [
-                'name' => 'Jalan',
-                'slug' => 'jalan',
-                'description' => 'Isu Jalan'
-            ],
-            [
-                'name' => 'Sampah',
-                'slug' => 'sampah',
-                'description' => 'Isu Sampah'
-            ],
-            [
-                'name' => 'Lainnya',
-                'slug' => 'lainnya',
-                'description' => 'Isu Lainnya'
-            ]
+        $categories = [
+            'jalan',
+            'sampah',
+            'lalu lintas',
+            'penerangan jalan',
+            'air bersih',
+            'drainase',
+            'kebersihan lingkungan',
+            'pohon',
+            'taman',
+            'keamanan',
+            'kebisingan',
+            'polusi udara',
+            'polusi air',
+            'kerusakan fasilitas',
+            'vandalisme',
+            'trotoar',
+            'angkutan umum',
+            'internet',
+            'listrik',
+            'taman bermain',
+            'hewan liar',
+            'banjir',
+            'lainnya',
         ];
 
-        foreach ($issueCategories as $issueCategory) {
-            IssueCategory::create($issueCategory);
+        foreach ($categories as $name) {
+            IssueCategory::updateOrCreate(
+                ['slug' => Str::slug($name)],
+                [
+                    'name' => ucfirst($name),
+                    'slug' => Str::slug($name),
+                    'description' => 'Isu ' . ucfirst($name)
+                ]
+            );
         }
     }
 }
