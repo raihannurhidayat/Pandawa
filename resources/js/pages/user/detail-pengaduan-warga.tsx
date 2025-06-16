@@ -45,6 +45,7 @@ import { IconType } from "react-icons/lib";
 import FeedbackComponent from "@/components/shared/tabbed-feedback";
 import { toast } from "sonner";
 import UserAvatar from "@/components/user-avatar";
+import UsernameLink from "@/components/username-link";
 
 // Mock data for the complaint
 const complaintData = {
@@ -685,16 +686,16 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                 )}
                                         </div>
                                     ) : (
-                                        <div className="border rounded-xl p-8 text-center ">
-                                            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4">
+                                        <div className="p-8 text-center border rounded-xl ">
+                                            <div className="inline-flex items-center justify-center w-12 h-12 mb-4 rounded-full">
                                                 <MessageSquare className="w-6 h-6 text-secondary-foreground" />
                                             </div>
 
-                                            <h3 className="text-base font-medium mb-2">
+                                            <h3 className="mb-2 text-base font-medium">
                                                 No comments
                                             </h3>
 
-                                            <p className="text-sm text-secondary-foreground mb-6 max-w-xs mx-auto">
+                                            <p className="max-w-xs mx-auto mb-6 text-sm text-secondary-foreground">
                                                 Start a conversation by sharing
                                                 your thoughts or asking a
                                                 question.
@@ -760,6 +761,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                             <h3 className="font-semibold">
                                                 {issue.user.name}
                                             </h3>
+                                            <UsernameLink user={issue.user} />
                                             <p className="text-sm text-gray-600">
                                                 Masyarakat
                                             </p>
