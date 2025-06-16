@@ -109,7 +109,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
     return (
         <>
             <Head title="Beranda" />
-            <div className="min-h-screen bg-gradient-to-br font-poppins from-slate-50 via-blue-50 to-indigo-100 relative overflow-visible">
+            <div className="min-h-screen font-poppins bg-card relative overflow-visible">
                 <div className="absolute inset-0 opacity-30">
                     <div className="absolute top-10 sm:top-20 left-5 sm:left-10 w-20 sm:w-32 h-20 sm:h-32 bg-blue-200 rounded-full blur-3xl"></div>
                     <div className="absolute top-20 sm:top-40 right-10 sm:right-20 w-32 sm:w-48 h-32 sm:h-48 bg-purple-200 rounded-full blur-3xl"></div>
@@ -127,7 +127,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                     </div>
 
                     <div className="text-center mb-8 sm:mb-12">
-                        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-4 sm:mb-6 leading-tight px-2">
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-secondary-foreground mb-4 sm:mb-6 leading-tight px-2">
                             Laporkan Masalah Anda{' '}
                             <span className="text-green-500">Dengan Mudah</span>,<br className="hidden sm:block" />
                             <span className="text-green-500">Sampaikan</span> Dalam Hitungan Detik
@@ -137,9 +137,9 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                             Pantau Progres Laporan Anda <span className="text-green-500">Secara Real-time</span>
                         </p>
 
-                        <button className="bg-green-500 text-white px-6 sm:px-8 lg:px-10 py-3 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-green-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                        <a href={route("user.dashboard")} className="bg-green-500 text-white px-6 sm:px-8 lg:px-10 py-3 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-green-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                             Buat Laporan Sekarang
-                        </button>
+                        </a>
                     </div>
 
                     <div className="relative mt-12 sm:mt-16 lg:mt-20">
@@ -148,7 +148,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                 {categories.map((category, index) => (
                                     <div key={index} className="relative group flex-none w-72 sm:w-80">
 
-                                        <div className="relative bg-white rounded-2xl shadow-md p-6 hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] border border-gray-100 overflow-hidden h-full">
+                                        <div className="relative bg-card rounded-2xl shadow-md p-6 hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] border border-gray-100 overflow-hidden h-full">
                                             <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
                                                 <div className="w-full h-full bg-gradient-to-br from-gray-400 to-gray-600 rounded-full transform translate-x-8 -translate-y-8"></div>
                                             </div>
@@ -163,7 +163,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                             </div>
 
                                             <div className="relative z-10">
-                                                <h3 className="font-bold text-gray-900 text-lg mb-2 group-hover:text-green-600 transition-colors duration-300">
+                                                <h3 className="font-bold text-secondary-foreground text-lg mb-2 group-hover:text-green-600 transition-colors duration-300">
                                                     {category.title}
                                                 </h3>
                                                 <p className="text-sm text-gray-600 leading-relaxed">
@@ -179,7 +179,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                         <div className="hidden lg:flex justify-center items-center min-h-96">
                             <div className="absolute left-0 top-0">
                                 <div className="space-y-8 transform -rotate-12">
-                                    <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 w-48 hover:scale-105 hover:rotate-0">
+                                    <div className="bg-card rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 w-48 hover:scale-105 hover:rotate-0">
                                         <div className="h-28 rounded-xl overflow-hidden mb-3">
                                             <img src={categories[0].image} alt={categories[0].title} className="w-full h-full object-cover" />
                                         </div>
@@ -187,7 +187,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                             <div className={`p-1 rounded ${categories[0].color} mr-2`}>
                                                 {categories[0].icon}
                                             </div>
-                                            <h3 className="font-bold text-gray-900 text-sm">{categories[0].title}</h3>
+                                            <h3 className="font-bold text-secondary-foreground text-sm">{categories[0].title}</h3>
                                         </div>
                                         <p className="text-xs text-gray-600">{categories[0].subtitle}</p>
                                     </div>
@@ -196,7 +196,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
 
                             <div className="absolute left-32 top-16">
                                 <div className="transform rotate-6">
-                                    <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 w-48 hover:scale-105 hover:rotate-0">
+                                    <div className="bg-card rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 w-48 hover:scale-105 hover:rotate-0">
                                         <div className="h-28 rounded-xl overflow-hidden mb-3">
                                             <img src={categories[1].image} alt={categories[1].title} className="w-full h-full object-cover" />
                                         </div>
@@ -204,7 +204,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                             <div className={`p-1 rounded ${categories[1].color} mr-2`}>
                                                 {categories[1].icon}
                                             </div>
-                                            <h3 className="font-bold text-gray-900 text-sm">{categories[1].title}</h3>
+                                            <h3 className="font-bold text-secondary-foreground text-sm">{categories[1].title}</h3>
                                         </div>
                                         <p className="text-xs text-gray-600">{categories[1].subtitle}</p>
                                     </div>
@@ -212,7 +212,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                             </div>
 
                             <div className="transform hover:scale-105 transition-all duration-300">
-                                <div className="bg-white rounded-2xl p-6 shadow-2xl w-64 border border-gray-100">
+                                <div className="bg-card rounded-2xl p-6 shadow-2xl w-64 border border-gray-100">
                                     <div className="h-40 rounded-xl overflow-hidden mb-4">
                                         <img src={categories[2].image} alt={categories[2].title} className="w-full h-full object-cover" />
                                     </div>
@@ -220,7 +220,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                         <div className={`p-2 rounded-lg ${categories[2].color} mr-3`}>
                                             {categories[2].icon}
                                         </div>
-                                        <h3 className="font-bold text-gray-900">{categories[2].title}</h3>
+                                        <h3 className="font-bold text-secondary-foreground">{categories[2].title}</h3>
                                     </div>
                                     <p className="text-sm text-gray-600">{categories[2].subtitle}</p>
                                 </div>
@@ -228,7 +228,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
 
                             <div className="absolute right-32 top-16">
                                 <div className="transform -rotate-6">
-                                    <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 w-48 hover:scale-105 hover:rotate-0">
+                                    <div className="bg-card rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 w-48 hover:scale-105 hover:rotate-0">
                                         <div className="h-28 rounded-xl overflow-hidden mb-3">
                                             <img src={categories[3].image} alt={categories[3].title} className="w-full h-full object-cover" />
                                         </div>
@@ -236,7 +236,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                             <div className={`p-1 rounded ${categories[3].color} mr-2`}>
                                                 {categories[3].icon}
                                             </div>
-                                            <h3 className="font-bold text-gray-900 text-sm">{categories[3].title}</h3>
+                                            <h3 className="font-bold text-secondary-foreground text-sm">{categories[3].title}</h3>
                                         </div>
                                         <p className="text-xs text-gray-600">{categories[3].subtitle}</p>
                                     </div>
@@ -245,7 +245,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
 
                             <div className="absolute right-0 top-0">
                                 <div className="transform rotate-12">
-                                    <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 w-48 hover:scale-105 hover:rotate-0">
+                                    <div className="bg-card rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 w-48 hover:scale-105 hover:rotate-0">
                                         <div className="h-28 rounded-xl overflow-hidden mb-3">
                                             <img src={categories[4].image} alt={categories[4].title} className="w-full h-full object-cover" />
                                         </div>
@@ -253,7 +253,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                             <div className={`p-1 rounded ${categories[4].color} mr-2`}>
                                                 {categories[4].icon}
                                             </div>
-                                            <h3 className="font-bold text-gray-900 text-sm">{categories[4].title}</h3>
+                                            <h3 className="font-bold text-secondary-foreground text-sm">{categories[4].title}</h3>
                                         </div>
                                         <p className="text-xs text-gray-600">{categories[4].subtitle}</p>
                                     </div>
@@ -315,13 +315,13 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
 
                                     <button
                                         onClick={() => setCurrentBannerSlide(currentBannerSlide > 1 ? currentBannerSlide - 2 : bannerItems.length - 2)}
-                                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm rounded-full p-1 hover:bg-white/30 transition-all duration-300"
+                                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-card/20 backdrop-blur-sm rounded-full p-1 hover:bg-card/30 transition-all duration-300"
                                     >
                                         <ChevronLeft className="w-4 h-4 text-white" />
                                     </button>
                                     <button
                                         onClick={() => setCurrentBannerSlide(currentBannerSlide < bannerItems.length - 2 ? currentBannerSlide + 2 : 0)}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm rounded-full p-1 hover:bg-white/30 transition-all duration-300"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-card/20 backdrop-blur-sm rounded-full p-1 hover:bg-card/30 transition-all duration-300"
                                     >
                                         <ChevronRight className="w-4 h-4 text-white" />
                                     </button>
@@ -363,7 +363,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                             <div className="group">
                                 <div className="relative bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 h-60 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
                                     <div className="flex justify-center">
-                                        <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                                        <div className="p-3 bg-card/20 backdrop-blur-sm rounded-xl">
                                             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                             </svg>
@@ -382,7 +382,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                 <div className="group">
                                     <div className="relative bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl p-6 h-60 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
                                         <div className="flex justify-center">
-                                            <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                                            <div className="p-3 bg-card/20 backdrop-blur-sm rounded-xl">
                                                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                                 </svg>
@@ -402,7 +402,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                 <div className="group">
                                     <div className="relative bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 h-60 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
                                         <div className="flex justify-center">
-                                            <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                                            <div className="p-3 bg-card/20 backdrop-blur-sm rounded-xl">
                                                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
@@ -422,7 +422,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                 <div className="group">
                                     <div className="relative bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 h-60 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
                                         <div className="flex justify-center">
-                                            <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                                            <div className="p-3 bg-card/20 backdrop-blur-sm rounded-xl">
                                                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
                                                 </svg>
@@ -443,12 +443,12 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                     </div>
                 </section>
 
-                <section id='Tentang' className="relative bg-gradient-to-br from-gray-50 to-blue-50 py-16 sm:py-24 lg:py-32">
+                <section id='Tentang' className="relative bg-card py-16 sm:py-24 lg:py-32">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-end">
                             <div className="space-y-8">
                                 <div>
-                                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-secondary-foreground leading-tight">
                                         Pelayanan Publik <span className="text-green-500">Efektif</span> dan <span className="text-blue-600">Transparan</span>
                                     </h2>
                                     <div className="w-20 h-1.5 bg-gradient-to-r from-green-500 to-blue-500 my-6 rounded-full"></div>
@@ -459,7 +459,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                 </p>
 
                                 <div className="space-y-6">
-                                    <div className="flex items-start space-x-5 p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+                                    <div className="flex items-start space-x-5 p-5 bg-card rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
                                         <div className="flex-shrink-0 p-3 bg-green-50 rounded-lg text-green-600">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -467,26 +467,26 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                             </svg>
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-semibold text-gray-900 mb-2">Proses Tanpa Ribet</h3>
+                                            <h3 className="text-xl font-semibold text-secondary-foreground mb-2">Proses Tanpa Ribet</h3>
                                             <p className="text-gray-600">Kirim laporan hanya dalam 3 langkah mudah</p>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-start space-x-5 p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+                                    <div className="flex items-start space-x-5 p-5 bg-card rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
                                         <div className="flex-shrink-0 p-3 bg-blue-50 rounded-lg text-blue-600">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                 <path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"></path>
                                             </svg>
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-semibold text-gray-900 mb-2">Pelacakan Real-time</h3>
+                                            <h3 className="text-xl font-semibold text-secondary-foreground mb-2">Pelacakan Real-time</h3>
                                             <p className="text-gray-600">Pantau perkembangan laporan Anda</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-3xl shadow-md p-8">
+                            <div className="bg-card rounded-3xl shadow-md p-8">
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="text-center p-5 bg-green-50 rounded-xl">
                                         <div className="text-3xl font-bold text-green-600 mb-2">24/7</div>
@@ -513,10 +513,10 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                     </div>
                 </section>
 
-                <section id="" className="relative bg-white py-16 sm:py-20 lg:py-24">
+                <section id="" className="relative bg-card py-16 sm:py-20 lg:py-24">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-12 sm:mb-16">
-                            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-secondary-foreground mb-4">
                                 Visi & <span className="text-green-500">Misi Kami</span>
                             </h2>
                             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -530,7 +530,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                     <div className="p-3 bg-green-500 rounded-xl">
                                         <Target className="w-8 h-8 text-white" />
                                     </div>
-                                    <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 ml-4">Visi</h3>
+                                    <h3 className="text-2xl lg:text-3xl font-bold text-black ml-4">Visi</h3>
                                 </div>
                                 <p className="text-gray-700 leading-relaxed text-lg">
                                     Menjadi platform pelaporan masyarakat terdepan yang menghubungkan warga dengan pemerintah
@@ -543,7 +543,7 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                                     <div className="p-3 bg-blue-500 rounded-xl">
                                         <ListTodo className="w-8 h-8 text-white" />
                                     </div>
-                                    <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 ml-4">Misi</h3>
+                                    <h3 className="text-2xl lg:text-3xl font-bold text-black ml-4">Misi</h3>
                                 </div>
                                 <div className="space-y-4">
                                     <div className="flex items-start space-x-3">
@@ -564,10 +564,10 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                     </div>
                 </section>
 
-                <section id="Tujuan" className="relative bg-gradient-to-br from-gray-50 to-blue-50 py-16 sm:py-20 lg:py-24">
+                <section id="Tujuan" className="relative bg-card py-16 sm:py-20 lg:py-24">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-12 sm:mb-16">
-                            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-secondary-foreground mb-4">
                                 Tujuan <span className="text-blue-500">Platform</span>
                             </h2>
                             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -579,12 +579,12 @@ const App = ({ issuesByStatus, issueStatistics }: LandingProps) => {
                             {goalsItems.map((item, index) => (
                                 <div
                                     key={index}
-                                    className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-100"
+                                    className="bg-card rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-100"
                                 >
                                     <div className={`w-16 h-16 bg-gradient-to-br ${item.gradient} rounded-2xl flex items-center justify-center mb-6`}>
                                         {item.icon}
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-4">{item.title}</h3>
+                                    <h3 className="text-xl font-bold text-secondary-foreground mb-4">{item.title}</h3>
                                     <p className="text-gray-600 leading-relaxed">{item.description}</p>
                                 </div>
                             ))}
