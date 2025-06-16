@@ -1,4 +1,4 @@
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,6 +47,7 @@ import { toast } from "sonner";
 import UserAvatar from "@/components/user-avatar";
 import UsernameLink from "@/components/username-link";
 import { useLocation } from "@/hooks/use-location";
+import { PartialAddress } from "@/types/location";
 
 // Mock data for the complaint
 const complaintData = {
@@ -135,6 +136,25 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
     const [selectedImage, setSelectedImage] = useState<number | null>(null);
     const [newComment, setNewComment] = useState("");
     const [isHandleSubmitLoading, setIsHandleSubmitLoading] = useState(false);
+
+    const [addressString, setAddressString] = useState<string | null>(null);
+
+    const { provinsi, kota, kecamatan, kelurahan, isFetching } = useLocation(
+        issue.user.address
+    );
+
+    const address = { provinsi, kota, kecamatan, kelurahan };
+
+    useEffect(() => {
+        if (!isFetching && provinsi && kota && kecamatan && kelurahan) {
+            setAddressString(
+                [provinsi, kota, kecamatan, kelurahan]
+                    .filter(Boolean)
+                    .join(", ")
+                    .toLowerCase()
+            );
+        }
+    }, [isFetching]);
 
     const CategoryIcon =
         categoryIcons[complaintData.category as keyof typeof categoryIcons];
@@ -756,16 +776,18 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                     <Separator />
 
                                     <div className="space-y-3">
-                                        <div className="flex items-center gap-2 text-sm">
+                                        {/* <div className="flex items-center gap-2 text-sm">
                                             <Phone className="w-4 h-4 text-gray-500" />
                                             <span>
                                                 {complaintData.reporter.phone}
                                             </span>
-                                        </div>
+                                        </div> */}
                                         <div className="flex items-start gap-2 text-sm">
                                             <MapPin className="h-4 w-4 text-gray-500 mt-0.5" />
-                                            <span>
-                                                {complaintData.reporter.address}
+                                            <span className="capitalize">
+                                                {isFetching
+                                                    ? "Fetching..."
+                                                    : addressString}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-2 text-sm">

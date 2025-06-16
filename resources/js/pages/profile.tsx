@@ -10,7 +10,11 @@ import { motion } from "framer-motion";
 import UsernameLink from "@/components/username-link";
 
 export default function Profile({ user }: { user: User }) {
-    const address = useLocation(user.address);
+    const { provinsi, kota, kecamatan, kelurahan, isFetching } = useLocation(
+        user.address
+    );
+
+    const address = { provinsi, kota, kecamatan, kelurahan };
 
     const addressEntries = Object.entries(address) as [
         keyof PartialAddress,
