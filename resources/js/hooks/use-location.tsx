@@ -7,86 +7,127 @@ export function useLocation(
         | JsonStringified<PartialAddress | Address>
         | PartialAddress
         | Address
+        | null
 ) {
-    const [provinsi, setProvinsi] = useState("");
-    const [kota, setKota] = useState("");
-    const [kecamatan, setKecamatan] = useState("");
-    const [kelurahan, setKelurahan] = useState("");
+    const [provinsi, setProvinsi] = useState<string | null>(null);
+    const [kota, setKota] = useState<string | null>(null);
+    const [kecamatan, setKecamatan] = useState<string | null>(null);
+    const [kelurahan, setKelurahan] = useState<string | null>(null);
 
-    let locationObjeck: PartialAddress | Address;
-
+    // Parse if input is JSON string
+    let locationObj: PartialAddress | Address | null;
     if (typeof location === "string") {
-        locationObjeck = JSON.parse(location);
+        try {
+            locationObj = JSON.parse(location);
+        } catch {
+            locationObj = null;
+        }
     } else {
-        locationObjeck = location;
+        locationObj = location;
     }
 
     useEffect(() => {
         const fetchWilayah = async () => {
-            const responseProvinsi = await fetch(`${API_WILAYAH}/provinsi`, {
-                headers: {
-                    "X-API-KEY": import.meta.env.VITE_API_WILAYAH,
-                },
-            });
-            const dataProvinsi = await responseProvinsi.json();
-            const provinsi = dataProvinsi.data.find(
-                (value: any) => value.id === locationObjeck.provinsi
-            );
+            try {
+                // Clear all fields before fetching or when no location
+                setProvinsi(null);
+                setKota(null);
+                setKecamatan(null);
+                setKelurahan(null);
 
-            setProvinsi(provinsi.name);
-
-            const responseKota = await fetch(
-                `${API_WILAYAH}/kota?provinsi_id=${provinsi.id}`,
-                {
-                    headers: {
-                        "X-API-KEY": import.meta.env.VITE_API_WILAYAH,
-                    },
+                // If location is null or empty, skip fetching
+                if (!locationObj) {
+                    return;
                 }
-            );
-            const dataKota = await responseKota.json();
-            const kota = dataKota.data.find(
-                (value: any) => value.id === locationObjeck.kota
-            );
 
-            setKota(kota.name);
+                // 1. Provinsi
+                if (locationObj.provinsi) {
+                    const respProv = await fetch(`${API_WILAYAH}/provinsi`, {
+                        headers: {
+                            "X-API-KEY": import.meta.env.VITE_API_WILAYAH,
+                        },
+                    });
+                    const dataProv = await respProv.json();
+                    const foundProv = dataProv.data.find(
+                        (v: any) => v.id === locationObj.provinsi
+                    );
+                    if (foundProv) {
+                        setProvinsi(foundProv.name);
+                    } else {
+                        return;
+                    }
 
-            const responseKecamatan = await fetch(
-                `${API_WILAYAH}/kecamatan?kota_id=${kota.id}`,
-                {
-                    headers: {
-                        "X-API-KEY": import.meta.env.VITE_API_WILAYAH,
-                    },
+                    // 2. Kota
+                    if (locationObj.kota) {
+                        const respKota = await fetch(
+                            `${API_WILAYAH}/kota?provinsi_id=${foundProv.id}`,
+                            {
+                                headers: {
+                                    "X-API-KEY": import.meta.env
+                                        .VITE_API_WILAYAH,
+                                },
+                            }
+                        );
+                        const dataKota = await respKota.json();
+                        const foundKota = dataKota.data.find(
+                            (v: any) => v.id === locationObj.kota
+                        );
+                        if (foundKota) {
+                            setKota(foundKota.name);
+                        } else {
+                            return;
+                        }
+
+                        // 3. Kecamatan
+                        if (locationObj.kecamatan) {
+                            const respKec = await fetch(
+                                `${API_WILAYAH}/kecamatan?kota_id=${foundKota.id}`,
+                                {
+                                    headers: {
+                                        "X-API-KEY": import.meta.env
+                                            .VITE_API_WILAYAH,
+                                    },
+                                }
+                            );
+                            const dataKec = await respKec.json();
+                            const foundKec = dataKec.data.find(
+                                (v: any) => v.id === locationObj.kecamatan
+                            );
+                            if (foundKec) {
+                                setKecamatan(foundKec.name);
+                            } else {
+                                return;
+                            }
+
+                            // 4. Kelurahan
+                            if (locationObj.kelurahan) {
+                                const respKel = await fetch(
+                                    `${API_WILAYAH}/kelurahan?kecamatan_id=${foundKec.id}`,
+                                    {
+                                        headers: {
+                                            "X-API-KEY": import.meta.env
+                                                .VITE_API_WILAYAH,
+                                        },
+                                    }
+                                );
+                                const dataKel = await respKel.json();
+                                const foundKel = dataKel.data.find(
+                                    (v: any) => v.id === locationObj.kelurahan
+                                );
+                                if (foundKel) {
+                                    setKelurahan(foundKel.name);
+                                }
+                            }
+                        }
+                    }
                 }
-            );
-            const dataKecamatan = await responseKecamatan.json();
-            const kecamatan = dataKecamatan.data.find(
-                (value: any) => value.id === locationObjeck.kecamatan
-            );
-
-            setKecamatan(kecamatan.name);
-
-            const responseKelurahan = await fetch(
-                `${API_WILAYAH}/kelurahan?kecamatan_id=${kecamatan.id}`,
-                {
-                    headers: {
-                        "X-API-KEY": import.meta.env.VITE_API_WILAYAH,
-                    },
-                }
-            );
-            const dataKelurahan = await responseKelurahan.json();
-            const kelurahan = dataKelurahan.data.find(
-                (value: any) => value.id === locationObjeck.kelurahan
-            );
-            setKelurahan(kelurahan.name);
+            } catch (error) {
+                console.error("Error fetching wilayah data:", error);
+            }
         };
 
         fetchWilayah();
     }, [location]);
 
-    return {
-        provinsi,
-        kota,
-        kecamatan,
-        kelurahan,
-    };
+    return { provinsi, kota, kecamatan, kelurahan };
 }
