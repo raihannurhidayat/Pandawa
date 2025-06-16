@@ -4,6 +4,7 @@ export interface Address {
   kota: string
   kecamatan: string
   kelurahan: string
+  coordinats: any
 }
 
 // If you want to allow users to leave parts out, use Partial<>
