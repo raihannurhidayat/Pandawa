@@ -771,6 +771,14 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                     <Separator />
 
                                     <div className="space-y-3">
+                                        <div className="flex items-start gap-2 text-sm">
+                                            <MapPin className="h-4 w-4 text-gray-500 mt-0.5" />
+                                            <span className="capitalize">
+                                                {isFetching
+                                                    ? "Fetching..."
+                                                    : addressString}
+                                            </span>
+                                        </div>
                                         <div className="flex items-center gap-2 text-sm">
                                             <Mail className="w-4 h-4 text-gray-500" />
                                             <span>{issue.user.email}</span>
@@ -804,7 +812,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                             placeholder="Click to select your location"
                                         />
                                     ) : (
-                                        <div className="flex items-center justify-center rounded-lg aspect-video border-2 border-dashed">
+                                        <div className="flex items-center justify-center border-2 border-dashed rounded-lg aspect-video">
                                             <div className="text-center text-gray-500">
                                                 <MapPin className="w-8 h-8 mx-auto mb-2" />
                                                 <p className="text-sm">
