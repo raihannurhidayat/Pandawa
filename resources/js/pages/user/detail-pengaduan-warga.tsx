@@ -46,6 +46,8 @@ import FeedbackComponent from "@/components/shared/tabbed-feedback";
 import { toast } from "sonner";
 import UserAvatar from "@/components/user-avatar";
 import UsernameLink from "@/components/username-link";
+import { useLocation } from "@/hooks/use-location";
+import LocationInput from "@/components/forms/location-utils";
 
 // Mock data for the complaint
 const complaintData = {
@@ -141,6 +143,8 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
     const { data, setData } = useForm({
         comment: "",
     });
+
+    const { coordinats } = useLocation(issue.location);
 
     console.log(issue);
 
@@ -373,14 +377,6 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                                                         phase.status
                                                                                     }
                                                                                 </p>
-                                                                                {/* {phase.status ===
-                                                                            "rejected" && (
-                                                                            <p className="mt-1 text-sm text-red-600">
-                                                                                Reason:{" "}
-
-                                                                                    "See comments for details"
-                                                                            </p>
-                                                                        )} */}
                                                                             </div>
                                                                             {phase.created_at && (
                                                                                 <span className="text-xs text-gray-500">
@@ -776,18 +772,6 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                             <span>{issue.user.email}</span>
                                         </div>
                                         <div className="flex items-center gap-2 text-sm">
-                                            <Phone className="w-4 h-4 text-gray-500" />
-                                            <span>
-                                                {complaintData.reporter.phone}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-start gap-2 text-sm">
-                                            <MapPin className="h-4 w-4 text-gray-500 mt-0.5" />
-                                            <span>
-                                                {complaintData.reporter.address}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm">
                                             <Calendar className="w-4 h-4 text-gray-500" />
                                             <span>
                                                 Diajukan{" "}
@@ -806,51 +790,27 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="flex items-center justify-center bg-gray-200 rounded-lg aspect-video">
-                                        <div className="text-center text-gray-500">
-                                            <MapPin className="w-8 h-8 mx-auto mb-2" />
-                                            <p className="text-sm">
-                                                Map Preview
-                                            </p>
-                                            <p className="text-xs">
-                                                {complaintData.location.address}
-                                            </p>
+                                    {coordinats ? (
+                                        <LocationInput
+                                            isEditable={false}
+                                            value={coordinats?.location}
+                                            defaultLocation={
+                                                coordinats?.location
+                                            }
+                                            placeholder="Click to select your location"
+                                        />
+                                    ) : (
+                                        <div className="flex items-center justify-center rounded-lg aspect-video border-2 border-dashed">
+                                            <div className="text-center text-gray-500">
+                                                <MapPin className="w-8 h-8 mx-auto mb-2" />
+                                                <p className="text-sm">
+                                                    Tidak Ada Map Preview
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
                                 </CardContent>
                             </Card>
-
-                            {/* Quick Actions */}
-                            {/* <Card>
-                                <CardHeader>
-                                    <CardTitle className="text-lg">
-                                        Quick Actions
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2">
-                                    <Button
-                                        variant="outline"
-                                        className="justify-start w-full"
-                                    >
-                                        <ThumbsUp className="w-4 h-4 mr-2" />
-                                        Support This Report
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="justify-start w-full"
-                                    >
-                                        <MapPin className="w-4 h-4 mr-2" />
-                                        View on Map
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="justify-start w-full"
-                                    >
-                                        <Mail className="w-4 h-4 mr-2" />
-                                        Contact Reporter
-                                    </Button>
-                                </CardContent>
-                            </Card> */}
                         </div>
                     </div>
 

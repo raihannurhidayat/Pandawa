@@ -1,7 +1,14 @@
 import type React from "react";
 
 import { useState, useCallback, useEffect } from "react";
-import { Upload, X, FileText, ImageIcon, ArrowLeft, Loader2 } from "lucide-react";
+import {
+    Upload,
+    X,
+    FileText,
+    ImageIcon,
+    ArrowLeft,
+    Loader2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,7 +46,9 @@ import { toast } from "sonner";
 import { API_WILAYAH } from "@/constant/api-wilayah";
 import { Provinsi } from "@/types/wilayah";
 import AuthenticatedUserLayout from "@/layouts/authenticatedUserLayout";
-
+import LocationInputDemo, {
+    Coordinates,
+} from "@/components/forms/location-input";
 
 interface FileWithPreview extends File {
     preview?: string;
@@ -56,9 +65,13 @@ export default function UserCreateIssue({
     const [kecamatan, setKecamatan] = useState<any[]>([]);
 
     const [files, setFiles] = useState<FileWithPreview[]>([]);
+    const [coordinats, setCoordinats] = useState({
+        location: null as Coordinates | null,
+    });
     const [isDragOver, setIsDragOver] = useState(false);
 
-    const [isLoadingHandleCreateIssue, setIsLoadingHandleCreateIssue] = useState(false);
+    const [isLoadingHandleCreateIssue, setIsLoadingHandleCreateIssue] =
+        useState(false);
 
     const form = useForm<CreateIssueFormSchema>({
         resolver: zodResolver(createIssueFormSchema),
@@ -77,8 +90,6 @@ export default function UserCreateIssue({
     });
 
     useEffect(() => {
-        console.log(import.meta.env.VITE_API_WILAYAH);
-
         const fetchWilayah = async () => {
             const response = await fetch(`${API_WILAYAH}/provinsi`, {
                 headers: {
@@ -135,13 +146,18 @@ export default function UserCreateIssue({
         };
 
         fetchWilayah();
-    }, [form.watch("location.provinsi"), form.watch("location.kota"), form.watch("location.kecamatan")]);
+    }, [
+        form.watch("location.provinsi"),
+        form.watch("location.kota"),
+        form.watch("location.kecamatan"),
+    ]);
 
     const handleSubmitCreateIssue = (data: CreateIssueFormSchema) => {
         setIsLoadingHandleCreateIssue(true);
+        const location = {...data.location, coordinats}
         const newissueData = {
             ...data,
-            location: JSON.stringify(data.location),
+            location: JSON.stringify(location),
             attachments: files,
         };
 
@@ -524,7 +540,8 @@ export default function UserCreateIssue({
                                                                     disabled={
                                                                         !form.getValues(
                                                                             "location.provinsi"
-                                                                        ) || !kota
+                                                                        ) ||
+                                                                        !kota
                                                                     }
                                                                 >
                                                                     <SelectTrigger
@@ -681,7 +698,8 @@ export default function UserCreateIssue({
                                                                     disabled={
                                                                         !form.getValues(
                                                                             "location.kecamatan"
-                                                                        ) || !kelurahan
+                                                                        ) ||
+                                                                        !kelurahan
                                                                     }
                                                                 >
                                                                     <SelectTrigger
@@ -729,6 +747,12 @@ export default function UserCreateIssue({
                                             />
                                         </div>
                                     </div>
+
+                                    {/* Koordinat Lokasi */}
+                                    <LocationInputDemo
+                                        formData={coordinats}
+                                        setFormData={setCoordinats}
+                                    />
 
                                     {/* File Upload */}
                                     <div className="space-y-4">
@@ -829,7 +853,9 @@ export default function UserCreateIssue({
                                         <Button
                                             type="submit"
                                             className="w-full"
-                                            disabled={isLoadingHandleCreateIssue}
+                                            disabled={
+                                                isLoadingHandleCreateIssue
+                                            }
                                         >
                                             {isLoadingHandleCreateIssue ? (
                                                 <Loader2 className="h-4 w-4 animate-spin" />
