@@ -46,6 +46,7 @@ import FeedbackComponent from "@/components/shared/tabbed-feedback";
 import { toast } from "sonner";
 import UserAvatar from "@/components/user-avatar";
 import UsernameLink from "@/components/username-link";
+import { useLocation } from "@/hooks/use-location";
 
 // Mock data for the complaint
 const complaintData = {
@@ -611,7 +612,7 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                                     (comment) => (
                                                         <div
                                                             key={comment.id}
-                                                            className="flex gap-3"
+                                                            className="flex items-start gap-3"
                                                         >
                                                             <UserAvatar
                                                                 user={
@@ -622,13 +623,12 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
 
                                                             <div className="flex-1">
                                                                 <div className="flex items-center gap-2 mb-1">
-                                                                    <span className="text-sm font-medium">
-                                                                        {
-                                                                            comment
-                                                                                .user
-                                                                                .name
+                                                                    <UsernameLink
+                                                                        user={
+                                                                            comment.user
                                                                         }
-                                                                    </span>
+                                                                        className="text-sm font-medium text-secondary-foreground"
+                                                                    />
                                                                     {comment
                                                                         .user
                                                                         .role ===
@@ -746,35 +746,16 @@ export default function DetailPengaduanWarga({ issue }: { issue: Issue }) {
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex items-center gap-3">
-                                        <Avatar className="w-12 h-12">
-                                            <AvatarImage
-                                            // src={
-                                            //     complaintData.reporter
-                                            //         .avatar
-                                            // }
-                                            />
-                                            <AvatarFallback>
-                                                <User className="w-6 h-6" />
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <h3 className="font-semibold">
-                                                {issue.user.name}
-                                            </h3>
-                                            <UsernameLink user={issue.user} />
-                                            <p className="text-sm text-gray-600">
-                                                Masyarakat
-                                            </p>
-                                        </div>
+                                        <UserAvatar
+                                            user={issue.user}
+                                            size="lg"
+                                            showInformation={true}
+                                        />
                                     </div>
 
                                     <Separator />
 
                                     <div className="space-y-3">
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <Mail className="w-4 h-4 text-gray-500" />
-                                            <span>{issue.user.email}</span>
-                                        </div>
                                         <div className="flex items-center gap-2 text-sm">
                                             <Phone className="w-4 h-4 text-gray-500" />
                                             <span>

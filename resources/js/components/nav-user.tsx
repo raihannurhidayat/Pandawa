@@ -35,12 +35,6 @@ export function NavUser({ user }: { user: User }) {
                             size="lg"
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
-                            {/* <Avatar className="w-8 h-8 rounded-lg">
-                                <AvatarImage src={user.avatar} alt={user.name} />
-                                <AvatarFallback className="rounded-lg">
-                                    {getInitialNameUser(user?.name! ?? "")}
-                                </AvatarFallback>
-                            </Avatar> */}
                             <UserAvatar user={user} size="md" />
                             <div className="grid flex-1 text-sm leading-tight text-left">
                                 <span className="font-semibold truncate">
@@ -61,12 +55,6 @@ export function NavUser({ user }: { user: User }) {
                     >
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                {/* <Avatar className="w-8 h-8 rounded-lg">
-                                    <AvatarImage src={user.avatar} alt={user.name} />
-                                    <AvatarFallback className="rounded-lg">
-                                        AC
-                                    </AvatarFallback>
-                                </Avatar> */}
                                 <UserAvatar user={user} size="md" />
                                 <div className="grid flex-1 text-sm leading-tight text-left">
                                     <span className="font-semibold truncate">
